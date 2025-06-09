@@ -1,17 +1,17 @@
-import {NextIntlClientProvider} from "next-intl"
+import type React from "react"
 import {notFound} from "next/navigation"
+import {AuthProvider} from "@/lib/auth"
+import {NextIntlClientProvider} from "next-intl";
+import {ProtectedLayout} from "@/app/[locale]/protectedLayout";
 
-export function generateStaticParams() {
-  return [{locale: "en"}, {locale: "ru"}, {locale: "uz"}]
-}
-
-export default async function LocaleLayout({
-                                             children,
-                                             params,
-                                           }: {
+export default async function AdminLayout({
+                                            children,
+                                            params,
+                                          }: {
   children: React.ReactNode
   params: Promise<{ locale: string }>
 }) {
+
   const {locale} = await params;
   let messages
   try {
@@ -19,10 +19,11 @@ export default async function LocaleLayout({
   } catch (error) {
     notFound()
   }
-
   return (
-    <NextIntlClientProvider locale={locale} messages={messages}>
-      {children}
-    </NextIntlClientProvider>
+    <AuthProvider>
+      <NextIntlClientProvider locale={locale} messages={messages}>
+        <ProtectedLayout>{children}</ProtectedLayout>
+      </NextIntlClientProvider>
+    </AuthProvider>
   )
 }
