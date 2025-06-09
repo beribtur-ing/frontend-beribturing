@@ -1,5 +1,4 @@
 import type React from "react"
-import {AuthProvider} from "@/contexts/auth-context"
 import './globals.css'
 
 export default function RootLayout({
@@ -10,7 +9,7 @@ export default function RootLayout({
     return (
         <html>
             <body>
-            <AuthProvider>{children}</AuthProvider>
+            {children}
             </body>
         </html>
     )
