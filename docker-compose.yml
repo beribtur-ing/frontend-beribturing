@@ -1,0 +1,9 @@
+services:
+  beribturing-front:
+    container_name: beribturing-front
+    build:
+      context: .
+      dockerfile: front-dev.dockerfile
+    command: ["nginx", "-g", "daemon off;"]
+    ports:
+      - "127.0.0.1:1050:80"
