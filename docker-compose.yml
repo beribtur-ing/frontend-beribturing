@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   beribturing-admin:
     container_name: beribturing-admin
@@ -9,8 +11,6 @@ services:
         PACKAGE_NAME: "@beribturing/admin-app"
     expose:
       - "3000"
-    networks:
-      - beribturing-network
 
   beribturing-owner:
     container_name: beribturing-owner
@@ -22,8 +22,6 @@ services:
         PACKAGE_NAME: "@beribturing/owner-app"
     expose:
       - "3000"
-    networks:
-      - beribturing-network
 
   beribturing-renter:
     container_name: beribturing-renter
@@ -35,23 +33,19 @@ services:
         PACKAGE_NAME: "@beribturing/rental-app"
     expose:
       - "3000"
-    networks:
-      - beribturing-network
 
   nginx:
     image: nginx:alpine
     container_name: beribturing-nginx
     ports:
-      - "0.0.0.0:80:80"
+      - "80:80"
     volumes:
       - ./nginx/proxy.conf:/etc/nginx/conf.d/default.conf
     depends_on:
       - beribturing-admin
       - beribturing-owner
       - beribturing-renter
-    networks:
-      - beribturing-network
-
-networks:
-  beribturing-network:
-    driver: bridge
+    links:
+      - beribturing-admin
+      - beribturing-owner
+      - beribturing-renter
