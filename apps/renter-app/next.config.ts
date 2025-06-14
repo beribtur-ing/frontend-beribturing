@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from 'next-intl/plugin';
 
+const withNextIntl = createNextIntlPlugin();
+
 const nextConfig: NextConfig = {
+  output: 'standalone', // ✅ Must be before wrapping
   typescript: {
     ignoreBuildErrors: true,
   },
@@ -13,5 +16,4 @@ const nextConfig: NextConfig = {
   },
 };
 
-const withNextIntl = createNextIntlPlugin();
 export default withNextIntl(nextConfig);

@@ -1,9 +1,57 @@
+version: '3.8'
+
 services:
-  beribturing-front:
-    container_name: beribturing-front
+  beribturing-admin:
+    image: frontend-beribturing-admin
+    container_name: beribturing-admin
     build:
       context: .
       dockerfile: front-dev.dockerfile
-    command: ["nginx", "-g", "daemon off;"]
+      args:
+        APP_NAME: admin-app
+        PACKAGE_NAME: "@beribturing/admin-app"
+    networks:
+      - beribturing-network
+
+  beribturing-owner:
+    image: frontend-beribturing-owner
+    container_name: beribturing-owner
+    build:
+      context: .
+      dockerfile: front-dev.dockerfile
+      args:
+        APP_NAME: owner-app
+        PACKAGE_NAME: "@beribturing/owner-app"
+    networks:
+      - beribturing-network
+
+  beribturing-renter:
+    image: frontend-beribturing-renter
+    container_name: beribturing-renter
+    build:
+      context: .
+      dockerfile: front-dev.dockerfile
+      args:
+        APP_NAME: renter-app
+        PACKAGE_NAME: "@beribturing/rental-app"
+    networks:
+      - beribturing-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: beribturing-nginx
     ports:
-      - "127.0.0.1:1050:80"
+      - "80:80"
+    volumes:
+      - ./nginx/proxy.conf:/etc/nginx/conf.d/default.conf
+
+    depends_on:
+      - beribturing-admin
+      - beribturing-owner
+      - beribturing-renter
+    networks:
+      - beribturing-network
+
+networks:
+  beribturing-network:
+    driver: bridge
