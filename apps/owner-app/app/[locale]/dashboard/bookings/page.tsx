@@ -1,38 +1,54 @@
-"use client"
+'use client';
 
-import { useEffect, useState } from "react"
-import { BookingTable } from "@/components/ui/booking-table"
-import type { Reservation, RentalRecord } from "@/lib/types"
-import Link from "next/link"
+import { useEffect, useState } from 'react';
+import type { Reservation, RentalRecord } from '@/lib/types';
+import Link from 'next/link';
+import { TableList } from '@/components/shared/TableList';
+import { TablePagination } from '@/components/shared/TablePagination';
 
-type BookingItem = (Reservation | RentalRecord) & { type: "reservation" | "rental" }
+type BookingItem = (Reservation | RentalRecord) & { type: 'reservation' | 'rental' };
 
 export default function BookingsPage() {
-  const [bookings, setBookings] = useState<BookingItem[]>([])
-  const [loading, setLoading] = useState(true)
-  const [filter, setFilter] = useState<"all" | "pending" | "confirmed" | "active" | "completed">("all")
+  const [bookings, setBookings] = useState<BookingItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<'all' | 'pending' | 'confirmed' | 'active' | 'completed'>('all');
 
   useEffect(() => {
-    fetch("/api/bookings")
+    fetch('/api/bookings')
       .then((res) => res.json())
       .then((data) => {
-        setBookings(data)
-        setLoading(false)
-      })
-  }, [])
+        setBookings(data);
+        setLoading(false);
+      });
+  }, []);
 
   const filteredBookings = bookings.filter((booking) => {
-    if (filter === "all") return true
-    return booking.status.toLowerCase() === filter
-  })
+    if (filter === 'all') return true;
+    return booking.status.toLowerCase() === filter;
+  });
 
   if (loading) {
     return (
       <div className="animate-pulse">
         <div className="bg-white rounded-lg shadow h-96"></div>
       </div>
-    )
+    );
   }
+
+  const initialData = [
+    { id: 1, name: 'Alice Johnson', email: 'alice@example.com', role: 'Admin' },
+    { id: 2, name: 'Bob Smith', email: 'bob@example.com', role: 'Editor' },
+    { id: 3, name: 'Carol Lee', email: 'carol@example.com', role: 'Viewer' },
+    { id: 4, name: 'David Kim', email: 'david@example.com', role: 'Editor' },
+    { id: 5, name: 'Eve Adams', email: 'eve@example.com', role: 'Viewer' },
+  ];
+
+  // 2. Column config
+  const columns = [
+    { field: 'name', title: 'Full Name' },
+    { field: 'email', title: 'Email Address' },
+    { field: 'role', title: 'Role' },
+  ];
 
   return (
     <div>
@@ -51,14 +67,14 @@ export default function BookingsPage() {
 
       <div className="mb-6 overflow-x-auto">
         <div className="flex flex-wrap gap-2">
-          {["all", "pending", "confirmed", "active", "completed"].map((status) => (
+          {['all', 'pending', 'confirmed', 'active', 'completed'].map((status) => (
             <button
               key={status}
               onClick={() => setFilter(status as any)}
               className={`px-3 py-2 text-xs md:text-sm font-medium rounded-lg capitalize ${
                 filter === status
-                  ? "bg-blue-600 text-white"
-                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
               }`}
             >
               {status}
@@ -67,16 +83,30 @@ export default function BookingsPage() {
         </div>
       </div>
 
-      <BookingTable bookings={filteredBookings} />
+      {/*<BookingTable bookings={filteredBookings} />*/}
+
+      <TableList
+        data={initialData}
+        columns={columns as any}
+        onEdit={(item) => alert(`Edit: ${item.name}`)}
+        onDelete={(item) => alert(`Delete: ${item.name}`)}
+      />
+      <TablePagination
+        offset={0}
+        limit={10}
+        total={300}
+        onChange={(newOffset) => {}}
+        onLimitChange={(newLimit) => {}}
+      />
 
       {filteredBookings.length === 0 && (
         <div className="text-center py-12 bg-white rounded-lg shadow">
           <h3 className="text-lg font-medium text-gray-900 mb-2">No bookings found</h3>
           <p className="text-gray-600">
-            {filter === "all" ? "You don't have any bookings yet." : `No ${filter} bookings at the moment.`}
+            {filter === 'all' ? "You don't have any bookings yet." : `No ${filter} bookings at the moment.`}
           </p>
         </div>
       )}
     </div>
-  )
+  );
 }
