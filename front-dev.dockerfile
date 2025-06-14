@@ -59,4 +59,5 @@ ENV HOST=0.0.0.0
 ENV PORT=3000
 
 #CMD ["pm2-runtime", "server.js"]
-CMD ["pm2-runtime", "apps/${APP_NAME}/server.js"]
+CMD sh -c "pm2-runtime apps/${APP_NAME}/server.js"
+
