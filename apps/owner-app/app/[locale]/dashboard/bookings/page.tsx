@@ -8,6 +8,7 @@ import { CustomPagination } from '@/components/shared/CustomPagination';
 import { Title } from '@/components/shared/Title';
 import { Filter } from '@/components/shared/Filter';
 import { SearchBar } from '@/components/shared/SearchBar';
+import { DeleteModal } from '@/components/shared/DeleteModal';
 
 type BookingItem = (Reservation | RentalRecord) & { type: 'reservation' | 'rental' };
 
@@ -29,14 +30,6 @@ export default function BookingsPage() {
     if (filter === 'all') return true;
     return booking.status.toLowerCase() === filter;
   });
-
-  if (loading) {
-    return (
-      <div className="animate-pulse">
-        <div className="bg-white rounded-lg shadow h-96"></div>
-      </div>
-    );
-  }
 
   const initialData = [
     { id: 1, name: 'Alice Johnson', email: 'alice@example.com', role: 'Admin' },
@@ -60,6 +53,16 @@ export default function BookingsPage() {
     { id: 4, name: 'Active' },
     { id: 5, name: 'Completed' },
   ];
+
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+
+  if (loading) {
+    return (
+      <div className="animate-pulse">
+        <div className="bg-white rounded-lg shadow h-96"></div>
+      </div>
+    );
+  }
 
   return (
     <div>
@@ -102,7 +105,7 @@ export default function BookingsPage() {
         data={initialData}
         columns={columns as any}
         onEdit={(item) => alert(`Edit: ${item.name}`)}
-        onDelete={(item) => alert(`Delete: ${item.name}`)}
+        onDelete={(item) => setShowDeleteModal(true)}
       />
       <CustomPagination
         offset={0}
@@ -111,6 +114,16 @@ export default function BookingsPage() {
         onChange={(newOffset) => {}}
         onLimitChange={(newLimit) => {}}
       />
+
+      <DeleteModal
+        title="Are you sure you want to delete this item?"
+        showModal={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        onDelete={() => {}}
+        deleteIsLoading={false}
+      >
+        <button onClick={() => setShowDeleteModal(true)}>Delete Item</button>
+      </DeleteModal>
     </div>
   );
 }
