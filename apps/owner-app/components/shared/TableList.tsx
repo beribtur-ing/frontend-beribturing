@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/ModeEditOutlineOutlined';
+import DeleteIcon from '@mui/icons-material/DeleteOutlineRounded';
 
 export interface ColumnConfig<T> {
   field?: keyof T;
@@ -89,7 +89,7 @@ export function TableList<T extends { id: string | number }>({
                     <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
                       {onEdit && (
                         <button
-                          className="p-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
+                          className="p-1.5 bg-orange-100 text-orange-600 rounded-md hover:bg-orange-200 transition-colors"
                           onClick={() => onEdit(item)}
                           title="Edit"
                         >
@@ -98,7 +98,7 @@ export function TableList<T extends { id: string | number }>({
                       )}
                       {onDelete && (
                         <button
-                          className="p-1 bg-red-100 text-red-700 rounded hover:bg-red-200 transition-colors"
+                          className="p-1.5 bg-rose-100 text-rose-600 rounded-md hover:bg-rose-200 transition-colors"
                           onClick={() => onDelete(item)}
                           title="Delete"
                         >
