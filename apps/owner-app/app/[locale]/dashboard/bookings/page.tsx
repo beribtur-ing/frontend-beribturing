@@ -3,14 +3,22 @@
 import { useEffect, useState } from 'react';
 import type { Reservation, RentalRecord } from '@/lib/types';
 import Link from 'next/link';
-import { TableList } from '@/components/shared/TableList';
+import { ColumnConfig, TableList } from '@/components/shared/TableList';
 import { CustomPagination } from '@/components/shared/CustomPagination';
 import { Title } from '@/components/shared/Title';
 import { Filter } from '@/components/shared/Filter';
 import { SearchBar } from '@/components/shared/SearchBar';
 import { DeleteModal } from '@/components/shared/DeleteModal';
 
-type BookingItem = (Reservation | RentalRecord) & { type: 'reservation' | 'rental' };
+// type BookingItem = (Reservation | RentalRecord) & { type: 'reservation' | 'rental' };
+
+interface BookingItem {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  status: 'Pending' | 'Confirmed' | 'Active' | 'Completed';
+}
 
 export default function BookingsPage() {
   const [bookings, setBookings] = useState<BookingItem[]>([]);
@@ -31,19 +39,32 @@ export default function BookingsPage() {
     return booking.status.toLowerCase() === filter;
   });
 
-  const initialData = [
-    { id: 1, name: 'Alice Johnson', email: 'alice@example.com', role: 'Admin' },
-    { id: 2, name: 'Bob Smith', email: 'bob@example.com', role: 'Editor' },
-    { id: 3, name: 'Carol Lee', email: 'carol@example.com', role: 'Viewer' },
-    { id: 4, name: 'David Kim', email: 'david@example.com', role: 'Editor' },
-    { id: 5, name: 'Eve Adams', email: 'eve@example.com', role: 'Viewer' },
+  const initialData: BookingItem[] = [
+    { id: 1, name: 'Alice Johnson', email: 'alice@example.com', role: 'Admin', status: 'Active' },
+    { id: 2, name: 'Bob Smith', email: 'bob@example.com', role: 'Editor', status: 'Pending' },
+    { id: 3, name: 'Carol Lee', email: 'carol@example.com', role: 'Viewer', status: 'Confirmed' },
+    { id: 4, name: 'David Kim', email: 'david@example.com', role: 'Editor', status: 'Completed' },
+    { id: 5, name: 'Eve Adams', email: 'eve@example.com', role: 'Viewer', status: 'Active' },
   ];
 
   // 2. Column config
-  const columns = [
+  const columns: ColumnConfig<BookingItem>[] = [
     { field: 'name', title: 'Full Name' },
     { field: 'email', title: 'Email Address' },
     { field: 'role', title: 'Role' },
+    {
+      field: 'status',
+      title: 'Status',
+      cell: (item) => {
+        const statusColors: Record<string, string> = {
+          Pending: 'bg-yellow-100 text-yellow-800',
+          Confirmed: 'bg-blue-100 text-blue-800',
+          Active: 'bg-green-100 text-green-800',
+          Completed: 'bg-gray-100 text-gray-800',
+        };
+        return <span className={`px-2 py-1 rounded-[4px] ${statusColors[item.status]}`}>{item.status}</span>;
+      },
+    },
   ];
 
   const statusOptions = [
@@ -85,7 +106,7 @@ export default function BookingsPage() {
 
       <TableList
         data={initialData}
-        columns={columns as any}
+        columns={columns}
         onEdit={(item) => alert(`Edit: ${item.name}`)}
         onDelete={(item) => setShowDeleteModal(true)}
       />
