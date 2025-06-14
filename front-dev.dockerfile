@@ -8,7 +8,8 @@ ENV PACKAGE_NAME=${PACKAGE_NAME}
 
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@latest --activate
+RUN corepack enable && corepack prepare pnpm@8.9.0 --activate
+
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 
@@ -21,7 +22,8 @@ COPY packages/api-stub/package.json ./packages/api-stub/
 COPY packages/eslint-config/package.json ./packages/eslint-config/
 COPY packages/typescript-config/package.json ./packages/typescript-config/
 
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --force
+
 
 COPY . .
 
@@ -47,7 +49,7 @@ COPY --from=builder /app/apps/${APP_NAME}/.next/static ./.next/static
 COPY --from=builder /app/apps/${APP_NAME}/public ./public
 
 # PM2 process config (optional)
-COPY ecosystem.config.js .
+COPY ecosystem.config.ts .
 
 EXPOSE 3000
 
