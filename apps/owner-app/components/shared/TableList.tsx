@@ -57,7 +57,7 @@ export function TableList<T extends { id: string | number }>({
           </tr>
         </thead>
 
-        <tbody>
+        <tbody className="bg-white">
           {data.length === 0 ? (
             <tr>
               <td colSpan={columns.length + 1 + (onEdit || onDelete ? 1 : 0)} className="px-4 py-12 text-center">
