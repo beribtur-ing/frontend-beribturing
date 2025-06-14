@@ -40,12 +40,13 @@ ENV APP_NAME=${APP_NAME}
 
 WORKDIR /app
 
+
 RUN npm install -g pm2
 
-# ✅ Correct: copy full standalone output, including node_modules and server.js
-COPY --from=builder /app/apps/${APP_NAME}/.next/standalone/apps/${APP_NAME}/ ./
+# ✅ Correct: copy full standalone output (with trailing slash!)
+COPY --from=builder /app/apps/${APP_NAME}/.next/standalone/ ./
 
-# ✅ Static assets and public folder
+# ✅ Static and public folders
 COPY --from=builder /app/apps/${APP_NAME}/.next/static ./.next/static
 COPY --from=builder /app/apps/${APP_NAME}/public ./public
 
@@ -53,10 +54,9 @@ COPY --from=builder /app/apps/${APP_NAME}/public ./public
 COPY ecosystem.config.ts .
 
 # Runtime environment
+EXPOSE 3000
 ENV HOST=0.0.0.0
 ENV PORT=3000
-
-EXPOSE 3000
 
 CMD ["pm2-runtime", "server.js"]
 
