@@ -43,7 +43,7 @@ services:
     ports:
       - "80:80"
     volumes:
-      - ./nginx/proxy.conf:/etc/nginx/conf.d/proxy.conf
+      - ./nginx/proxy.conf:/etc/nginx/conf.d/default.conf
 
     depends_on:
       - beribturing-admin
