@@ -43,7 +43,7 @@ WORKDIR /app
 RUN npm install -g pm2
 
 # ✅ Correct: copy full standalone output, including node_modules and server.js
-COPY --from=builder /app/apps/${APP_NAME}/.next/standalone/ ./
+COPY --from=builder /app/apps/${APP_NAME}/.next/standalone/apps/${APP_NAME}/ ./
 
 # ✅ Static assets and public folder
 COPY --from=builder /app/apps/${APP_NAME}/.next/static ./.next/static
