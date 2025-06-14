@@ -4,7 +4,8 @@ import createNextIntlPlugin from 'next-intl/plugin';
 const withNextIntl = createNextIntlPlugin();
 
 const nextConfig: NextConfig = {
-  output: 'standalone', // ✅ Must be before wrapping
+  basePath: '/owner',
+  output: 'standalone',
   typescript: {
     ignoreBuildErrors: true,
   },
