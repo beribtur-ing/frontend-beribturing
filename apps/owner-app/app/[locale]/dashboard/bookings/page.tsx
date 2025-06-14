@@ -121,9 +121,7 @@ export default function BookingsPage() {
         onClose={() => setShowDeleteModal(false)}
         onDelete={() => {}}
         deleteIsLoading={false}
-      >
-        <button onClick={() => setShowDeleteModal(true)}>Delete Item</button>
-      </DeleteModal>
+      />
     </div>
   );
 }
