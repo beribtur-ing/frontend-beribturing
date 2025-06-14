@@ -66,11 +66,8 @@ export default function BookingsPage() {
 
   return (
     <div>
-      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 md:mb-8 gap-4 sm:gap-0">
-        <div>
-          <Title title="Bookings" />
-          <p className="text-sm md:text-base text-gray-600">Manage your rental bookings and reservations</p>
-        </div>
+      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3 gap-4 sm:gap-0">
+        <Title title="Bookings" />
         <Link
           href="/dashboard/bookings/calendar"
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-center sm:text-left"
@@ -79,27 +76,12 @@ export default function BookingsPage() {
         </Link>
       </div>
 
-      <div className="mb-6">
+      <div className="mb-4">
         <div className="flex flex-wrap gap-2">
-          {/*{['all', 'pending', 'confirmed', 'active', 'completed'].map((status) => (*/}
-          {/*  <button*/}
-          {/*    key={status}*/}
-          {/*    onClick={() => setFilter(status as any)}*/}
-          {/*    className={`px-3 py-2 text-xs md:text-sm font-medium rounded-lg capitalize ${*/}
-          {/*      filter === status*/}
-          {/*        ? 'bg-blue-600 text-white'*/}
-          {/*        : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'*/}
-          {/*    }`}*/}
-          {/*  >*/}
-          {/*    {status}*/}
-          {/*  </button>*/}
-          {/*))}*/}
           <Filter label="Status" values={statusOptions} onChange={(value) => {}} />
           <SearchBar placeholder="Search..." onSearch={(value) => console.log('Searching for:', value)} />
         </div>
       </div>
-
-      {/*<BookingTable bookings={filteredBookings} />*/}
 
       <TableList
         data={initialData}
