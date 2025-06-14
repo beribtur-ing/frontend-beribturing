@@ -1,0 +1,7 @@
+export enum DepositStatus {
+  HELD = 'HELD',
+  REFUNDABLE = 'REFUNDABLE',
+  REFUNDED = 'REFUNDED',
+  REVIEW_NEEDED = 'REVIEW_NEEDED',
+  WITHHELD = 'WITHHELD'
+}
