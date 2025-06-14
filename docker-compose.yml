@@ -42,7 +42,7 @@ services:
     image: nginx:alpine
     container_name: beribturing-nginx
     ports:
-      - "80:80"
+      - "0.0.0.0:80:80"
     volumes:
       - ./nginx/proxy.conf:/etc/nginx/conf.d/default.conf
     depends_on:
