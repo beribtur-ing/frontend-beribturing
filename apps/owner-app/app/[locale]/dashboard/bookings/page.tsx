@@ -5,6 +5,9 @@ import type { Reservation, RentalRecord } from '@/lib/types';
 import Link from 'next/link';
 import { TableList } from '@/components/shared/TableList';
 import { CustomPagination } from '@/components/shared/CustomPagination';
+import { Title } from '@/components/shared/Title';
+import { Filter } from '@/components/shared/Filter';
+import { SearchBar } from '@/components/shared/SearchBar';
 
 type BookingItem = (Reservation | RentalRecord) & { type: 'reservation' | 'rental' };
 
@@ -50,11 +53,19 @@ export default function BookingsPage() {
     { field: 'role', title: 'Role' },
   ];
 
+  const statusOptions = [
+    { id: 1, name: 'All' },
+    { id: 2, name: 'Pending' },
+    { id: 3, name: 'Confirmed' },
+    { id: 4, name: 'Active' },
+    { id: 5, name: 'Completed' },
+  ];
+
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-6 md:mb-8 gap-4 sm:gap-0">
         <div>
-          <h1 className="text-xl md:text-2xl font-bold text-gray-900">Bookings</h1>
+          <Title title="Bookings" />
           <p className="text-sm md:text-base text-gray-600">Manage your rental bookings and reservations</p>
         </div>
         <Link
@@ -65,21 +76,23 @@ export default function BookingsPage() {
         </Link>
       </div>
 
-      <div className="mb-6 overflow-x-auto">
+      <div className="mb-6">
         <div className="flex flex-wrap gap-2">
-          {['all', 'pending', 'confirmed', 'active', 'completed'].map((status) => (
-            <button
-              key={status}
-              onClick={() => setFilter(status as any)}
-              className={`px-3 py-2 text-xs md:text-sm font-medium rounded-lg capitalize ${
-                filter === status
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-              }`}
-            >
-              {status}
-            </button>
-          ))}
+          {/*{['all', 'pending', 'confirmed', 'active', 'completed'].map((status) => (*/}
+          {/*  <button*/}
+          {/*    key={status}*/}
+          {/*    onClick={() => setFilter(status as any)}*/}
+          {/*    className={`px-3 py-2 text-xs md:text-sm font-medium rounded-lg capitalize ${*/}
+          {/*      filter === status*/}
+          {/*        ? 'bg-blue-600 text-white'*/}
+          {/*        : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'*/}
+          {/*    }`}*/}
+          {/*  >*/}
+          {/*    {status}*/}
+          {/*  </button>*/}
+          {/*))}*/}
+          <Filter label="Status" values={statusOptions} onChange={(value) => {}} />
+          <SearchBar placeholder="Search..." onSearch={(value) => console.log('Searching for:', value)} />
         </div>
       </div>
 
