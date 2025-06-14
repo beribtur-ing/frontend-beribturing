@@ -17,6 +17,8 @@ interface TableListProps<T> {
   onDelete?: (value: T) => void;
   pagination?: React.ReactElement;
   isLoading?: boolean;
+  emptyText?: string;
+  emptyIcon?: React.ReactNode;
 }
 
 export function TableList<T extends { id: string | number }>({
@@ -27,6 +29,8 @@ export function TableList<T extends { id: string | number }>({
   onDelete,
   pagination,
   isLoading = false,
+  emptyText = 'No data available',
+  emptyIcon,
 }: TableListProps<T>) {
   return (
     <div className="relative overflow-x-auto border rounded-lg shadow-sm">
@@ -56,44 +60,55 @@ export function TableList<T extends { id: string | number }>({
         </thead>
 
         <tbody>
-          {data.map((item, index) => (
-            <tr
-              key={item.id}
-              className={`border-b hover:bg-gray-50 ${onRowClick ? 'cursor-pointer' : ''}`}
-              onClick={() => onRowClick?.(item)}
-            >
-              <td className="px-4 py-3">{index + 1}</td>
-
-              {columns.map((col, idx) => (
-                <td key={idx} className="px-4 py-3">
-                  {col.cell ? col.cell(item, idx) : col.field ? String(item[col.field]) : ''}
-                </td>
-              ))}
-
-              {(onEdit || onDelete) && (
-                <td className="px-4 py-3">
-                  <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
-                    {onEdit && (
-                      <button
-                        className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded"
-                        onClick={() => onEdit(item)}
-                      >
-                        Edit
-                      </button>
-                    )}
-                    {onDelete && (
-                      <button
-                        className="text-xs px-2 py-1 bg-red-100 text-red-700 rounded"
-                        onClick={() => onDelete(item)}
-                      >
-                        Delete
-                      </button>
-                    )}
-                  </div>
-                </td>
-              )}
+          {data.length === 0 ? (
+            <tr>
+              <td colSpan={columns.length + 1 + (onEdit || onDelete ? 1 : 0)} className="px-4 py-12 text-center">
+                <div className="flex flex-col items-center justify-center text-gray-500">
+                  {emptyIcon && <div className="mb-3">{emptyIcon}</div>}
+                  <span className="text-sm">{emptyText}</span>
+                </div>
+              </td>
             </tr>
-          ))}
+          ) : (
+            data.map((item, index) => (
+              <tr
+                key={item.id}
+                className={`border-b hover:bg-gray-50 ${onRowClick ? 'cursor-pointer' : ''}`}
+                onClick={() => onRowClick?.(item)}
+              >
+                <td className="px-4 py-3">{index + 1}</td>
+
+                {columns.map((col, idx) => (
+                  <td key={idx} className="px-4 py-3">
+                    {col.cell ? col.cell(item, idx) : col.field ? String(item[col.field]) : ''}
+                  </td>
+                ))}
+
+                {(onEdit || onDelete) && (
+                  <td className="px-4 py-3">
+                    <div className="flex gap-2" onClick={(e) => e.stopPropagation()}>
+                      {onEdit && (
+                        <button
+                          className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded"
+                          onClick={() => onEdit(item)}
+                        >
+                          Edit
+                        </button>
+                      )}
+                      {onDelete && (
+                        <button
+                          className="text-xs px-2 py-1 bg-red-100 text-red-700 rounded"
+                          onClick={() => onDelete(item)}
+                        >
+                          Delete
+                        </button>
+                      )}
+                    </div>
+                  </td>
+                )}
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
 

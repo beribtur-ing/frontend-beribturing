@@ -9,7 +9,7 @@ import InputLabel from '@mui/material/InputLabel';
 import Box from '@mui/material/Box';
 import { SelectChangeEvent } from '@mui/material/Select';
 
-interface TablePaginationProps {
+interface CustomPaginationProps {
   onChange: (offset: number) => void;
   limit: number;
   offset: number;
@@ -18,14 +18,14 @@ interface TablePaginationProps {
   onLimitChange: (rows: number) => void;
 }
 
-export const TablePagination = ({
+export const CustomPagination = ({
   onChange,
   limit,
   offset,
   total,
   onLimitChange,
   pagerButtonCount = 5,
-}: TablePaginationProps) => {
+}: CustomPaginationProps) => {
   const totalPages = Math.ceil(total / limit);
   const currentPage = Math.floor(offset / limit) + 1;
 

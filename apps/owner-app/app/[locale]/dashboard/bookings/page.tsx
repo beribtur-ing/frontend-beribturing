@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import type { Reservation, RentalRecord } from '@/lib/types';
 import Link from 'next/link';
 import { TableList } from '@/components/shared/TableList';
-import { TablePagination } from '@/components/shared/TablePagination';
+import { CustomPagination } from '@/components/shared/CustomPagination';
 
 type BookingItem = (Reservation | RentalRecord) & { type: 'reservation' | 'rental' };
 
@@ -91,7 +91,7 @@ export default function BookingsPage() {
         onEdit={(item) => alert(`Edit: ${item.name}`)}
         onDelete={(item) => alert(`Delete: ${item.name}`)}
       />
-      <TablePagination
+      <CustomPagination
         offset={0}
         limit={10}
         total={300}
