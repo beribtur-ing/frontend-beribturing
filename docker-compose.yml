@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   beribturing-admin:
+    image: frontend-beribturing-admin
     container_name: beribturing-admin
     build:
       context: .
@@ -13,6 +14,7 @@ services:
       - beribturing-network
 
   beribturing-owner:
+    image: frontend-beribturing-owner
     container_name: beribturing-owner
     build:
       context: .
@@ -24,6 +26,7 @@ services:
       - beribturing-network
 
   beribturing-renter:
+    image: frontend-beribturing-renter
     container_name: beribturing-renter
     build:
       context: .

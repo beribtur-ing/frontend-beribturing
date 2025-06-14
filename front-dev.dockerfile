@@ -44,9 +44,9 @@ WORKDIR /app
 RUN npm install -g pm2
 
 # Copy built Next.js app (standalone)
-COPY --from=builder /app/apps/${APP_NAME}/.next/standalone ./
-COPY --from=builder /app/apps/${APP_NAME}/.next/static ./.next/static
+COPY --from=builder /app/apps/${APP_NAME}/.next/standalone/apps/${APP_NAME} ./
 COPY --from=builder /app/apps/${APP_NAME}/public ./public
+COPY --from=builder /app/apps/${APP_NAME}/.next/static ./.next/static
 
 # PM2 process config (optional)
 COPY ecosystem.config.ts .
