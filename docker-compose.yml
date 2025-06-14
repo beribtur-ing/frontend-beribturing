@@ -1,4 +1,4 @@
-version: '2.2'
+version: '3.8'
 
 services:
   beribturing-admin:
@@ -9,8 +9,8 @@ services:
       args:
         APP_NAME: admin-app
         PACKAGE_NAME: "@beribturing/admin-app"
-    expose:
-      - "3000"
+    networks:
+      - beribturing-network
 
   beribturing-owner:
     container_name: beribturing-owner
@@ -20,8 +20,8 @@ services:
       args:
         APP_NAME: owner-app
         PACKAGE_NAME: "@beribturing/owner-app"
-    expose:
-      - "3000"
+    networks:
+      - beribturing-network
 
   beribturing-renter:
     container_name: beribturing-renter
@@ -31,8 +31,8 @@ services:
       args:
         APP_NAME: renter-app
         PACKAGE_NAME: "@beribturing/rental-app"
-    expose:
-      - "3000"
+    networks:
+      - beribturing-network
 
   nginx:
     image: nginx:alpine
@@ -45,7 +45,9 @@ services:
       - beribturing-admin
       - beribturing-owner
       - beribturing-renter
-    links:
-      - beribturing-admin
-      - beribturing-owner
-      - beribturing-renter
+    networks:
+      - beribturing-network
+
+networks:
+  beribturing-network:
+    driver: bridge

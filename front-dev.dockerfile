@@ -1,6 +1,6 @@
+# Stage 1: Build Next.js app as static export
 FROM node:20-alpine AS builder
 
-# Build arguments to specify which app to build
 ARG APP_NAME
 ARG PACKAGE_NAME
 ENV APP_NAME=${APP_NAME}
@@ -8,13 +8,12 @@ ENV PACKAGE_NAME=${PACKAGE_NAME}
 
 WORKDIR /app
 
-# Install pnpm
 RUN corepack enable && corepack prepare pnpm@latest --activate
 
-# Copy root package files
+# Copy workspace files
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml turbo.json ./
 
-# Create directories and copy package.json files
+# Pre-create needed folders and copy individual package.jsons
 RUN mkdir -p ./apps/admin-app ./apps/owner-app ./apps/renter-app ./packages/api-stub ./packages/eslint-config ./packages/typescript-config
 COPY apps/admin-app/package.json ./apps/admin-app/
 COPY apps/owner-app/package.json ./apps/owner-app/
@@ -23,31 +22,28 @@ COPY packages/api-stub/package.json ./packages/api-stub/
 COPY packages/eslint-config/package.json ./packages/eslint-config/
 COPY packages/typescript-config/package.json ./packages/typescript-config/
 
-# Install dependencies
 RUN pnpm install --frozen-lockfile
 
-# Copy the rest of the monorepo
+# Copy the rest
 COPY . .
 
-# Build the specific application
-RUN pnpm turbo build --filter=${PACKAGE_NAME}
+# Build the target app
+RUN pnpm turbo run build --filter=${PACKAGE_NAME}
 
-# Serve with Node.js
-FROM node:20-alpine AS runtime
+# Export the app to static HTML
+RUN pnpm --filter ${PACKAGE_NAME} exec next export
 
-# Build arguments to specify which app to serve
+# Stage 2: Serve with NGINX
+FROM nginx:stable-alpine AS runtime
+
 ARG APP_NAME
-ARG PACKAGE_NAME
-ENV APP_NAME=${APP_NAME}
-ENV PACKAGE_NAME=${PACKAGE_NAME}
 
-WORKDIR /app
+# Copy exported static files
+COPY --from=builder /app/apps/${APP_NAME}/out /usr/share/nginx/html
 
-# Copy built files from the specific app (using standalone build)
-COPY --from=builder /app/apps/${APP_NAME}/.next/standalone ./
-COPY --from=builder /app/apps/${APP_NAME}/.next/static ./.next/static
-COPY --from=builder /app/apps/${APP_NAME}/public ./public
+# Optional: your custom proxy or routing config
+COPY ./nginx/proxy.conf /etc/nginx/conf.d/default.conf
 
-EXPOSE 3000
+EXPOSE 80
 
-CMD ["node", "server.js"]
+CMD ["nginx", "-g", "daemon off;"]
