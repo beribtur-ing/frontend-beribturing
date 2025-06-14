@@ -1,9 +1,33 @@
 services:
-  beribturing-front:
-    container_name: beribturing-front
+  beribturing-admin:
+    container_name: beribturing-admin
     build:
       context: .
       dockerfile: front-dev.dockerfile
-    command: ["nginx", "-g", "daemon off;"]
+      args:
+        APP_NAME: admin-app
+        PACKAGE_NAME: "@beribturing/admin-app"
     ports:
-      - "127.0.0.1:1050:80"
+      - "127.0.0.1:1050:3000"
+
+  beribturing-owner:
+    container_name: beribturing-owner
+    build:
+      context: .
+      dockerfile: front-dev.dockerfile
+      args:
+        APP_NAME: owner-app
+        PACKAGE_NAME: "@beribturing/owner-app"
+    ports:
+      - "127.0.0.1:1051:3000"
+
+  beribturing-renter:
+    container_name: beribturing-renter
+    build:
+      context: .
+      dockerfile: front-dev.dockerfile
+      args:
+        APP_NAME: renter-app
+        PACKAGE_NAME: "@beribturing/rental-app"
+    ports:
+      - "127.0.0.1:1052:3000"
