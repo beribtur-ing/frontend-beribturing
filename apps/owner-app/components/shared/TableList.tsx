@@ -15,7 +15,6 @@ interface TableListProps<T> {
   onRowClick?: (row: T) => void;
   onEdit?: (value: T) => void;
   onDelete?: (value: T) => void;
-  pagination?: React.ReactElement;
   isLoading?: boolean;
   emptyText?: string;
   emptyIcon?: React.ReactNode;
@@ -27,7 +26,6 @@ export function TableList<T extends { id: string | number }>({
   onRowClick,
   onEdit,
   onDelete,
-  pagination,
   isLoading = false,
   emptyText = 'No data available',
   emptyIcon,
@@ -111,8 +109,6 @@ export function TableList<T extends { id: string | number }>({
           )}
         </tbody>
       </table>
-
-      {pagination && <div className="p-4">{pagination}</div>}
     </div>
   );
 }
