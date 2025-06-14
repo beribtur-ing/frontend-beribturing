@@ -1,43 +1,18 @@
 import {
-  RegisterProductCategoryOwnCommand,
-  ModifyProductCategoryOwnCommand,
-  RemoveProductCategoryOwnCommand,
-  RegisterProductOwnCommand,
-  ModifyProductOwnCommand,
-  RemoveProductOwnCommand,
-  RegisterProductImageOwnCommand,
   ModifyProductImageOwnCommand,
-  RemoveProductImageOwnCommand,
-  RegisterProductVariantOwnCommand,
+  ModifyProductOwnCommand,
   ModifyProductVariantOwnCommand,
+  RegisterProductImageOwnCommand,
+  RegisterProductOwnCommand,
+  RegisterProductVariantOwnCommand,
+  RemoveProductImageOwnCommand,
+  RemoveProductOwnCommand,
   RemoveProductVariantOwnCommand
 } from '~/apis';
-import { CommandResponse, ProductCategoryCdo, ProductCdo, ProductImageCdo, ProductVariantCdo, NameValueList } from '~/models';
+import {CommandResponse, NameValueList, ProductCdo, ProductImageCdo, ProductVariantCdo} from '~/models';
 import axios from "axios";
 
 const url = (path: string) => `/api/feature/owner/item/${path}`;
-
-const registerProductCategory = (variables: {
-  productCategoryCdo: ProductCategoryCdo;
-}) => {
-  const command = <RegisterProductCategoryOwnCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/register-product-category/command'), command);
-};
-
-const modifyProductCategory = (variables: {
-  categoryId: string;
-  nameValueList: NameValueList;
-}) => {
-  const command = <ModifyProductCategoryOwnCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/modify-product-category/command'), command);
-};
-
-const removeProductCategory = (variables: {
-  categoryId: string;
-}) => {
-  const command = <RemoveProductCategoryOwnCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/remove-product-category/command'), command);
-};
 
 const registerProduct = (variables: {
   productCdo: ProductCdo;
@@ -106,9 +81,6 @@ const removeProductVariant = (variables: {
 };
 
 export default {
-  registerProductCategory,
-  modifyProductCategory,
-  removeProductCategory,
   registerProduct,
   modifyProduct,
   removeProduct,
