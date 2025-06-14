@@ -1,7 +1,7 @@
-"use client"
+'use client';
 
-import Link from "next/link"
-import { usePathname } from "next/navigation"
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import {
   HomeIcon,
   BuildingOfficeIcon,
@@ -10,24 +10,24 @@ import {
   CogIcon,
   InboxIcon,
   XMarkIcon,
-} from "@heroicons/react/24/outline"
+} from '@heroicons/react/24/outline';
 
 const navigation = [
-  { name: "Overview", href: "/dashboard/overview", icon: HomeIcon },
-  { name: "Properties", href: "/dashboard/properties", icon: BuildingOfficeIcon },
-  { name: "Bookings", href: "/dashboard/bookings", icon: CalendarDaysIcon },
-  { name: "Requests", href: "/dashboard/requests", icon: InboxIcon },
-  { name: "Analytics", href: "/dashboard/analytics", icon: ChartBarIcon },
-  { name: "Settings", href: "/dashboard/settings", icon: CogIcon },
-]
+  { name: 'Overview', href: '/dashboard/overview', icon: HomeIcon },
+  { name: 'Properties', href: '/dashboard/properties', icon: BuildingOfficeIcon },
+  { name: 'Bookings', href: '/dashboard/bookings', icon: CalendarDaysIcon },
+  { name: 'Requests', href: '/dashboard/requests', icon: InboxIcon },
+  { name: 'Analytics', href: '/dashboard/analytics', icon: ChartBarIcon },
+  { name: 'Settings', href: '/dashboard/settings', icon: CogIcon },
+];
 
 interface SidebarProps {
-  isOpen: boolean
-  setIsOpen: (isOpen: boolean) => void
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
 }
 
 export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <>
@@ -43,7 +43,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
       {/* Sidebar for mobile */}
       <div
         className={`fixed inset-y-0 left-0 z-30 w-64 transform bg-white shadow-lg transition duration-300 lg:translate-x-0 lg:static lg:inset-auto lg:z-auto ${
-          isOpen ? "translate-x-0" : "-translate-x-full"
+          isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         <div className="flex items-center justify-between h-16 px-4 bg-blue-600">
@@ -58,29 +58,29 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
 
         <nav className="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
           {navigation.map((item) => {
-            const isActive = pathname === item.href
+            const isActive = pathname === item.href;
             return (
               <Link
                 key={item.name}
                 href={item.href}
                 className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
                   isActive
-                    ? "bg-blue-50 text-blue-700 border-r-2 border-blue-700"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                    ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-700'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 }`}
                 onClick={() => {
                   if (window.innerWidth < 1024) {
-                    setIsOpen(false)
+                    setIsOpen(false);
                   }
                 }}
               >
                 <item.icon className="w-5 h-5 mr-3" />
                 {item.name}
               </Link>
-            )
+            );
           })}
         </nav>
       </div>
     </>
-  )
+  );
 }

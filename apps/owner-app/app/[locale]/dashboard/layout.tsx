@@ -1,17 +1,13 @@
-"use client"
+'use client';
 
-import type React from "react"
-import { useState } from "react"
-import { Sidebar } from "@/components/dashboard/sidebar"
-import { Header } from "@/components/dashboard/header"
-import { AuthWrapper } from "@/components/auth/auth-wrapper"
+import type React from 'react';
+import { useState } from 'react';
+import { Sidebar } from '@/components/dashboard/sidebar';
+import { Header } from '@/components/dashboard/header';
+import { AuthWrapper } from '@/components/auth/auth-wrapper';
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
     <AuthWrapper>
@@ -23,5 +19,5 @@ export default function DashboardLayout({
         </div>
       </div>
     </AuthWrapper>
-  )
+  );
 }
