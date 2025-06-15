@@ -1,5 +1,5 @@
-import { ProductVariantCdo } from '~/models';
+import { ProductVariantRegCdo } from '~/models';
 
 export interface RegisterProductVariantOwnCommand {
-  productVariantCdo: ProductVariantCdo;
+  productVariantRegCdo: ProductVariantRegCdo;
 }

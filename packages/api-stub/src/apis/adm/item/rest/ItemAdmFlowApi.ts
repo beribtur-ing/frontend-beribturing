@@ -5,23 +5,23 @@ import {
   RegisterProductAdmCommand,
   ModifyProductAdmCommand,
   RemoveProductAdmCommand,
-  RegisterProductImageAdmCommand,
   ModifyProductImageAdmCommand,
   RemoveProductImageAdmCommand,
   RegisterProductVariantAdmCommand,
   ModifyProductVariantAdmCommand,
   RemoveProductVariantAdmCommand
 } from '~/apis';
-import { CommandResponse, ProductCategoryCdo, ProductCdo, ProductImageCdo, ProductVariantCdo, NameValueList } from '~/models';
-import axios from "axios";
+import { CommandResponse, ProductCategoryRegCdo, ProductAdmRegCdo, NameValueList, ProductVariantRegCdo } from '~/models';
+import axios from 'axios';
 
 const url = (path: string) => `/api/feature/admin/item/${path}`;
 
+// Product Category Commands
 const registerProductCategory = (variables: {
-  productCategoryCdo: ProductCategoryCdo;
+  productCategoryRegCdo: ProductCategoryRegCdo;
 }) => {
   const command = <RegisterProductCategoryAdmCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/register-product-category/command'), command);
+  return axios.post<CommandResponse<string>>(url('register-product-category/command'), command);
 };
 
 const modifyProductCategory = (variables: {
@@ -29,21 +29,22 @@ const modifyProductCategory = (variables: {
   nameValueList: NameValueList;
 }) => {
   const command = <ModifyProductCategoryAdmCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/modify-product-category/command'), command);
+  return axios.post<CommandResponse<string>>(url('modify-product-category/command'), command);
 };
 
 const removeProductCategory = (variables: {
   categoryId: string;
 }) => {
   const command = <RemoveProductCategoryAdmCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/remove-product-category/command'), command);
+  return axios.post<CommandResponse<string>>(url('remove-product-category/command'), command);
 };
 
+// Product Commands
 const registerProduct = (variables: {
-  productCdo: ProductCdo;
+  productAdmRegCdo: ProductAdmRegCdo;
 }) => {
   const command = <RegisterProductAdmCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/register-product/command'), command);
+  return axios.post<CommandResponse<string>>(url('register-product/command'), command);
 };
 
 const modifyProduct = (variables: {
@@ -51,43 +52,47 @@ const modifyProduct = (variables: {
   nameValueList: NameValueList;
 }) => {
   const command = <ModifyProductAdmCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/modify-product/command'), command);
+  return axios.post<CommandResponse<string>>(url('modify-product/command'), command);
 };
 
 const removeProduct = (variables: {
   productId: string;
 }) => {
   const command = <RemoveProductAdmCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/remove-product/command'), command);
+  return axios.post<CommandResponse<string>>(url('remove-product/command'), command);
 };
 
-const registerProductImage = (variables: {
-  productImageCdo: ProductImageCdo;
-}) => {
-  const command = <RegisterProductImageAdmCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/register-product-image/command'), command);
-};
-
+// Product Image Commands
 const modifyProductImage = (variables: {
   imageId: string;
   nameValueList: NameValueList;
 }) => {
   const command = <ModifyProductImageAdmCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/modify-product-image/command'), command);
+  return axios.post<CommandResponse<string>>(url('modify-product-image/command'), command);
 };
 
 const removeProductImage = (variables: {
   imageId: string;
 }) => {
   const command = <RemoveProductImageAdmCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/remove-product-image/command'), command);
+  return axios.post<CommandResponse<string>>(url('remove-product-image/command'), command);
 };
 
+// Product Variant Commands
 const registerProductVariant = (variables: {
-  productVariantCdo: ProductVariantCdo;
-}) => {
+  productVariantRegCdo: ProductVariantRegCdo;
+}, images?: File[]) => {
   const command = <RegisterProductVariantAdmCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/register-product-variant/command'), command);
+  const formData = new FormData();
+  formData.append('command', JSON.stringify(command));
+  if (images) {
+    images.forEach((image, index) => {
+      formData.append(`images[${index}]`, image);
+    });
+  }
+  return axios.post<CommandResponse<string>>(url('register-product-variant/command'), formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+  });
 };
 
 const modifyProductVariant = (variables: {
@@ -95,26 +100,32 @@ const modifyProductVariant = (variables: {
   nameValueList: NameValueList;
 }) => {
   const command = <ModifyProductVariantAdmCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/modify-product-variant/command'), command);
+  return axios.post<CommandResponse<string>>(url('modify-product-variant/command'), command);
 };
 
 const removeProductVariant = (variables: {
   variantId: string;
 }) => {
   const command = <RemoveProductVariantAdmCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/remove-product-variant/command'), command);
+  return axios.post<CommandResponse<string>>(url('remove-product-variant/command'), command);
 };
 
 export default {
+  // Product Category commands
   registerProductCategory,
   modifyProductCategory,
   removeProductCategory,
+  
+  // Product commands
   registerProduct,
   modifyProduct,
   removeProduct,
-  registerProductImage,
+  
+  // Product Image commands
   modifyProductImage,
   removeProductImage,
+  
+  // Product Variant commands
   registerProductVariant,
   modifyProductVariant,
   removeProductVariant,
