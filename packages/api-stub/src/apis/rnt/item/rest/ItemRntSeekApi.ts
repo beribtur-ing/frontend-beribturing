@@ -1,13 +1,13 @@
 import {
-  FindProductCategoryRdoOwnQuery,
-  FindProductCategoryRdosOwnQuery,
-  FindProductRdoOwnQuery,
-  FindProductRdosOwnQuery
+  FindProductCategoryRdosRntQuery,
+  FindProductCategoryRdoRntQuery,
+  FindProductRdosRntQuery,
+  FindProductRdoRntQuery
 } from '~/apis';
 import { QueryResponse, ProductCategoryRdo, ProductRdo, FirstParameter } from '~/models';
 import axios from 'axios';
 
-const url = (path: string) => `/api/feature/owner/item/${path}`;
+const url = (path: string) => `/api/feature/rnt/item/${path}`;
 
 // Product Category Queries
 const findProductCategoryRdos = (variables: {
@@ -15,51 +15,36 @@ const findProductCategoryRdos = (variables: {
   offset?: number;
   limit?: number;
 }) => {
-  const query = <FindProductCategoryRdosOwnQuery>{...variables};
+  const query = <FindProductCategoryRdosRntQuery>{...variables};
   return axios.post<QueryResponse<ProductCategoryRdo[]>>(url('find-product-category-rdos/query'), query);
 };
 
 const findProductCategoryRdo = (variables: {
   categoryId: string;
 }) => {
-  const query = <FindProductCategoryRdoOwnQuery>{...variables};
+  const query = <FindProductCategoryRdoRntQuery>{...variables};
   return axios.post<QueryResponse<ProductCategoryRdo>>(url('find-product-category-rdo/query'), query);
 };
 
 // Product Queries
 const findProductRdos = (variables: {
   searchKeyword?: string;
-  categoryIds?: string[];
-  brands?: string[];
-  models?: string[];
-  manufacturers?: string[];
-  colors?: string[];
-  materials?: string[];
-  madeInCountries?: string[];
-  producedYears?: string[];
+  categoryId?: string;
   minPrice?: number;
   maxPrice?: number;
-  active?: boolean;
-  availableFrom?: string;
-  availableUntil?: string;
-  isAvailable?: boolean;
-  createdAfter?: string;
-  createdBefore?: string;
-  updatedAfter?: string;
-  updatedBefore?: string;
-  hasImages?: boolean;
-  hasVariants?: boolean;
+  lenderId?: string;
+  availability?: string;
   offset?: number;
   limit?: number;
 }) => {
-  const query = <FindProductRdosOwnQuery>{...variables};
+  const query = <FindProductRdosRntQuery>{...variables};
   return axios.post<QueryResponse<ProductRdo[]>>(url('find-product-rdos/query'), query);
 };
 
 const findProductRdo = (variables: {
   productId: string;
 }) => {
-  const query = <FindProductRdoOwnQuery>{...variables};
+  const query = <FindProductRdoRntQuery>{...variables};
   return axios.post<QueryResponse<ProductRdo>>(url('find-product-rdo/query'), query);
 };
 
@@ -75,26 +60,26 @@ export default {
   query: {
     // Product Category query keys
     findProductCategoryRdos: (params: FirstParameter<typeof findProductCategoryRdos>) => ({
-      queryKey: ['feature/owner/item', 'findProductCategoryRdos', params],
+      queryKey: ['feature/rnt/item', 'findProductCategoryRdos', params],
       queryFn: async ({ queryKey }: { queryKey: readonly any[] }) => 
         (await findProductCategoryRdos(queryKey.slice().pop()))?.data,
     }),
     
     findProductCategoryRdo: (params: FirstParameter<typeof findProductCategoryRdo>) => ({
-      queryKey: ['feature/owner/item', 'findProductCategoryRdo', params],
+      queryKey: ['feature/rnt/item', 'findProductCategoryRdo', params],
       queryFn: async ({ queryKey }: { queryKey: readonly any[] }) => 
         (await findProductCategoryRdo(queryKey.slice().pop()))?.data,
     }),
     
     // Product query keys
     findProductRdos: (params: FirstParameter<typeof findProductRdos>) => ({
-      queryKey: ['feature/owner/item', 'findProductRdos', params],
+      queryKey: ['feature/rnt/item', 'findProductRdos', params],
       queryFn: async ({ queryKey }: { queryKey: readonly any[] }) => 
         (await findProductRdos(queryKey.slice().pop()))?.data,
     }),
     
     findProductRdo: (params: FirstParameter<typeof findProductRdo>) => ({
-      queryKey: ['feature/owner/item', 'findProductRdo', params],
+      queryKey: ['feature/rnt/item', 'findProductRdo', params],
       queryFn: async ({ queryKey }: { queryKey: readonly any[] }) => 
         (await findProductRdo(queryKey.slice().pop()))?.data,
     }),

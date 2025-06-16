@@ -1,5 +1,5 @@
-import { ProductCdo } from '~/models';
+import { ProductOwnRegCdo } from '~/models';
 
 export interface RegisterProductOwnCommand {
-  productCdo: ProductCdo;
+  productOwnRegCdo: ProductOwnRegCdo;
 }
