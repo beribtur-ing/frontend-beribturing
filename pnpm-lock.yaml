@@ -107,9 +107,15 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: 1.1.6
         version: 1.1.6(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@tanstack/react-query':
+        specifier: ^4.36.1
+        version: 4.39.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.21(postcss@8.5.5)
+      axios:
+        specifier: 1.7.8
+        version: 1.7.8
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -271,6 +277,9 @@ importers:
       '@tailwindcss/postcss':
         specifier: ^4.1.5
         version: 4.1.10
+      '@tanstack/react-query':
+        specifier: ^4.36.1
+        version: 4.39.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@types/node':
         specifier: ^22.15.3
         version: 22.15.31
@@ -280,6 +289,9 @@ importers:
       '@types/react-dom':
         specifier: ^19.1.1
         version: 19.1.6(@types/react@19.1.8)
+      axios:
+        specifier: 1.7.8
+        version: 1.7.8
       eslint:
         specifier: ^9.28.0
         version: 9.29.0(jiti@2.4.2)
@@ -382,9 +394,15 @@ importers:
       '@radix-ui/react-tooltip':
         specifier: 1.1.6
         version: 1.1.6(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@tanstack/react-query':
+        specifier: ^4.36.1
+        version: 4.39.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.21(postcss@8.5.5)
+      axios:
+        specifier: 1.7.8
+        version: 1.7.8
       class-variance-authority:
         specifier: ^0.7.1
         version: 0.7.1
@@ -1817,6 +1835,21 @@ packages:
 
   '@tailwindcss/postcss@4.1.10':
     resolution: {integrity: sha512-B+7r7ABZbkXJwpvt2VMnS6ujcDoR2OOcFaqrLIo1xbcdxje4Vf+VgJdBzNNbrAjBj/rLZ66/tlQ1knIGNLKOBQ==}
+
+  '@tanstack/query-core@4.39.2':
+    resolution: {integrity: sha512-Crxng4rNDcN6bbppM/P8WiUR6JoGHY+5jJJjU7em1nJ6IUd88+AZpFAWz9ANQKL4GZOQ2CGzWEkuTL7o+rzvIw==}
+
+  '@tanstack/react-query@4.39.2':
+    resolution: {integrity: sha512-SFoKo96R5HaT9o6Y5yZ2fK02+kNQr6gCyv0GIEluGZ0pcXEnIW2E06lrGuVUtUQ/o606efOYh7nl/ePpus0Q+Q==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+      react-native: '*'
+    peerDependenciesMeta:
+      react-dom:
+        optional: true
+      react-native:
+        optional: true
 
   '@types/d3-array@3.2.1':
     resolution: {integrity: sha512-Y2Jn2idRrLzUfAKV2LyRImR+y4oa2AntrgID95SHJxuMUrkNXmanDSed71sRNZysveJVt1hLLemQZIady0FpEg==}
@@ -5001,6 +5034,16 @@ snapshots:
       '@tailwindcss/oxide': 4.1.10
       postcss: 8.5.5
       tailwindcss: 4.1.10
+
+  '@tanstack/query-core@4.39.2': {}
+
+  '@tanstack/react-query@4.39.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
+    dependencies:
+      '@tanstack/query-core': 4.39.2
+      react: 19.1.0
+      use-sync-external-store: 1.5.0(react@19.1.0)
+    optionalDependencies:
+      react-dom: 19.1.0(react@19.1.0)
 
   '@types/d3-array@3.2.1': {}
 

@@ -5,11 +5,12 @@ import {useState} from "react"
 import {ArrowLeft, Phone} from "lucide-react"
 import { Link } from "@/i18n/navigation"
 import { useRouter } from "@/i18n/navigation"
+import {usePasswordReset} from "@/hooks/auth"
 
 export default function ForgotPasswordPage() {
   const [phone, setPhone] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [error, setError] = useState("")
+  const { sendResetPasswordOtp, isSendingResetOtp } = usePasswordReset()
   const router = useRouter()
 
   const formatPhoneNumber = (value: string) => {
@@ -28,14 +29,21 @@ export default function ForgotPasswordPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
+    setError("")
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false)
-      // Navigate to OTP verification page
-      router.push(`/auth/verify-otp?phone=${encodeURIComponent(phone)}&type=reset`)
-    }, 1500)
+    if (!phone || phone.length < 14) {
+      setError("Please enter a valid phone number")
+      return
+    }
+
+    const success = await sendResetPasswordOtp(phone)
+
+    if (success) {
+      // Create a reset password page instead of using verify-otp
+      router.push(`/auth/reset-password?phone=${encodeURIComponent(phone)}`)
+    } else {
+      setError("Failed to send OTP. Please check your phone number and try again.")
+    }
   }
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -87,14 +95,20 @@ export default function ForgotPasswordPage() {
               <p className="mt-1 text-xs text-gray-500">We'll send a verification code to this number</p>
             </div>
 
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <p className="text-sm text-red-600">{error}</p>
+              </div>
+            )}
+
             {/* Submit button */}
             <div>
               <button
                 type="submit"
-                disabled={isLoading || phone.length < 14}
+                disabled={isSendingResetOtp || phone.length < 14}
                 className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {isLoading ? (
+                {isSendingResetOtp ? (
                   <div className="flex items-center">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                     Sending code...

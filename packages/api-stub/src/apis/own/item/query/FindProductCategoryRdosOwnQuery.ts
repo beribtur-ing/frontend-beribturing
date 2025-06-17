@@ -1,5 +1,5 @@
-export interface FindProductCategoryRdosOwnQuery {
+import {OffsetQueryRequest, ProductCategoryRdo} from "~/models";
+
+export interface FindProductCategoryRdosOwnQuery extends OffsetQueryRequest<ProductCategoryRdo[]> {
   searchKeyword?: string;
-  offset?: number;
-  limit?: number;
 }

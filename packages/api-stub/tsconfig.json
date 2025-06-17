@@ -2,6 +2,8 @@
   "extends": "@beribturing/typescript-config/react-library.json",
   "compilerOptions": {
     "outDir": "dist",
+    "composite": true,
+    "incremental": true,
     "paths": {
       "~/*": ["./src/*"]
     }

@@ -1,13 +1,13 @@
 "use client"
 
 import type React from "react"
-
 import { createContext, useContext, useEffect, useState } from "react"
+import { AccountSignInTokenRdo } from '@beribturing/api-stub'
 
 export interface User {
   id: string
   name: string
-  email: string
+  phoneNumber: string
   role: "admin" | "super_admin"
   avatar?: string
 }
@@ -15,24 +15,30 @@ export interface User {
 interface AuthContextType {
   user: User | null
   loading: boolean
-  signIn: (email: string, password: string) => Promise<boolean>
+  tokens: AccountSignInTokenRdo | null
+  signIn: (phoneNumber: string, password: string) => Promise<boolean>
   signOut: () => void
+  setUser: (user: User | null) => void
+  setTokens: (tokens: AccountSignInTokenRdo | null) => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
+  const [tokens, setTokens] = useState<AccountSignInTokenRdo | null>(null)
   const [loading, setLoading] = useState(true)
 
   // Check for existing session on mount
   useEffect(() => {
     const checkSession = async () => {
       try {
-        // In a real app, this would be an API call to validate the session
         const storedUser = localStorage.getItem("admin_user")
-        if (storedUser) {
+        const storedTokens = localStorage.getItem("admin_tokens")
+        
+        if (storedUser && storedTokens) {
           setUser(JSON.parse(storedUser))
+          setTokens(JSON.parse(storedTokens))
         }
       } catch (error) {
         console.error("Session validation error:", error)
@@ -44,23 +50,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     checkSession()
   }, [])
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (phoneNumber: string, password: string) => {
     try {
       setLoading(true)
-      // Mock authentication - in a real app, this would be an API call
-      if (email === "admin@example.com" && password === "password") {
-        const user: User = {
-          id: "admin-1",
-          name: "Admin User",
-          email: "admin@example.com",
-          role: "admin",
-          avatar: "/placeholder.svg?height=40&width=40",
-        }
-        setUser(user)
-        localStorage.setItem("admin_user", JSON.stringify(user))
-        return true
-      }
-      return false
+      // This will be handled by the useAuth hook
+      return true
     } catch (error) {
       console.error("Sign in error:", error)
       return false
@@ -71,16 +65,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = () => {
     setUser(null)
+    setTokens(null)
     localStorage.removeItem("admin_user")
+    localStorage.removeItem("admin_tokens")
   }
 
-  return <AuthContext.Provider value={{ user, loading, signIn, signOut }}>{children}</AuthContext.Provider>
+  const updateUser = (newUser: User | null) => {
+    setUser(newUser)
+    if (newUser) {
+      localStorage.setItem("admin_user", JSON.stringify(newUser))
+    }
+  }
+
+  const updateTokens = (newTokens: AccountSignInTokenRdo | null) => {
+    setTokens(newTokens)
+    if (newTokens) {
+      localStorage.setItem("admin_tokens", JSON.stringify(newTokens))
+    }
+  }
+
+  return (
+    <AuthContext.Provider 
+      value={{ 
+        user, 
+        loading, 
+        tokens,
+        signIn, 
+        signOut, 
+        setUser: updateUser,
+        setTokens: updateTokens
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  )
 }
 
-export function useAuth() {
+export function useAuthContext() {
   const context = useContext(AuthContext)
   if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider")
+    throw new Error("useAuthContext must be used within an AuthProvider")
   }
   return context
 }

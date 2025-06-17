@@ -5,6 +5,7 @@ import {useState} from "react"
 import {ArrowLeft, Check, Eye, EyeOff, Lock, Mail, Phone, User} from "lucide-react"
 import { Link } from "@/i18n/navigation"
 import {useRouter} from "@/i18n/navigation"
+import {useOtpAuth} from "@/hooks/auth"
 
 export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -20,8 +21,9 @@ export default function SignUpPage() {
     agreeToTerms: false,
     agreeToMarketing: false,
   })
-  const [isLoading, setIsLoading] = useState(false)
   const [passwordStrength, setPasswordStrength] = useState(0)
+  const [error, setError] = useState("")
+  const { sendOtp, isSendingOtp } = useOtpAuth()
   const router = useRouter()
 
   const formatPhoneNumber = (value: string) => {
@@ -50,14 +52,32 @@ export default function SignUpPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setIsLoading(true)
+    setError("")
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false)
-      // Navigate to OTP verification page with phone number
+    if (!formData.phone || !formData.firstName || !formData.lastName) {
+      setError("Please fill in all required fields")
+      return
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match")
+      return
+    }
+
+    if (!formData.agreeToTerms) {
+      setError("Please agree to the terms and conditions")
+      return
+    }
+
+    const success = await sendOtp(formData.phone)
+
+    if (success) {
+      // Store form data in sessionStorage to use in verify-otp page
+      sessionStorage.setItem('signupData', JSON.stringify(formData))
       router.push(`/auth/verify-otp?phone=${encodeURIComponent(formData.phone)}&type=signup`)
-    }, 2000)
+    } else {
+      setError("Failed to send OTP. Please try again.")
+    }
   }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -359,22 +379,28 @@ export default function SignUpPage() {
               </div>
             </div>
 
+            {error && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                <p className="text-sm text-red-600">{error}</p>
+              </div>
+            )}
+
             {/* Submit button */}
             <div>
               <button
                 type="submit"
                 disabled={
-                  isLoading ||
+                  isSendingOtp ||
                   !formData.agreeToTerms ||
                   formData.password !== formData.confirmPassword ||
                   formData.phone.length < 14
                 }
                 className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {isLoading ? (
+                {isSendingOtp ? (
                   <div className="flex items-center">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Creating account...
+                    Sending OTP...
                   </div>
                 ) : (
                   "Create account"

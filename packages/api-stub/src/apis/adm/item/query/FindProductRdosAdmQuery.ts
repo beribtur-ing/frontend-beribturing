@@ -1,6 +1,6 @@
-import { PriceUnit } from '~/models';
+import {OffsetQueryRequest, PriceUnit, ProductRdo} from '~/models';
 
-export interface FindProductRdosAdmQuery {
+export interface FindProductRdosAdmQuery extends OffsetQueryRequest<ProductRdo[]>{
   // Text search fields
   searchKeyword?: string;           // Search in title, description, brand, model
 
@@ -37,8 +37,4 @@ export interface FindProductRdosAdmQuery {
   // Administrative filters
   hasImages?: boolean;              // Filter products with/without images
   hasVariants?: boolean;            // Filter products with/without variants
-
-  // Offset query properties
-  offset?: number;
-  limit?: number;
 }

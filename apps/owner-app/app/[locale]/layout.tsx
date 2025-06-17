@@ -1,7 +1,7 @@
 import { NextIntlClientProvider } from 'next-intl';
 import { notFound } from 'next/navigation';
-import type React from 'react';
-import { AuthProvider } from '@/lib/auth-context';
+import React from 'react';
+import { Providers } from '@/components/providers';
 
 export function generateStaticParams() {
   return [{ locale: 'en' }, { locale: 'ru' }, { locale: 'uz' }];
@@ -23,10 +23,10 @@ export default async function LocaleLayout({
   }
 
   return (
-    <AuthProvider>
+    <Providers>
       <NextIntlClientProvider locale={locale} messages={messages}>
         {children}
       </NextIntlClientProvider>
-    </AuthProvider>
+    </Providers>
   );
 }

@@ -1,8 +1,8 @@
-import type React from "react"
+import React from "react"
 import {notFound} from "next/navigation"
-import {AuthProvider} from "@/lib/auth"
 import {NextIntlClientProvider} from "next-intl";
 import {ProtectedLayout} from "@/app/[locale]/protectedLayout";
+import {Providers} from "@/components/providers";
 
 export default async function AdminLayout({
                                             children,
@@ -20,10 +20,10 @@ export default async function AdminLayout({
     notFound()
   }
   return (
-    <AuthProvider>
+    <Providers>
       <NextIntlClientProvider locale={locale} messages={messages}>
         <ProtectedLayout>{children}</ProtectedLayout>
       </NextIntlClientProvider>
-    </AuthProvider>
+    </Providers>
   )
 }

@@ -1,6 +1,6 @@
 "use client"
 import React, {useEffect} from "react";
-import {useAuth} from "@/lib/auth";
+import {useAuth} from "@/hooks/auth/useAuth";
 import {usePathname, useRouter} from "@/i18n/navigation";
 import {SidebarInset, SidebarProvider} from "@/components/ui/sidebar";
 import {AdminSidebar} from "@/components/admin/admin-sidebar";
