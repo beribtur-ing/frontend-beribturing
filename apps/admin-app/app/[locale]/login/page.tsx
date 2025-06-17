@@ -4,7 +4,7 @@ import type React from "react"
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { useAuth } from "@/lib/auth"
+import { useAuth } from "@/hooks/auth"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -13,26 +13,26 @@ import { Shield } from "lucide-react"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 
 export default function LoginPage() {
-  const [email, setEmail] = useState("")
+  const [phoneNumber, setPhoneNumber] = useState("")
   const [password, setPassword] = useState("")
   const [error, setError] = useState("")
-  const { signIn, loading } = useAuth()
+  const { signIn, isSigningIn } = useAuth()
   const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError("")
 
-    if (!email || !password) {
-      setError("Please enter both email and password")
+    if (!phoneNumber || !password) {
+      setError("Please enter both phone number and password")
       return
     }
 
-    const success = await signIn(email, password)
+    const success = await signIn(phoneNumber, password)
     if (success) {
       router.push("/overview")
     } else {
-      setError("Invalid email or password")
+      setError("Invalid phone number or password")
     }
   }
 
@@ -45,7 +45,7 @@ export default function LoginPage() {
           </div>
           <CardTitle className="text-2xl text-center">Admin Login</CardTitle>
           <CardDescription className="text-center">
-            Enter your credentials to access the admin dashboard
+            Enter your phone number and password to access the admin dashboard
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
@@ -56,13 +56,13 @@ export default function LoginPage() {
               </Alert>
             )}
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="phoneNumber">Phone Number</Label>
               <Input
-                id="email"
-                type="email"
-                placeholder="admin@example.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                id="phoneNumber"
+                type="tel"
+                placeholder="+998901234567"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
               />
             </div>
             <div className="space-y-2">
@@ -71,8 +71,8 @@ export default function LoginPage() {
             </div>
           </CardContent>
           <CardFooter>
-            <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Signing in..." : "Sign In"}
+            <Button type="submit" className="w-full" disabled={isSigningIn}>
+              {isSigningIn ? "Signing in..." : "Sign In"}
             </Button>
           </CardFooter>
         </form>

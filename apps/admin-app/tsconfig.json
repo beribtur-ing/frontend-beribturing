@@ -1,6 +1,7 @@
 {
   "extends": "@beribturing/typescript-config/nextjs.json",
   "compilerOptions": {
+    "outDir": "dist",
     "plugins": [
       {
         "name": "next"
@@ -11,6 +12,11 @@
       "@/*": ["./*"]
     }
   },
+  "references": [
+    {
+      "path": "../../packages/api-stub"
+    }
+  ],
   "include": [
     "**/*.ts",
     "**/*.tsx",

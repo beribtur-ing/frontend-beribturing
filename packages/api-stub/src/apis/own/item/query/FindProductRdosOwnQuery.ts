@@ -1,6 +1,6 @@
-import { ProductSearchQdo } from '~/models';
+import {OffsetQueryRequest, ProductRdo, ProductSearchQdo} from '~/models';
 
-export interface FindProductRdosOwnQuery {
+export interface FindProductRdosOwnQuery extends OffsetQueryRequest<ProductRdo[]>{
   // Text search fields
   searchKeyword?: string;           // Search in title, description, brand, model
 
@@ -35,8 +35,4 @@ export interface FindProductRdosOwnQuery {
   // Administrative filters
   hasImages?: boolean;              // Filter products with/without images
   hasVariants?: boolean;            // Filter products with/without variants
-
-  // Pagination
-  offset?: number;
-  limit?: number;
 }

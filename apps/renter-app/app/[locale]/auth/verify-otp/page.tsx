@@ -6,21 +6,36 @@ import {ArrowLeft, Check, Phone, RefreshCw} from "lucide-react"
 import { Link } from "@/i18n/navigation"
 import {useRouter} from "@/i18n/navigation"
 import {useSearchParams} from "next/navigation"
+import {useOtpAuth} from "@/hooks/auth"
+import { Profile } from '@beribturing/api-stub'
 
 export default function VerifyOTPPage() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""])
-  const [isLoading, setIsLoading] = useState(false)
-  const [isResending, setIsResending] = useState(false)
   const [timeLeft, setTimeLeft] = useState(60)
   const [isVerified, setIsVerified] = useState(false)
   const [error, setError] = useState("")
+  const [signupData, setSignupData] = useState<any>(null)
 
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
   const searchParams = useSearchParams()
   const router = useRouter()
+  const { verifyOtpAndSignUp, sendOtp, isVerifyingOtp, isSendingOtp } = useOtpAuth()
 
   const phone = searchParams.get("phone") || ""
   const type = searchParams.get("type") || "signin" // signin or signup
+
+  // Get signup data from sessionStorage for signup flow
+  useEffect(() => {
+    if (type === "signup") {
+      const storedData = sessionStorage.getItem('signupData')
+      if (storedData) {
+        setSignupData(JSON.parse(storedData))
+      } else {
+        // Redirect back to signup if no data
+        router.push('/auth/signup')
+      }
+    }
+  }, [type, router])
 
   // Countdown timer
   useEffect(() => {
@@ -75,38 +90,56 @@ export default function VerifyOTPPage() {
   }
 
   const handleVerifyOtp = async (otpCode: string) => {
-    setIsLoading(true)
     setError("")
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false)
+    if (type === "signup" && signupData) {
+      // Create profile object
+      const profile: Profile = {
+        email: signupData.email || "",
+        phoneNumber: signupData.phone,
+        name: `${signupData.firstName} ${signupData.lastName}`
+      }
 
-      // Simulate success/failure
-      if (otpCode === "123456") {
+      const success = await verifyOtpAndSignUp(
+        phone,
+        otpCode,
+        signupData.password,
+        `${signupData.firstName} ${signupData.lastName}`,
+        profile
+      )
+
+      if (success) {
         setIsVerified(true)
+        // Clear stored data
+        sessionStorage.removeItem('signupData')
         setTimeout(() => {
-          router.push("/") // Redirect to dashboard or home
+          router.push("/auth/signin?message=Account created successfully")
         }, 2000)
       } else {
         setError("Invalid verification code. Please try again.")
         setOtp(["", "", "", "", "", ""])
         inputRefs.current[0]?.focus()
       }
-    }, 1500)
+    } else {
+      // For signin OTP verification, implement direct signin logic here
+      // This would typically involve a different API call
+      setError("OTP signin not implemented yet")
+    }
   }
 
   const handleResendOtp = async () => {
-    setIsResending(true)
     setError("")
 
-    // Simulate API call
-    setTimeout(() => {
-      setIsResending(false)
+    if (!phone) return
+    
+    const success = await sendOtp(phone)
+    if (success) {
       setTimeLeft(60)
       setOtp(["", "", "", "", "", ""])
       inputRefs.current[0]?.focus()
-    }, 1000)
+    } else {
+      setError("Failed to resend OTP")
+    }
   }
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -202,10 +235,10 @@ export default function VerifyOTPPage() {
             <div>
               <button
                 type="submit"
-                disabled={isLoading || otp.some((digit) => digit === "")}
+                disabled={isVerifyingOtp || otp.some((digit) => digit === "")}
                 className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {isLoading ? (
+                {isVerifyingOtp ? (
                   <div className="flex items-center">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                     Verifying...
@@ -226,10 +259,10 @@ export default function VerifyOTPPage() {
             ) : (
               <button
                 onClick={handleResendOtp}
-                disabled={isResending}
+                disabled={isSendingOtp}
                 className="text-sm font-medium text-purple-600 hover:text-purple-500 disabled:opacity-50 flex items-center justify-center mx-auto"
               >
-                {isResending ? (
+                {isSendingOtp ? (
                   <>
                     <RefreshCw className="h-4 w-4 mr-1 animate-spin" />
                     Sending...

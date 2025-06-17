@@ -1,2 +1,2 @@
-export * from "./AuthOwnFlowApi";
-export * from "./AuthOwnSeekApi";
+export {default as AuthOwnFlowApi} from "./AuthOwnFlowApi";
+export {default as AuthOwnSeekApi} from "./AuthOwnSeekApi";

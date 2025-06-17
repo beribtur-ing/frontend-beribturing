@@ -4,7 +4,7 @@ import {useState} from "react"
 
 import {ArrowLeft, Eye, EyeOff, Lock, Phone} from "lucide-react"
 import { Link } from "@/i18n/navigation"
-import {useAuth} from "@/contexts/auth-context"
+import {useAuth} from "@/hooks/auth"
 import {useRouter} from "@/i18n/navigation"
 
 export default function SignInPage() {
@@ -15,7 +15,7 @@ export default function SignInPage() {
     rememberMe: false,
   })
   const [error, setError] = useState("")
-  const { signIn, isLoading } = useAuth()
+  const { signIn, isSigningIn } = useAuth()
   const router = useRouter()
 
   const formatPhoneNumber = (value: string) => {
@@ -175,10 +175,10 @@ export default function SignInPage() {
             <div>
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={isSigningIn}
                 className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {isLoading ? (
+                {isSigningIn ? (
                   <div className="flex items-center">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                     Signing in...
