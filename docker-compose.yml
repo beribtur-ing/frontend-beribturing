@@ -10,6 +10,8 @@ services:
       args:
         APP_NAME: admin-app
         PACKAGE_NAME: "@beribturing/admin-app"
+    ports:
+      - "3001:3000"
     networks:
       - beribturing-network
 
@@ -22,6 +24,8 @@ services:
       args:
         APP_NAME: owner-app
         PACKAGE_NAME: "@beribturing/owner-app"
+    ports:
+      - "3002:3000"
     networks:
       - beribturing-network
 
@@ -34,6 +38,8 @@ services:
       args:
         APP_NAME: renter-app
         PACKAGE_NAME: "@beribturing/rental-app"
+    ports:
+      - "3003:3000"
     networks:
       - beribturing-network
 
