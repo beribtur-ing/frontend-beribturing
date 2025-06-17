@@ -4,12 +4,9 @@ import axios from "axios";
 
 const url = (path: string) => `/api/feature/admin/auth/${path}`;
 
-const accountSignIn = (variables: {
-  phoneNumber: string;
-  password: string;
-}) => {
-  const query = <AccountSignInAdmQuery>{...variables};
-  return axios.post<QueryResponse<AccountSignInTokenRdo>>(url('sign-in/query'), query);
+const accountSignIn = <T = AccountSignInTokenRdo>(params: { phoneNumber: string; password: string; }) => {
+  const query = <AccountSignInAdmQuery>{...params};
+  return axios.post<QueryResponse<T>>(url('sign-in/query'), query);
 };
 
 export default {
