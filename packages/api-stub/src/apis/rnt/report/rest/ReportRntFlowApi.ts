@@ -12,7 +12,7 @@ const registerReport = (variables: {
   reportCdo: ReportCdo;
 }) => {
   const command = <RegisterReportRntCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/register-report/command'), command);
+  return axios.post<CommandResponse<string>>(url('register-report/command'), command);
 };
 
 const modifyReport = (variables: {
@@ -20,14 +20,14 @@ const modifyReport = (variables: {
   nameValueList: NameValueList;
 }) => {
   const command = <ModifyReportRntCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/modify-report/command'), command);
+  return axios.post<CommandResponse<string>>(url('modify-report/command'), command);
 };
 
 const removeReport = (variables: {
   reportId: string;
 }) => {
   const command = <RemoveReportRntCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/remove-report/command'), command);
+  return axios.post<CommandResponse<string>>(url('remove-report/command'), command);
 };
 
 export default {

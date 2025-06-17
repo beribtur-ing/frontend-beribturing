@@ -8,7 +8,7 @@ const resolveReport = (variables: {
   reportId: string;
 }) => {
   const command = <ResolveReportAdmCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/resolve-report/command'), command);
+  return axios.post<CommandResponse<string>>(url('resolve-report/command'), command);
 };
 
 export default {

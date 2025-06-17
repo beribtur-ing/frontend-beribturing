@@ -18,22 +18,22 @@ const url = (path: string) => `/api/feature/renter/rental/${path}`;
 
 const findRentalRecord = <T = RentalRecord>(params: { rentalRecordId: string; }) => {
   const query = <FindRentalRecordRntQuery>{...params};
-  return axios.post<QueryResponse<T>>(url('/find-rental-record/query'), query);
+  return axios.post<QueryResponse<T>>(url('find-rental-record/query'), query);
 };
 
 const findReservation = <T = Reservation>(params: { reservationId: string; }) => {
   const query = <FindReservationRntQuery>{...params};
-  return axios.post<QueryResponse<T>>(url('/find-reservation/query'), query);
+  return axios.post<QueryResponse<T>>(url('find-reservation/query'), query);
 };
 
 const findItemConditionCheck = <T = ItemConditionCheck>(params: { itemConditionCheckId: string; }) => {
   const query = <FindItemConditionCheckRntQuery>{...params};
-  return axios.post<QueryResponse<T>>(url('/find-item-condition-check/query'), query);
+  return axios.post<QueryResponse<T>>(url('find-item-condition-check/query'), query);
 };
 
 const findItemConditionPhoto = <T = ItemConditionPhoto>(params: { itemConditionPhotoId: string; }) => {
   const query = <FindItemConditionPhotoRntQuery>{...params};
-  return axios.post<QueryResponse<T>>(url('/find-item-condition-photo/query'), query);
+  return axios.post<QueryResponse<T>>(url('find-item-condition-photo/query'), query);
 };
 
 export default {

@@ -10,7 +10,7 @@ const findDisabledLenders = (variables: {
   sort: string;
 }) => {
   const query = <FindDisabledLendersAdmQuery>{...variables};
-  return axios.post<QueryResponse<Lender[]>>(url('/find-disabled-lenders/query'), query);
+  return axios.post<QueryResponse<Lender[]>>(url('find-disabled-lenders/query'), query);
 };
 
 export default {

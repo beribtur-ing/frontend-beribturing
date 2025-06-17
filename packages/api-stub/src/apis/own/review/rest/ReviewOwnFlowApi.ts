@@ -12,7 +12,7 @@ const registerReview = (variables: {
   reviewCdo: ReviewCdo;
 }) => {
   const command = <RegisterReviewOwnCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/register-review/command'), command);
+  return axios.post<CommandResponse<string>>(url('register-review/command'), command);
 };
 
 const modifyReview = (variables: {
@@ -20,14 +20,14 @@ const modifyReview = (variables: {
   nameValueList: NameValueList;
 }) => {
   const command = <ModifyReviewOwnCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/modify-review/command'), command);
+  return axios.post<CommandResponse<string>>(url('modify-review/command'), command);
 };
 
 const removeReview = (variables: {
   reviewId: string;
 }) => {
   const command = <RemoveReviewOwnCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/remove-review/command'), command);
+  return axios.post<CommandResponse<string>>(url('remove-review/command'), command);
 };
 
 export default {

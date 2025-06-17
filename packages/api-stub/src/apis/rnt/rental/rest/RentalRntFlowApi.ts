@@ -20,7 +20,7 @@ const registerReservation = (variables: {
   reservationCdo: ReservationCdo;
 }) => {
   const command = <RegisterReservationRntCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/register-reservation/command'), command);
+  return axios.post<CommandResponse<string>>(url('register-reservation/command'), command);
 };
 
 const modifyReservation = (variables: {
@@ -28,7 +28,7 @@ const modifyReservation = (variables: {
   nameValueList: NameValueList;
 }) => {
   const command = <ModifyReservationRntCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/modify-reservation/command'), command);
+  return axios.post<CommandResponse<string>>(url('modify-reservation/command'), command);
 };
 
 const modifyRentalRecord = (variables: {
@@ -36,21 +36,21 @@ const modifyRentalRecord = (variables: {
   nameValueList: NameValueList;
 }) => {
   const command = <ModifyRentalRecordRntCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/modify-rental-record/command'), command);
+  return axios.post<CommandResponse<string>>(url('modify-rental-record/command'), command);
 };
 
 const registerItemConditionCheck = (variables: {
   itemConditionCheckCdo: ItemConditionCheckCdo;
 }) => {
   const command = <RegisterItemConditionCheckRntCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/register-item-condition-check/command'), command);
+  return axios.post<CommandResponse<string>>(url('register-item-condition-check/command'), command);
 };
 
 const registerItemConditionPhoto = (variables: {
   itemConditionPhotoCdo: ItemConditionPhotoCdo;
 }) => {
   const command = <RegisterItemConditionPhotoRntCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/register-item-condition-photo/command'), command);
+  return axios.post<CommandResponse<string>>(url('register-item-condition-photo/command'), command);
 };
 
 export default {

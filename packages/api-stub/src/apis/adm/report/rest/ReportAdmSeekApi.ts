@@ -13,28 +13,28 @@ const findReport = (variables: {
   reportId: string;
 }) => {
   const query = <FindReportAdmQuery>{...variables};
-  return axios.post<QueryResponse<Report>>(url('/find-report/query'), query);
+  return axios.post<QueryResponse<Report>>(url('find-report/query'), query);
 };
 
 const findReportsByRecord = (variables: {
   recordId: string;
 }) => {
   const query = <FindReportsByRecordAdmQuery>{...variables};
-  return axios.post<QueryResponse<Report[]>>(url('/find-reports-by-record/query'), query);
+  return axios.post<QueryResponse<Report[]>>(url('find-reports-by-record/query'), query);
 };
 
 const findReportsByReporter = (variables: {
   reporterId: string;
 }) => {
   const query = <FindReportsByReporterAdmQuery>{...variables};
-  return axios.post<QueryResponse<Report[]>>(url('/find-reports-by-reporter/query'), query);
+  return axios.post<QueryResponse<Report[]>>(url('find-reports-by-reporter/query'), query);
 };
 
 const findReportsByResolvedState = (variables: {
   resolved: boolean;
 }) => {
   const query = <FindReportsByResolvedStateAdmQuery>{...variables};
-  return axios.post<QueryResponse<Report[]>>(url('/find-reports-by-resolved-state/query'), query);
+  return axios.post<QueryResponse<Report[]>>(url('find-reports-by-resolved-state/query'), query);
 };
 
 export default {
