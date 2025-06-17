@@ -46,9 +46,9 @@ RUN npm install -g pm2
 # ✅ Correct: copy full standalone output (with trailing slash!)
 COPY --from=builder /app/apps/${APP_NAME}/.next/standalone/ ./
 
-# ✅ Static and public folders
-COPY --from=builder /app/apps/${APP_NAME}/.next/static ./.next/static
-COPY --from=builder /app/apps/${APP_NAME}/public ./public
+# ✅ Static and public folders - copy to correct locations
+COPY --from=builder /app/apps/${APP_NAME}/.next/static ./apps/${APP_NAME}/.next/static
+COPY --from=builder /app/apps/${APP_NAME}/public ./apps/${APP_NAME}/public
 
 # Optional: PM2 config file if needed
 COPY ecosystem.config.ts .
