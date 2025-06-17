@@ -11,14 +11,14 @@ const findReview = (variables: {
   reviewId: string;
 }) => {
   const query = <FindReviewAdmQuery>{...variables};
-  return axios.post<QueryResponse<Review>>(url('/find-review/query'), query);
+  return axios.post<QueryResponse<Review>>(url('find-review/query'), query);
 };
 
 const findReviewsByRecord = (variables: {
   recordId: string;
 }) => {
   const query = <FindReviewsByRecordAdmQuery>{...variables};
-  return axios.post<QueryResponse<Review[]>>(url('/find-reviews-by-record/query'), query);
+  return axios.post<QueryResponse<Review[]>>(url('find-reviews-by-record/query'), query);
 };
 
 export default {

@@ -9,7 +9,7 @@ const accountSignIn = (variables: {
   password: string;
 }) => {
   const query = <AccountSignInAdmQuery>{...variables};
-  return axios.post<QueryResponse<AccountSignInTokenRdo>>(url('/sign-in/query'), query);
+  return axios.post<QueryResponse<AccountSignInTokenRdo>>(url('sign-in/query'), query);
 };
 
 export default {

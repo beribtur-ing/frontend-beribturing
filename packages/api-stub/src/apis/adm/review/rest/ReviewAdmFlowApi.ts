@@ -8,7 +8,7 @@ const hideReview = (variables: {
   reviewId: string;
 }) => {
   const command = <HideReviewAdmCommand>{...variables};
-  return axios.post<CommandResponse<string>>(url('/hide-review/command'), command);
+  return axios.post<CommandResponse<string>>(url('hide-review/command'), command);
 };
 
 export default {

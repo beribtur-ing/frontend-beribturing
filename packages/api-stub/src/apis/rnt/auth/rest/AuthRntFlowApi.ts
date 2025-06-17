@@ -10,21 +10,21 @@ const resetPassword = (variables: {
   otp: string;
 }) => {
   const command = <ResetPasswordRntCommand>{...variables};
-  return axios.post<CommandResponse<boolean>>(url('/reset-password/command'), command);
+  return axios.post<CommandResponse<boolean>>(url('reset-password/command'), command);
 };
 
 const sendOtp = (variables: {
   phoneNumber: string;
 }) => {
   const command = <SendOtpRntCommand>{...variables};
-  return axios.post<CommandResponse<boolean>>(url('/send-otp/command'), command);
+  return axios.post<CommandResponse<boolean>>(url('send-otp/command'), command);
 };
 
 const sendResetPasswordOtp = (variables: {
   phoneNumber: string;
 }) => {
   const command = <SendOtpRntCommand>{...variables};
-  return axios.post<CommandResponse<boolean>>(url('/send-reset-password-otp/command'), command);
+  return axios.post<CommandResponse<boolean>>(url('send-reset-password-otp/command'), command);
 };
 
 const verifyOtpAndSignUp = (variables: {
@@ -35,7 +35,7 @@ const verifyOtpAndSignUp = (variables: {
   profile: Profile;
 }) => {
   const command = <VerifyOtpAndSignUpRntCommand>{...variables};
-  return axios.post<CommandResponse<boolean>>(url('/verify-otp-sign-up/command'), command);
+  return axios.post<CommandResponse<boolean>>(url('verify-otp-sign-up/command'), command);
 };
 
 export default {

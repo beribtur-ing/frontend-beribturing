@@ -10,17 +10,17 @@ const url = (path: string) => `/api/feature/renter/report/${path}`;
 
 const findReport = <T = Report>(params: { reportId: string; }) => {
   const query = <FindReportRntQuery>{...params};
-  return axios.post<QueryResponse<T>>(url('/find-report/query'), query);
+  return axios.post<QueryResponse<T>>(url('find-report/query'), query);
 };
 
 const findReportsByReporter = <T = Report[]>(params: { reporterId: string; }) => {
   const query = <FindReportsByReporterRntQuery>{...params};
-  return axios.post<QueryResponse<T>>(url('/find-reports-by-reporter/query'), query);
+  return axios.post<QueryResponse<T>>(url('find-reports-by-reporter/query'), query);
 };
 
 const findReportsByResolvedState = <T = Report[]>(params: { reporterId: string; resolved: boolean; }) => {
   const query = <FindReportsByReporterAndResolvedStateRntQuery>{...params};
-  return axios.post<QueryResponse<T>>(url('/find-reports-by-resolved-state/query'), query);
+  return axios.post<QueryResponse<T>>(url('find-reports-by-resolved-state/query'), query);
 };
 
 export default {

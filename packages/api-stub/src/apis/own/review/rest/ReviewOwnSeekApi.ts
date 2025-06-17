@@ -9,12 +9,12 @@ const url = (path: string) => `/api/feature/owner/review/${path}`;
 
 const findReview = <T = Review>(params: { reviewId: string; }) => {
   const query = <FindReviewOwnQuery>{...params};
-  return axios.post<QueryResponse<T>>(url('/find-review/query'), query);
+  return axios.post<QueryResponse<T>>(url('find-review/query'), query);
 };
 
 const findReviewsByRecord = <T = Review[]>(params: { recordId: string; }) => {
   const query = <FindReviewsByRecordOwnQuery>{...params};
-  return axios.post<QueryResponse<T>>(url('/find-reviews-by-record/query'), query);
+  return axios.post<QueryResponse<T>>(url('find-reviews-by-record/query'), query);
 };
 
 export default {

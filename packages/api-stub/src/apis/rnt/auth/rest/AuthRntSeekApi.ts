@@ -6,7 +6,7 @@ const url = (path: string) => `/api/feature/renter/auth/${path}`;
 
 const accountSignIn = <T = AccountSignInTokenRdo>(params: { phoneNumber: string; password: string; }) => {
   const query = <AccountSignInRntQuery>{...params};
-  return axios.post<QueryResponse<T>>(url('/sign-in/query'), query);
+  return axios.post<QueryResponse<T>>(url('sign-in/query'), query);
 };
 
 export default {
