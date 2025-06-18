@@ -1,7 +1,7 @@
 "use client"
 import {useState} from "react"
 
-import {useAuth} from "@/contexts/auth-context"
+import {useAuth} from "@/hooks"
 import {Calendar, CheckCircle, Clock, MapPin, MessageCircle, Package, RotateCcw, Star, X} from "lucide-react"
 import {useRouter} from "@/i18n/navigation"
 

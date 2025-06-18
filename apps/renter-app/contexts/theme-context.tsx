@@ -25,22 +25,26 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
 
   // Check for saved theme preference, default to light mode
   useEffect(() => {
-    const savedTheme = localStorage.getItem("renthub_theme")
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem("renthub_theme")
 
-    if (savedTheme) {
-      setIsDarkMode(savedTheme === "dark")
+      if (savedTheme) {
+        setIsDarkMode(savedTheme === "dark")
+      }
     }
     // Removed automatic dark mode detection - always default to light
   }, [])
 
   // Apply theme to document
   useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark")
-    } else {
-      document.documentElement.classList.remove("dark")
+    if (typeof window !== 'undefined') {
+      if (isDarkMode) {
+        document.documentElement.classList.add("dark")
+      } else {
+        document.documentElement.classList.remove("dark")
+      }
+      localStorage.setItem("renthub_theme", isDarkMode ? "dark" : "light")
     }
-    localStorage.setItem("renthub_theme", isDarkMode ? "dark" : "light")
   }, [isDarkMode])
 
   const toggleDarkMode = () => {

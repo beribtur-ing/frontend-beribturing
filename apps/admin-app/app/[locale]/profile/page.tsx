@@ -66,7 +66,7 @@ export default function ProfilePage() {
                 <Phone className="h-5 w-5 text-muted-foreground" />
                 <div>
                   <p className="text-sm text-muted-foreground">Phone</p>
-                  <p>+1 (555) 123-4567</p>
+                  <p>+998 90 123-45-67</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">

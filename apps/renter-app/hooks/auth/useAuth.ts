@@ -16,7 +16,8 @@ export const useAuth = () => {
     tokens, 
     signOut, 
     setUser, 
-    setTokens 
+    setTokens,
+    updateProfile 
   } = useAuthContext();
 
   const signInMutation = useMutation<
@@ -36,6 +37,17 @@ export const useAuth = () => {
           name: 'Renter User', // You might want to get this from a separate API call
           phoneNumber: variables.phoneNumber,
           role: 'renter',
+          createdAt: new Date().toISOString(),
+          profile: {
+            firstName: 'John',
+            lastName: 'Doe',
+            email: 'john.doe@example.com',
+            address: '123 Main Street',
+            city: 'New York',
+            state: 'NY',
+            zipCode: '10001',
+            profilePictureUrl: undefined,
+          },
         };
         
         setUser(userData);
@@ -70,6 +82,7 @@ export const useAuth = () => {
     isAuthenticated,
     signIn,
     signOut,
+    updateProfile,
     error: signInMutation.error,
     isSigningIn: signInMutation.isPending,
   };

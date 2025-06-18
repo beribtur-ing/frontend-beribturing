@@ -2,7 +2,7 @@
 import type React from "react"
 import {useState} from "react"
 
-import {useAuth} from "@/contexts/auth-context"
+import {useAuth} from "@/hooks"
 import {AlertCircle, Check, ChevronDown, ChevronUp, CreditCard, Lock, Plus, Trash2, X} from "lucide-react"
 import {useRouter} from "@/i18n/navigation"
 
@@ -45,7 +45,7 @@ const mockPaymentMethods = [
 ]
 
 export default function PaymentsPage() {
-  const { user, isLoading } = useAuth()
+  const { user, loading } = useAuth()
   const router = useRouter()
   const [paymentMethods, setPaymentMethods] = useState(mockPaymentMethods)
   const [isAddingCard, setIsAddingCard] = useState(false)

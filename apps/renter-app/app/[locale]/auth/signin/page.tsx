@@ -4,7 +4,7 @@ import {useState} from "react"
 
 import {ArrowLeft, Eye, EyeOff, Lock, Phone} from "lucide-react"
 import { Link } from "@/i18n/navigation"
-import {useAuth} from "@/hooks/auth"
+import {useAuth} from "@/hooks"
 import {useRouter} from "@/i18n/navigation"
 
 export default function SignInPage() {
@@ -20,15 +20,24 @@ export default function SignInPage() {
 
   const formatPhoneNumber = (value: string) => {
     // Remove all non-digits
-    const phoneNumber = value.replace(/\D/g, "")
+    let phoneNumber = value.replace(/\D/g, "")
+    
+    // Auto-add country code if not present
+    if (phoneNumber.length > 0 && !phoneNumber.startsWith('998')) {
+      phoneNumber = '998' + phoneNumber
+    }
 
-    // Format as (XXX) XXX-XXXX
-    if (phoneNumber.length >= 6) {
-      return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`
+    // Format as +998 XX XXX-XX-XX
+    if (phoneNumber.length >= 12) {
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(8, 10)}-${phoneNumber.slice(10, 12)}`
+    } else if (phoneNumber.length >= 8) {
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(8)}`
+    } else if (phoneNumber.length >= 5) {
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5)}`
     } else if (phoneNumber.length >= 3) {
-      return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3)}`
     } else {
-      return phoneNumber
+      return phoneNumber ? `+${phoneNumber}` : ""
     }
   }
 
@@ -36,12 +45,15 @@ export default function SignInPage() {
     e.preventDefault()
     setError("")
 
-    const success = await signIn(formData.phone, formData.password)
+    // Clean phone number for API (remove +, spaces, and hyphens)
+    const cleanPhone = formData.phone.replace(/[\s\-+]/g, '')
+    
+    const success = await signIn(cleanPhone, formData.password)
 
     if (success) {
       router.push("/")
     } else {
-      setError("Invalid phone number or password. Try (555) 123-4567 with password 'password'")
+      setError("Invalid phone number or password. Try +998 90 123-45-67 with password 'password'")
     }
   }
 
@@ -92,7 +104,7 @@ export default function SignInPage() {
               <p className="text-sm text-blue-600">
                 <strong>Demo credentials:</strong>
                 <br />
-                Phone: (555) 123-4567
+                Phone: +998 90 123-45-67
                 <br />
                 Password: password
               </p>
@@ -113,8 +125,8 @@ export default function SignInPage() {
                   value={formData.phone}
                   onChange={handleInputChange}
                   className="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
-                  placeholder="(555) 123-4567"
-                  maxLength={14}
+                  placeholder="+998 90 123-45-67"
+                  maxLength={18}
                 />
                 <Phone className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
               </div>
@@ -190,28 +202,6 @@ export default function SignInPage() {
             </div>
           </form>
 
-          {/* Divider */}
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Or sign in with OTP</span>
-              </div>
-            </div>
-
-            {/* OTP Sign in */}
-            <div className="mt-6">
-              <Link
-                href="/auth/phone-signin"
-                className="w-full inline-flex justify-center py-2 px-4 border border-purple-600 rounded-lg shadow-sm bg-white text-sm font-medium text-purple-600 hover:bg-purple-50 transition-colors"
-              >
-                <Phone className="h-5 w-5 mr-2" />
-                Sign in with Phone OTP
-              </Link>
-            </div>
-          </div>
 
           {/* Sign up link */}
           <div className="mt-6 text-center">

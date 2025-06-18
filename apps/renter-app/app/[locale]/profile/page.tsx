@@ -3,13 +3,13 @@ import type React from "react"
 import {useState} from "react"
 import { Link } from "@/i18n/navigation"
 import {Calendar, Camera, Edit3, Heart, Mail, MapPin, Package, Phone, Save, Settings, Star, User, X} from "lucide-react" // Import Settings icon
-import {useAuth} from "@/contexts/auth-context"
+import {useAuth} from "@/hooks"
 import {useRouter} from "@/i18n/navigation"
 import { useTranslations } from "next-intl"
 
 export default function ProfilePage() {
   const t = useTranslations("beribturing")
-  const { user, updateProfile, isLoading } = useAuth()
+  const { user, updateProfile, loading } = useAuth()
   const [isEditing, setIsEditing] = useState(false)
   const [editForm, setEditForm] = useState({
     firstName: "",
@@ -31,14 +31,14 @@ export default function ProfilePage() {
 
   const handleEditStart = () => {
     setEditForm({
-      firstName: user.profile.firstName,
-      lastName: user.profile.lastName,
-      email: user.profile.email,
+      firstName: user.profile?.firstName,
+      lastName: user.profile?.lastName,
+      email: user.profile?.email,
       phone: user.phoneNumber,
-      address: user.profile.address,
-      city: user.profile.city,
-      state: user.profile.state,
-      zipCode: user.profile.zipCode,
+      address: user.profile?.address,
+      city: user.profile?.city,
+      state: user.profile?.state,
+      zipCode: user.profile?.zipCode,
     })
     setIsEditing(true)
   }
@@ -117,7 +117,7 @@ export default function ProfilePage() {
             <div className="bg-white rounded-xl shadow-sm p-6 text-center">
               <div className="relative inline-block mb-4">
                 <img
-                  src={user.profile.profilePictureUrl || "/placeholder.svg"}
+                  src={user.profile?.profilePictureUrl || "/placeholder.svg"}
                   alt={user.name}
                   className="w-24 h-24 rounded-full object-cover mx-auto"
                 />
@@ -127,9 +127,9 @@ export default function ProfilePage() {
               </div>
 
               <h1 className="text-xl font-bold text-gray-900 mb-1">
-                {user.profile.firstName} {user.profile.lastName}
+                {user.profile?.firstName} {user.profile?.lastName}
               </h1>
-              <p className="text-gray-600 mb-4">{t("memberSince")} {new Date(user.createdAt).getFullYear()}</p>
+              <p className="text-gray-600 mb-4">{t("memberSince")} {user.createdAt ? new Date(user.createdAt).getFullYear() : new Date().getFullYear()}</p>
 
               <div className="flex items-center justify-center space-x-1 mb-6">
                 <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
@@ -183,7 +183,7 @@ export default function ProfilePage() {
                   <div className="flex space-x-2">
                     <button
                       onClick={handleEditSave}
-                      disabled={isLoading}
+                      disabled={loading}
                       className="flex items-center space-x-2 bg-purple-600 hover:bg-purple-700 text-white px-3 py-1 rounded-lg transition-colors disabled:opacity-50"
                     >
                       <Save className="h-4 w-4" />
@@ -216,7 +216,7 @@ export default function ProfilePage() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                   ) : (
-                    <p className="text-gray-900">{user.profile.firstName}</p>
+                    <p className="text-gray-900">{user.profile?.firstName}</p>
                   )}
                 </div>
 
@@ -235,7 +235,7 @@ export default function ProfilePage() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                   ) : (
-                    <p className="text-gray-900">{user.profile.lastName}</p>
+                    <p className="text-gray-900">{user.profile?.lastName}</p>
                   )}
                 </div>
 
@@ -254,7 +254,7 @@ export default function ProfilePage() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                   ) : (
-                    <p className="text-gray-900">{user.profile.email}</p>
+                    <p className="text-gray-900">{user.profile?.email}</p>
                   )}
                 </div>
 
@@ -292,7 +292,7 @@ export default function ProfilePage() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                   ) : (
-                    <p className="text-gray-900">{user.profile.address}</p>
+                    <p className="text-gray-900">{user.profile?.address}</p>
                   )}
                 </div>
 
@@ -308,7 +308,7 @@ export default function ProfilePage() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                   ) : (
-                    <p className="text-gray-900">{user.profile.city}</p>
+                    <p className="text-gray-900">{user.profile?.city}</p>
                   )}
                 </div>
 
@@ -324,7 +324,7 @@ export default function ProfilePage() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                   ) : (
-                    <p className="text-gray-900">{user.profile.state}</p>
+                    <p className="text-gray-900">{user.profile?.state}</p>
                   )}
                 </div>
 
@@ -340,7 +340,7 @@ export default function ProfilePage() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                   ) : (
-                    <p className="text-gray-900">{user.profile.zipCode}</p>
+                    <p className="text-gray-900">{user.profile?.zipCode}</p>
                   )}
                 </div>
               </div>

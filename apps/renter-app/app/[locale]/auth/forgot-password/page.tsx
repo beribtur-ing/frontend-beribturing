@@ -5,25 +5,34 @@ import {useState} from "react"
 import {ArrowLeft, Phone} from "lucide-react"
 import { Link } from "@/i18n/navigation"
 import { useRouter } from "@/i18n/navigation"
-import {usePasswordReset} from "@/hooks/auth"
+import {useOtpAuth} from "@/hooks/auth"
 
 export default function ForgotPasswordPage() {
   const [phone, setPhone] = useState("")
   const [error, setError] = useState("")
-  const { sendResetPasswordOtp, isSendingResetOtp } = usePasswordReset()
+  const { sendOtp, isSendingOtp } = useOtpAuth()
   const router = useRouter()
 
   const formatPhoneNumber = (value: string) => {
     // Remove all non-digits
-    const phoneNumber = value.replace(/\D/g, "")
+    let phoneNumber = value.replace(/\D/g, "")
+    
+    // Auto-add country code if not present
+    if (phoneNumber.length > 0 && !phoneNumber.startsWith('998')) {
+      phoneNumber = '998' + phoneNumber
+    }
 
-    // Format as (XXX) XXX-XXXX
-    if (phoneNumber.length >= 6) {
-      return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3, 6)}-${phoneNumber.slice(6, 10)}`
+    // Format as +998 XX XXX-XX-XX
+    if (phoneNumber.length >= 12) {
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(8, 10)}-${phoneNumber.slice(10, 12)}`
+    } else if (phoneNumber.length >= 8) {
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(8)}`
+    } else if (phoneNumber.length >= 5) {
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5)}`
     } else if (phoneNumber.length >= 3) {
-      return `(${phoneNumber.slice(0, 3)}) ${phoneNumber.slice(3)}`
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3)}`
     } else {
-      return phoneNumber
+      return phoneNumber ? `+${phoneNumber}` : ""
     }
   }
 
@@ -31,16 +40,19 @@ export default function ForgotPasswordPage() {
     e.preventDefault()
     setError("")
 
-    if (!phone || phone.length < 14) {
+    if (!phone || phone.length < 18) {
       setError("Please enter a valid phone number")
       return
     }
 
-    const success = await sendResetPasswordOtp(phone)
+    // Clean phone number for API (remove +, spaces, and hyphens)
+    const cleanPhone = phone.replace(/[\s\-+]/g, '')
+    
+    const success = await sendOtp(cleanPhone, 'renter')
 
     if (success) {
       // Create a reset password page instead of using verify-otp
-      router.push(`/auth/reset-password?phone=${encodeURIComponent(phone)}`)
+      router.push(`/auth/reset-password?phone=${encodeURIComponent(cleanPhone)}`)
     } else {
       setError("Failed to send OTP. Please check your phone number and try again.")
     }
@@ -87,8 +99,8 @@ export default function ForgotPasswordPage() {
                   value={phone}
                   onChange={handlePhoneChange}
                   className="appearance-none block w-full px-3 py-2 pl-10 border border-gray-300 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-purple-500 focus:border-purple-500"
-                  placeholder="(555) 123-4567"
-                  maxLength={14}
+                  placeholder="+998 90 123-45-67"
+                  maxLength={18}
                 />
                 <Phone className="h-5 w-5 text-gray-400 absolute left-3 top-2.5" />
               </div>
@@ -105,10 +117,10 @@ export default function ForgotPasswordPage() {
             <div>
               <button
                 type="submit"
-                disabled={isSendingResetOtp || phone.length < 14}
+                disabled={isSendingOtp || phone.length < 18}
                 className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {isSendingResetOtp ? (
+                {isSendingOtp ? (
                   <div className="flex items-center">
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                     Sending code...

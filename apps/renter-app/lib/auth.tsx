@@ -10,6 +10,17 @@ export interface User {
   phoneNumber: string
   role: "renter"
   avatar?: string
+  createdAt?: string
+  profile: {
+    firstName: string
+    lastName: string
+    email: string
+    address: string
+    city: string
+    state: string
+    zipCode: string
+    profilePictureUrl?: string
+  }
 }
 
 interface AuthContextType {
@@ -20,6 +31,7 @@ interface AuthContextType {
   signOut: () => void
   setUser: (user: User | null) => void
   setTokens: (tokens: AccountSignInTokenRdo | null) => void
+  updateProfile: (updatedUser: User) => Promise<boolean>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
@@ -33,12 +45,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const checkSession = async () => {
       try {
-        const storedUser = localStorage.getItem("renter_user")
-        const storedTokens = localStorage.getItem("renter_tokens")
-        
-        if (storedUser && storedTokens) {
-          setUser(JSON.parse(storedUser))
-          setTokens(JSON.parse(storedTokens))
+        if (typeof window !== 'undefined') {
+          const storedUser = localStorage.getItem("renter_user")
+          const storedTokens = localStorage.getItem("renter_tokens")
+
+          if (storedUser && storedTokens) {
+            setUser(JSON.parse(storedUser))
+            setTokens(JSON.parse(storedTokens))
+          }
         }
       } catch (error) {
         console.error("Session validation error:", error)
@@ -66,34 +80,52 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = () => {
     setUser(null)
     setTokens(null)
-    localStorage.removeItem("renter_user")
-    localStorage.removeItem("renter_tokens")
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem("renter_user")
+      localStorage.removeItem("renter_tokens")
+    }
   }
 
   const updateUser = (newUser: User | null) => {
     setUser(newUser)
-    if (newUser) {
+    if (newUser && typeof window !== 'undefined') {
       localStorage.setItem("renter_user", JSON.stringify(newUser))
     }
   }
 
   const updateTokens = (newTokens: AccountSignInTokenRdo | null) => {
     setTokens(newTokens)
-    if (newTokens) {
+    if (newTokens && typeof window !== 'undefined') {
       localStorage.setItem("renter_tokens", JSON.stringify(newTokens))
     }
   }
 
+  const updateProfile = async (updatedUser: User): Promise<boolean> => {
+    try {
+      setLoading(true)
+      // Here you would typically make an API call to update the user profile
+      // For now, we'll just update the local state
+      updateUser(updatedUser)
+      return true
+    } catch (error) {
+      console.error("Profile update error:", error)
+      return false
+    } finally {
+      setLoading(false)
+    }
+  }
+
   return (
-    <AuthContext.Provider 
-      value={{ 
-        user, 
-        loading, 
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
         tokens,
-        signIn, 
-        signOut, 
+        signIn,
+        signOut,
         setUser: updateUser,
-        setTokens: updateTokens
+        setTokens: updateTokens,
+        updateProfile
       }}
     >
       {children}

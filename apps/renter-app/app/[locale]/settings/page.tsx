@@ -1,7 +1,7 @@
 "use client"
 import {useState} from "react"
 
-import {useAuth} from "@/contexts/auth-context"
+import {useAuth} from "@/hooks"
 import {
   Bell,
   ChevronRight,
@@ -21,7 +21,7 @@ import {useTranslations} from "next-intl"
 
 export default function SettingsPage() {
   const t = useTranslations("beribturing")  
-  const { user, isLoading } = useAuth()
+  const { user, loading } = useAuth()
   const router = useRouter()
   const [activeTab, setActiveTab] = useState("notifications")
   const [settings, setSettings] = useState({

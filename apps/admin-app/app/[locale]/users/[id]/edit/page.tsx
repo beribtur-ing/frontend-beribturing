@@ -18,6 +18,35 @@ export default function EditUserPage({ params }: { params: { id: string } }) {
   const router = useRouter()
   const user = mockUsers.find((u) => u.id === params.id) || mockUsers[0]
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [phoneNumber, setPhoneNumber] = useState(user?.phoneNumber || "")
+
+  const formatPhoneNumber = (value: string) => {
+    // Remove all non-digits
+    let phoneNumber = value.replace(/\D/g, "")
+    
+    // Auto-add country code if not present
+    if (phoneNumber.length > 0 && !phoneNumber.startsWith('998')) {
+      phoneNumber = '998' + phoneNumber
+    }
+
+    // Format as +998 XX XXX-XX-XX
+    if (phoneNumber.length >= 12) {
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(8, 10)}-${phoneNumber.slice(10, 12)}`
+    } else if (phoneNumber.length >= 8) {
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(8)}`
+    } else if (phoneNumber.length >= 5) {
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5)}`
+    } else if (phoneNumber.length >= 3) {
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3)}`
+    } else {
+      return phoneNumber ? `+${phoneNumber}` : ""
+    }
+  }
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value)
+    setPhoneNumber(formatted)
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -62,7 +91,14 @@ export default function EditUserPage({ params }: { params: { id: string } }) {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone Number</Label>
-                <Input id="phone" defaultValue={user?.phoneNumber} />
+                <Input 
+                  id="phone" 
+                  type="tel"
+                  value={phoneNumber}
+                  onChange={handlePhoneChange}
+                  placeholder="+998 90 123-45-67"
+                  maxLength={18}
+                />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="user-type">User Type</Label>

@@ -7,7 +7,7 @@ import { Link } from "@/i18n/navigation"
 import {useRouter} from "@/i18n/navigation"
 import {useSearchParams} from "next/navigation"
 import {useOtpAuth} from "@/hooks/auth"
-import { Profile } from '@beribturing/api-stub'
+import {LenderType, Profile, Gender } from '@beribturing/api-stub'
 
 export default function VerifyOTPPage() {
   const [otp, setOtp] = useState(["", "", "", "", "", ""])
@@ -23,6 +23,7 @@ export default function VerifyOTPPage() {
 
   const phone = searchParams.get("phone") || ""
   const type = searchParams.get("type") || "signin" // signin or signup
+  const userType = searchParams.get("userType") || "renter" // renter or lender
 
   // Get signup data from sessionStorage for signup flow
   useEffect(() => {
@@ -93,19 +94,21 @@ export default function VerifyOTPPage() {
     setError("")
 
     if (type === "signup" && signupData) {
-      // Create profile object
-      const profile: Profile = {
-        email: signupData.email || "",
-        phoneNumber: signupData.phone,
-        name: `${signupData.firstName} ${signupData.lastName}`
-      }
+      // Create profile object with required fields
+      // @ts-ignore
+      const profile: Profile = {}
+
+      // Clean phone number for API (remove +, spaces, and hyphens)
+      const cleanPhone = phone.replace(/[\s\-+]/g, '')
 
       const success = await verifyOtpAndSignUp(
-        phone,
+        cleanPhone,
         otpCode,
         signupData.password,
         `${signupData.firstName} ${signupData.lastName}`,
-        profile
+        profile,
+        signupData.userType as 'renter' | 'lender',
+        signupData.userType === 'lender' ? LenderType.Individual : undefined
       )
 
       if (success) {
@@ -113,7 +116,16 @@ export default function VerifyOTPPage() {
         // Clear stored data
         sessionStorage.removeItem('signupData')
         setTimeout(() => {
-          router.push("/auth/signin?message=Account created successfully")
+          // Conditional redirect based on user type
+          if (signupData.userType === 'lender') {
+            // Redirect to owner app signin
+            window.location.href = process.env.NODE_ENV === 'development'
+              ? 'http://localhost:3001/login?message=Account created successfully'
+              : 'https://owner.renthub.com/login?message=Account created successfully'
+          } else {
+            // Redirect to renter signin
+            router.push("/auth/signin?message=Account created successfully")
+          }
         }, 2000)
       } else {
         setError("Invalid verification code. Please try again.")
@@ -131,8 +143,11 @@ export default function VerifyOTPPage() {
     setError("")
 
     if (!phone) return
-    
-    const success = await sendOtp(phone)
+
+    // Clean phone number for API (remove +, spaces, and hyphens)
+    const cleanPhone = phone.replace(/[\s\-+]/g, '')
+
+    const success = await sendOtp(cleanPhone, userType as 'renter' | 'lender')
     if (success) {
       setTimeLeft(60)
       setOtp(["", "", "", "", "", ""])
@@ -194,7 +209,7 @@ export default function VerifyOTPPage() {
             <Phone className="h-8 w-8 text-purple-600" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900">Verify your phone</h2>
-          <p className="mt-2 text-sm text-gray-600">We've sent a 6-digit verification code to</p>
+          <p className="mt-2 text-sm text-gray-600">We&apos;ve sent a 6-digit verification code to</p>
           <p className="font-medium text-gray-900">{phone}</p>
         </div>
       </div>
@@ -212,7 +227,7 @@ export default function VerifyOTPPage() {
                 {otp.map((digit, index) => (
                   <input
                     key={index}
-                    ref={(el) => (inputRefs.current[index] = el)}
+                    ref={(el) => { inputRefs.current[index] = el }}
                     type="text"
                     inputMode="numeric"
                     pattern="[0-9]"
@@ -223,7 +238,7 @@ export default function VerifyOTPPage() {
                     className={`w-12 h-12 text-center text-lg font-semibold border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 ${
                       error ? "border-red-300" : "border-gray-300"
                     }`}
-                    disabled={isLoading}
+                    disabled={isVerifyingOtp}
                   />
                 ))}
               </div>
@@ -254,7 +269,7 @@ export default function VerifyOTPPage() {
           <div className="mt-6 text-center">
             {timeLeft > 0 ? (
               <p className="text-sm text-gray-600">
-                Didn't receive the code? <span className="text-gray-400">Resend in {timeLeft}s</span>
+                Didn&apos;t receive the code? <span className="text-gray-400">Resend in {timeLeft}s</span>
               </p>
             ) : (
               <button

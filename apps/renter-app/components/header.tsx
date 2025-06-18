@@ -2,7 +2,7 @@
 import {useEffect, useRef, useState} from "react"
 import {ChevronDown, Heart, LogOut, Menu, Search, Settings, User, UserCircle, X} from "lucide-react"
 import {CatalogMenu} from "./catalog-menu"
-import {useAuth} from "@/contexts/auth-context"
+import {useAuth} from "@/hooks"
 import { Link } from "@/i18n/navigation"
 import { LanguageSwitcher } from "./language-switcher"
 import { useTranslations } from "next-intl"
@@ -103,7 +103,7 @@ export function Header() {
             {/* User Actions - Desktop */}
             <div className="hidden lg:flex items-center space-x-4">
               <LanguageSwitcher />
-              
+
               {user ? (
                 // Authenticated user menu
                 <div className="relative" ref={userMenuRef}>
@@ -112,11 +112,11 @@ export function Header() {
                     className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-purple-600 transition-colors"
                   >
                     <img
-                      src={user.profile.profilePictureUrl || "/placeholder.svg"}
+                      src={user.avatar || "/placeholder.svg"}
                       alt={user.name}
                       className="w-8 h-8 rounded-full object-cover"
                     />
-                    <span className="font-medium">{user.profile.firstName}</span>
+                    <span className="font-medium">{user.name}</span>
                     <ChevronDown className={`h-4 w-4 transition-transform ${isUserMenuOpen ? "rotate-180" : ""}`} />
                   </button>
 
@@ -178,7 +178,7 @@ export function Header() {
               {user ? (
                 <Link href="/profile" className="p-2">
                   <img
-                    src={user.profile.profilePictureUrl || "/placeholder.svg"}
+                    src={user.avatar || "/placeholder.svg"}
                     alt={user.name}
                     className="w-6 h-6 rounded-full object-cover"
                   />
