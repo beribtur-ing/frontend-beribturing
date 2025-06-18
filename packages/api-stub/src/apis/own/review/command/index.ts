@@ -1,3 +1,3 @@
-export type * from "./ModifyReviewOwnCommand";
-export type * from "./RegisterReviewOwnCommand";
-export type * from "./RemoveReviewOwnCommand";
+export * from "./ModifyReviewOwnCommand";
+export * from "./RegisterReviewOwnCommand";
+export * from "./RemoveReviewOwnCommand";

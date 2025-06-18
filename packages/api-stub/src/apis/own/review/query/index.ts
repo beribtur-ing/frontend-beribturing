@@ -1,2 +1,2 @@
-export type * from "./FindReviewOwnQuery";
-export type * from "./FindReviewsByRecordOwnQuery";
+export * from "./FindReviewOwnQuery";
+export * from "./FindReviewsByRecordOwnQuery";

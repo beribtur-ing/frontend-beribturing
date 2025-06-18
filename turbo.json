@@ -1,21 +1,35 @@
 {
-  "$schema": "https://turborepo.com/schema.json",
-  "ui": "tui",
-  "tasks": {
+  "$schema": "https://turbo.build/schema.json",
+  "pipeline": {
+    "@beribturing/api-stub#build": {
+      "dependsOn": []
+    },
+    "@beribturing/renter-app#build": {
+      "dependsOn": [
+        "@beribturing/api-stub#build"
+      ]
+    },
+    "@beribturing/owner-app#build": {
+      "dependsOn": [
+        "@beribturing/api-stub#build"
+      ]
+    },
+    "@beribturing/admin-app#build": {
+      "dependsOn": [
+        "@beribturing/api-stub#build"
+      ]
+    },
     "build": {
-      "dependsOn": ["^build"],
-      "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": ["dist/**", ".next/**", "!.next/cache/**"]
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "dist/**",
+        "storybook-static/**"
+      ]
     },
-    "lint": {
-      "dependsOn": ["^lint"]
-    },
-    "check-types": {
-      "dependsOn": ["^check-types"]
-    },
-    "dev": {
-      "cache": false,
-      "persistent": true
+    "clean": {
+      "cache": false
     }
   }
 }
