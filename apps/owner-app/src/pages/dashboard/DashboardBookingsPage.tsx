@@ -33,10 +33,10 @@ export default function DashboardBookingsPage() {
       });
   }, []);
 
-  const filteredBookings = bookings.filter((booking) => {
-    if (filter === 'all') return true;
-    return booking.status.toLowerCase() === filter;
-  });
+  // const filteredBookings = bookings.filter((booking) => {
+  //   if (filter === 'all') return true;
+  //   return booking.status.toLowerCase() === filter;
+  // });
 
   const initialData: BookingItem[] = [
     { id: 1, name: 'Alice Johnson', email: 'alice@example.com', role: 'Admin', status: 'Active' },
