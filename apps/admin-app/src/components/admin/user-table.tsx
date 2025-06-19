@@ -1,97 +1,127 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "../ui/table"
-import { Badge } from "../ui/badge"
-import { Button } from "../ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu"
+import { Table, TableBody, TableCell, TableHead, TableRow, Card, Chip, IconButton, Menu, MenuItem } from "@mui/material"
+import { useState } from "react"
 import { MoreHorizontal, Shield, ShieldOff, Edit, Eye } from "lucide-react"
 import { mockUsers } from "../../lib/mock-data"
-import { Card } from "../ui/card"
 import { Link, useLocation } from "react-router-dom"
 
 export function UserTable() {
   const location = useLocation()
   const locale = location.pathname.split('/')[1] || 'en'
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
+
+  const handleMenuClick = (event: React.MouseEvent<HTMLElement>, userId: string) => {
+    setAnchorEl(event.currentTarget)
+    setSelectedUserId(userId)
+  }
+
+  const handleMenuClose = () => {
+    setAnchorEl(null)
+    setSelectedUserId(null)
+  }
 
   return (
-    <Card>
-      <div className="overflow-x-auto">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Phone</TableHead>
-              <TableHead>Joined</TableHead>
-              <TableHead>Activity</TableHead>
-              <TableHead className="w-[70px]">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {mockUsers.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell className="font-medium">
-                  <Link to={`/${locale}/users/${user.id}`} className="hover:underline">
-                    {user.name}
-                  </Link>
-                </TableCell>
-                <TableCell>{user.email}</TableCell>
-                <TableCell>
-                  <Badge variant={user.type === "lender" ? "default" : "secondary"}>{user.type}</Badge>
-                </TableCell>
-                <TableCell>
-                  <Badge variant={user.isActive ? "default" : "destructive"}>
-                    {user.isActive ? "Active" : "Inactive"}
-                  </Badge>
-                </TableCell>
-                <TableCell>{user.phoneNumber}</TableCell>
-                <TableCell>{new Date(user.joinedAt).toLocaleDateString()}</TableCell>
-                <TableCell>
-                  {user.totalRentals && `${user.totalRentals} rentals`}
-                  {user.totalListings && `${user.totalListings} listings`}
-                </TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" className="h-8 w-8 p-0">
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem asChild>
-                        <Link to={`/${locale}/users/${user.id}`}>
-                          <Eye className="mr-2 h-4 w-4" />
-                          View Details
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link to={`/${locale}/users/${user.id}/edit`}>
-                          <Edit className="mr-2 h-4 w-4" />
-                          Edit User
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        {user.isActive ? (
-                          <>
-                            <ShieldOff className="mr-2 h-4 w-4" />
-                            Deactivate
-                          </>
-                        ) : (
-                          <>
-                            <Shield className="mr-2 h-4 w-4" />
-                            Activate
-                          </>
-                        )}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-600">Delete User</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
+    <Card sx={{ overflow: 'hidden' }}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell>Name</TableCell>
+            <TableCell>Email</TableCell>
+            <TableCell>Type</TableCell>
+            <TableCell>Status</TableCell>
+            <TableCell>Phone</TableCell>
+            <TableCell>Joined</TableCell>
+            <TableCell>Activity</TableCell>
+            <TableCell sx={{ width: 70 }}>Actions</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {mockUsers.map((user) => (
+            <TableRow key={user.id}>
+              <TableCell sx={{ fontWeight: 'medium' }}>
+                <Link to={`/${locale}/users/${user.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                  {user.name}
+                </Link>
+              </TableCell>
+              <TableCell>{user.email}</TableCell>
+              <TableCell>
+                <Chip 
+                  label={user.type} 
+                  color={user.type === "lender" ? "primary" : "secondary"} 
+                  size="small"
+                />
+              </TableCell>
+              <TableCell>
+                <Chip 
+                  label={user.isActive ? "Active" : "Inactive"}
+                  color={user.isActive ? "success" : "error"}
+                  size="small"
+                />
+              </TableCell>
+              <TableCell>{user.phoneNumber}</TableCell>
+              <TableCell>{new Date(user.joinedAt).toLocaleDateString()}</TableCell>
+              <TableCell>
+                {user.totalRentals && `${user.totalRentals} rentals`}
+                {user.totalListings && `${user.totalListings} listings`}
+              </TableCell>
+              <TableCell>
+                <IconButton
+                  size="small"
+                  onClick={(e) => handleMenuClick(e, user.id)}
+                >
+                  <MoreHorizontal size={16} />
+                </IconButton>
+              </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
-      </div>
+        
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right',
+          }}
+        >
+          <MenuItem 
+            component={Link} 
+            to={`/${locale}/users/${selectedUserId}`}
+            onClick={handleMenuClose}
+            sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+          >
+            <Eye size={16} />
+            View Details
+          </MenuItem>
+          <MenuItem 
+            component={Link} 
+            to={`/${locale}/users/${selectedUserId}/edit`}
+            onClick={handleMenuClose}
+            sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+          >
+            <Edit size={16} />
+            Edit User
+          </MenuItem>
+          <MenuItem 
+            onClick={handleMenuClose}
+            sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+          >
+            <Shield size={16} />
+            Toggle Status
+          </MenuItem>
+          <MenuItem 
+            onClick={handleMenuClose}
+            sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'error.main' }}
+          >
+            Delete User
+          </MenuItem>
+        </Menu>
     </Card>
   )
 }

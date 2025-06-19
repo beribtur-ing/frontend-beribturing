@@ -1,34 +1,22 @@
 
 
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
-import { type ChartConfig, ChartContainer, ChartTooltip, ChartTooltipContent } from "../ui/chart"
-import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis } from "recharts"
+import { Card, CardContent, CardHeader, Typography } from "@mui/material"
+import { Bar, BarChart, ResponsiveContainer, XAxis, YAxis, Tooltip } from "recharts"
 import { mockAnalyticsData } from "../../lib/mock-data"
-
-const chartConfig = {
-  amount: {
-    label: "Revenue",
-    color: "hsl(var(--chart-1))",
-  },
-} satisfies ChartConfig
 
 export function RevenueChart() {
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Monthly Revenue</CardTitle>
-      </CardHeader>
+      <CardHeader title="Monthly Revenue" />
       <CardContent>
-        <ChartContainer config={chartConfig}>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={mockAnalyticsData.revenue}>
-              <XAxis dataKey="month" />
-              <YAxis />
-              <ChartTooltip content={<ChartTooltipContent />} />
-              <Bar dataKey="amount" fill="var(--color-amount)" />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartContainer>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={mockAnalyticsData.revenue}>
+            <XAxis dataKey="month" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="amount" fill="#1976d2" />
+          </BarChart>
+        </ResponsiveContainer>
       </CardContent>
     </Card>
   )

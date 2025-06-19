@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from 'react-router-dom';
 import { browserRouter } from './pages/router';
 import { ThemeProvider } from './components/theme-provider';
-import { AuthProvider } from './lib/auth-context';
+import { AuthProvider } from './lib/auth';
 import './globals.css';
 import './i18n';
 import React, { useMemo } from 'react';

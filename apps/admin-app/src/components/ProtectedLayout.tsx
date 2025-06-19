@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useAuth } from "../hooks/auth/useAuth";
-import { SidebarInset, SidebarProvider } from "./ui/sidebar";
+import { useAuth } from "~/hooks";
+import { Box } from "@mui/material";
 import { AdminSidebar } from "./admin/admin-sidebar";
 import { AdminHeader } from "./admin/admin-header";
 
@@ -30,12 +30,14 @@ export function ProtectedLayout({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <SidebarProvider>
+    <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <AdminSidebar />
-      <SidebarInset>
+      <Box sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
         <AdminHeader />
-        <main className="flex-1 space-y-4 p-4 md:p-8 pt-6">{children}</main>
-      </SidebarInset>
-    </SidebarProvider>
+        <Box component="main" sx={{ flexGrow: 1, p: { xs: 2, md: 4 }, pt: 3 }}>
+          {children}
+        </Box>
+      </Box>
+    </Box>
   );
 }

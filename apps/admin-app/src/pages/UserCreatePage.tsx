@@ -1,11 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { Button } from "../components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
-import { Switch } from "../components/ui/switch";
+import { Button, Card, CardContent, CardHeader, TextField, Select, MenuItem, FormControl, InputLabel, FormControlLabel, Switch, Typography, Box, IconButton } from "@mui/material";
 import { ArrowLeft } from "lucide-react";
 
 export default function UserCreatePage() {
@@ -50,78 +45,89 @@ export default function UserCreatePage() {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon" onClick={() => navigate(`/${locale}/users`)}>
-          <ArrowLeft className="h-4 w-4" />
-        </Button>
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Create New User</h1>
-          <p className="text-muted-foreground">Add a new user to the platform.</p>
-        </div>
-      </div>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        <IconButton onClick={() => navigate(`/${locale}/users`)}>
+          <ArrowLeft size={20} />
+        </IconButton>
+        <Box>
+          <Typography variant="h4" fontWeight="bold">
+            Create New User
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Add a new user to the platform.
+          </Typography>
+        </Box>
+      </Box>
 
       <Card>
         <form onSubmit={handleSubmit}>
-          <CardHeader>
-            <CardTitle>User Information</CardTitle>
-            <CardDescription>Enter the details for the new user.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-2">
-              <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
-                <Input id="name" placeholder="John Doe" required />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
-                <Input id="email" type="email" placeholder="john@example.com" required />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input 
-                  id="phone" 
+          <CardHeader 
+            title="User Information"
+            subheader="Enter the details for the new user."
+          />
+          <CardContent>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+              <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
+                <TextField
+                  label="Full Name"
+                  placeholder="John Doe"
+                  required
+                  fullWidth
+                />
+                <TextField
+                  label="Email Address"
+                  type="email"
+                  placeholder="john@example.com"
+                  required
+                  fullWidth
+                />
+                <TextField
+                  label="Phone Number"
                   type="tel"
                   value={phoneNumber}
                   onChange={handlePhoneChange}
                   placeholder="+998 90 123-45-67"
-                  maxLength={18}
+                  inputProps={{ maxLength: 18 }}
+                  fullWidth
                 />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="user-type">User Type</Label>
-                <Select required>
-                  <SelectTrigger id="user-type">
-                    <SelectValue placeholder="Select user type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="lendee">Lendee</SelectItem>
-                    <SelectItem value="lender">Lender</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
+                <FormControl fullWidth required>
+                  <InputLabel>User Type</InputLabel>
+                  <Select
+                    label="User Type"
+                    defaultValue=""
+                  >
+                    <MenuItem value="lendee">Lendee</MenuItem>
+                    <MenuItem value="lender">Lender</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
 
-            <div className="space-y-2">
-              <Label htmlFor="password">Temporary Password</Label>
-              <Input id="password" type="password" placeholder="Set a temporary password" required />
-            </div>
+              <TextField
+                label="Temporary Password"
+                type="password"
+                placeholder="Set a temporary password"
+                required
+                fullWidth
+              />
 
-            <div className="flex items-center space-x-2">
-              <Switch id="active" defaultChecked />
-              <Label htmlFor="active">Active Account</Label>
-            </div>
+              <FormControlLabel
+                control={<Switch defaultChecked />}
+                label="Active Account"
+              />
+              
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Button variant="text" type="button" onClick={() => navigate(`/${locale}/users`)}>
+                  Cancel
+                </Button>
+                <Button type="submit" variant="contained" disabled={isSubmitting}>
+                  {isSubmitting ? "Creating..." : "Create User"}
+                </Button>
+              </Box>
+            </Box>
           </CardContent>
-          <CardFooter className="flex justify-between">
-            <Button variant="ghost" type="button" onClick={() => navigate(`/${locale}/users`)}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Creating..." : "Create User"}
-            </Button>
-          </CardFooter>
         </form>
       </Card>
-    </div>
+    </Box>
   );
 }

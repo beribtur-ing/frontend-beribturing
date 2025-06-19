@@ -1,17 +1,6 @@
 import { BarChart3, Calendar, Home, Settings, Users, Building2, Shield } from "lucide-react"
 
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarHeader,
-  SidebarFooter,
-} from "../ui/sidebar"
+import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography, Box, Divider } from "@mui/material"
 import { Link, useLocation } from "react-router-dom"
 
 const menuItems = [
@@ -52,35 +41,69 @@ export function AdminSidebar() {
   const locale = location.pathname.split('/')[1] || 'en'
 
   return (
-    <Sidebar>
-      <SidebarHeader className="border-b border-sidebar-border">
-        <div className="flex items-center gap-2 px-4 py-2">
-          <Shield className="h-6 w-6" />
-          <span className="font-semibold">RentApp Admin</span>
-        </div>
-      </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Administration</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={location.pathname === `/${locale}${item.url}`}>
-                    <Link to={`/${locale}${item.url}`}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-      </SidebarContent>
-      <SidebarFooter className="border-t border-sidebar-border">
-        <div className="p-4 text-xs text-muted-foreground">Admin Panel v1.0</div>
-      </SidebarFooter>
-    </Sidebar>
+    <Drawer
+      variant="permanent"
+      sx={{
+        width: 240,
+        flexShrink: 0,
+        '& .MuiDrawer-paper': {
+          width: 240,
+          boxSizing: 'border-box',
+          borderRight: '1px solid',
+          borderColor: 'divider',
+        },
+      }}
+    >
+      <Box sx={{ p: 2, borderBottom: '1px solid', borderColor: 'divider' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Shield size={24} />
+          <Typography variant="h6" fontWeight="600">
+            RentApp Admin
+          </Typography>
+        </Box>
+      </Box>
+      
+      <Box sx={{ flex: 1 }}>
+        <Typography variant="overline" sx={{ px: 2, pt: 2, pb: 1, fontSize: '0.75rem', fontWeight: 600, color: 'text.secondary' }}>
+          Administration
+        </Typography>
+        <List>
+          {menuItems.map((item) => {
+            const isActive = location.pathname === `/${locale}${item.url}`
+            return (
+              <ListItem key={item.title} disablePadding>
+                <ListItemButton
+                  component={Link}
+                  to={`/${locale}${item.url}`}
+                  selected={isActive}
+                  sx={{
+                    mx: 1,
+                    borderRadius: 1,
+                    '&.Mui-selected': {
+                      backgroundColor: 'primary.main',
+                      color: 'primary.contrastText',
+                      '&:hover': {
+                        backgroundColor: 'primary.dark',
+                      },
+                    },
+                  }}
+                >
+                  <ListItemIcon sx={{ minWidth: 40, color: isActive ? 'inherit' : 'text.secondary' }}>
+                    <item.icon size={20} />
+                  </ListItemIcon>
+                  <ListItemText primary={item.title} />
+                </ListItemButton>
+              </ListItem>
+            )
+          })}
+        </List>
+      </Box>
+      
+      <Box sx={{ p: 2, borderTop: '1px solid', borderColor: 'divider' }}>
+        <Typography variant="caption" color="text.secondary">
+          Admin Panel v1.0
+        </Typography>
+      </Box>
+    </Drawer>
   )
 }

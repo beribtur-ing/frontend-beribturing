@@ -1,5 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
-import { Button } from "../ui/button"
+import { Card, CardContent, CardHeader, Button, Typography, Box } from "@mui/material"
 import { Building2, AlertTriangle, Settings, BarChart3 } from "lucide-react"
 import { Link, useLocation } from "react-router-dom"
 
@@ -40,21 +39,37 @@ export function QuickActions() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Quick Actions</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-3">
-        {quickActions.map((action, index) => (
-          <Button key={index} variant={action.variant} className="w-full justify-start h-auto p-4" asChild>
-            <Link to={`/${locale}${action.href}`}>
-              <action.icon className="mr-3 h-4 w-4" />
-              <div className="text-left">
-                <div className="font-medium">{action.title}</div>
-                <div className="text-xs opacity-70">{action.description}</div>
-              </div>
-            </Link>
-          </Button>
-        ))}
+      <CardHeader 
+        title="Quick Actions"
+      />
+      <CardContent>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+          {quickActions.map((action, index) => (
+            <Button 
+              key={index} 
+              variant={action.variant === 'destructive' ? 'contained' : action.variant === 'outline' ? 'outlined' : 'contained'}
+              color={action.variant === 'destructive' ? 'error' : 'primary'}
+              component={Link}
+              to={`/${locale}${action.href}`}
+              sx={{ 
+                justifyContent: 'flex-start', 
+                textAlign: 'left',
+                py: 2,
+                px: 2
+              }}
+              startIcon={<action.icon size={16} />}
+            >
+              <Box>
+                <Typography variant="body2" fontWeight="medium" display="block">
+                  {action.title}
+                </Typography>
+                <Typography variant="caption" color="text.secondary" display="block">
+                  {action.description}
+                </Typography>
+              </Box>
+            </Button>
+          ))}
+        </Box>
       </CardContent>
     </Card>
   )

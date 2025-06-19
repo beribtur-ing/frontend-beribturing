@@ -1,8 +1,5 @@
 import { useAuth } from "../hooks/auth";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
-import { Button } from "../components/ui/button";
-import { Badge } from "../components/ui/badge";
+import { Card, CardContent, CardHeader, Avatar, Button, Chip, Typography, Box, Grid, Divider } from "@mui/material";
 import { CalendarDays, Mail, Phone, Shield } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import { PlaceholderImage } from "~/assets";
@@ -16,109 +13,137 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">My Profile</h1>
-          <p className="text-muted-foreground">Manage your account and personal information.</p>
-        </div>
-        <Button asChild>
-          <Link to={`/${locale}/profile/settings`}>Edit Profile</Link>
+    <Box sx={{ py: 3 }}>
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { sm: 'center' }, justifyContent: 'space-between', gap: 2, mb: 3 }}>
+        <Box>
+          <Typography variant="h3" component="h1" gutterBottom>
+            My Profile
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Manage your account and personal information.
+          </Typography>
+        </Box>
+        <Button variant="contained" component={Link} to={`/${locale}/profile/settings`}>
+          Edit Profile
         </Button>
-      </div>
+      </Box>
 
-      <div className="grid gap-6 md:grid-cols-[1fr_2fr]">
-        <Card>
-          <CardContent className="pt-6 flex flex-col items-center">
-            <Avatar className="h-24 w-24 mb-4">
-              <AvatarImage src={user.avatar || PlaceholderImage} alt={user.name} />
-              <AvatarFallback className="text-2xl">{user.name.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <h2 className="text-xl font-semibold">{user.name}</h2>
-            <p className="text-muted-foreground mb-2">{user.email}</p>
-            <Badge className="mb-4">{user.role === "super_admin" ? "Super Admin" : "Admin"}</Badge>
-            <div className="w-full space-y-2">
-              <Button variant="outline" className="w-full" asChild>
-                <Link to={`/${locale}/profile/settings`}>Account Settings</Link>
-              </Button>
-              <Button variant="outline" className="w-full">
-                Change Password
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="space-y-6">
+      <Grid container spacing={3}>
+        <Grid item xs={12} md={4}>
           <Card>
-            <CardHeader>
-              <CardTitle>Personal Information</CardTitle>
-              <CardDescription>Your personal details and contact information.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center gap-3">
-                <Mail className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Email</p>
-                  <p>{user.email}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <Phone className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Phone</p>
-                  <p>+998 90 123-45-67</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <Shield className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Role</p>
-                  <p>{user.role === "super_admin" ? "Super Administrator" : "Administrator"}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-3">
-                <CalendarDays className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <p className="text-sm text-muted-foreground">Member Since</p>
-                  <p>January 15, 2023</p>
-                </div>
-              </div>
+            <CardContent sx={{ pt: 3, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+              <Avatar 
+                src={user.avatar || PlaceholderImage} 
+                alt={user.name}
+                sx={{ width: 96, height: 96, mb: 2, fontSize: '2rem' }}
+              >
+                {user.name.charAt(0)}
+              </Avatar>
+              <Typography variant="h6" gutterBottom>{user.name}</Typography>
+              <Typography variant="body2" color="text.secondary" gutterBottom>
+                {user.email}
+              </Typography>
+              <Chip 
+                label={user.role === "super_admin" ? "Super Admin" : "Admin"} 
+                color="primary" 
+                sx={{ mb: 2 }}
+              />
+              <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: 1 }}>
+                <Button 
+                  variant="outlined" 
+                  fullWidth 
+                  component={Link} 
+                  to={`/${locale}/profile/settings`}
+                >
+                  Account Settings
+                </Button>
+                <Button variant="outlined" fullWidth>
+                  Change Password
+                </Button>
+              </Box>
             </CardContent>
           </Card>
+        </Grid>
 
-          <Card>
-            <CardHeader>
-              <CardTitle>Recent Activity</CardTitle>
-              <CardDescription>Your recent actions on the platform.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="font-medium">Updated system settings</p>
-                    <p className="text-sm text-muted-foreground">Changed payment gateway configuration</p>
-                  </div>
-                  <p className="text-sm text-muted-foreground">2 hours ago</p>
-                </div>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="font-medium">Approved new property</p>
-                    <p className="text-sm text-muted-foreground">Professional Camera Kit by Jane Smith</p>
-                  </div>
-                  <p className="text-sm text-muted-foreground">Yesterday</p>
-                </div>
-                <div className="flex justify-between items-start">
-                  <div>
-                    <p className="font-medium">Resolved user report</p>
-                    <p className="text-sm text-muted-foreground">Handled complaint about Power Drill Set</p>
-                  </div>
-                  <p className="text-sm text-muted-foreground">3 days ago</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    </div>
+        <Grid item xs={12} md={8}>
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+            <Card>
+              <CardHeader 
+                title="Personal Information" 
+                subheader="Your personal details and contact information."
+              />
+              <CardContent>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Mail size={20} color="#666" />
+                    <Box>
+                      <Typography variant="caption" color="text.secondary">Email</Typography>
+                      <Typography variant="body2">{user.email}</Typography>
+                    </Box>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Phone size={20} color="#666" />
+                    <Box>
+                      <Typography variant="caption" color="text.secondary">Phone</Typography>
+                      <Typography variant="body2">+998 90 123-45-67</Typography>
+                    </Box>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Shield size={20} color="#666" />
+                    <Box>
+                      <Typography variant="caption" color="text.secondary">Role</Typography>
+                      <Typography variant="body2">
+                        {user.role === "super_admin" ? "Super Administrator" : "Administrator"}
+                      </Typography>
+                    </Box>
+                  </Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <CalendarDays size={20} color="#666" />
+                    <Box>
+                      <Typography variant="caption" color="text.secondary">Member Since</Typography>
+                      <Typography variant="body2">January 15, 2023</Typography>
+                    </Box>
+                  </Box>
+                </Box>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader 
+                title="Recent Activity" 
+                subheader="Your recent actions on the platform."
+              />
+              <CardContent>
+                <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <Box>
+                      <Typography variant="body2" fontWeight="medium">Updated system settings</Typography>
+                      <Typography variant="caption" color="text.secondary">Changed payment gateway configuration</Typography>
+                    </Box>
+                    <Typography variant="caption" color="text.secondary">2 hours ago</Typography>
+                  </Box>
+                  <Divider />
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <Box>
+                      <Typography variant="body2" fontWeight="medium">Approved new property</Typography>
+                      <Typography variant="caption" color="text.secondary">Professional Camera Kit by Jane Smith</Typography>
+                    </Box>
+                    <Typography variant="caption" color="text.secondary">Yesterday</Typography>
+                  </Box>
+                  <Divider />
+                  <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                    <Box>
+                      <Typography variant="body2" fontWeight="medium">Resolved user report</Typography>
+                      <Typography variant="caption" color="text.secondary">Handled complaint about Power Drill Set</Typography>
+                    </Box>
+                    <Typography variant="caption" color="text.secondary">3 days ago</Typography>
+                  </Box>
+                </Box>
+              </CardContent>
+            </Card>
+          </Box>
+        </Grid>
+      </Grid>
+    </Box>
   );
 }

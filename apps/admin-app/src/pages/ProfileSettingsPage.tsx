@@ -1,14 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../hooks/auth";
-import { Button } from "../components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "../components/ui/card";
-import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { Textarea } from "../components/ui/textarea";
-import { Switch } from "../components/ui/switch";
-import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
+import { Button, Card, CardContent, CardHeader, TextField, Tab, FormControlLabel, Switch, Avatar, Typography, Box } from "@mui/material";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { PlaceholderImage } from "~/assets";
 
 export default function ProfileSettingsPage() {
@@ -17,6 +11,7 @@ export default function ProfileSettingsPage() {
   const { locale } = useParams();
   const [isSaving, setIsSaving] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState("+998 90 123-45-67");
+  const [activeTab, setActiveTab] = useState("general");
 
   const formatPhoneNumber = (value: string) => {
     let phoneNumber = value.replace(/\D/g, "");
@@ -62,24 +57,26 @@ export default function ProfileSettingsPage() {
         <p className="text-muted-foreground">Update your account preferences and personal information.</p>
       </div>
 
-      <Tabs defaultValue="general" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="general">General</TabsTrigger>
-          <TabsTrigger value="password">Password</TabsTrigger>
-          <TabsTrigger value="notifications">Notifications</TabsTrigger>
-        </TabsList>
+      <TabContext value={activeTab}>
+        <TabList onChange={(e, newValue) => setActiveTab(newValue)}>
+          <Tab label="General" value="general" />
+          <Tab label="Password" value="password" />
+          <Tab label="Notifications" value="notifications" />
+        </TabList>
 
-        <TabsContent value="general">
+        <TabPanel value="general">
           <Card>
-            <CardHeader>
-              <CardTitle>General Information</CardTitle>
-              <CardDescription>Update your personal details and profile information.</CardDescription>
-            </CardHeader>
+            <CardHeader
+              title="General Information"
+              subheader="Update your personal details and profile information."
+            />
             <CardContent className="space-y-6">
               <div className="flex flex-col items-center sm:flex-row sm:items-start gap-6">
-                <Avatar className="h-24 w-24">
-                  <AvatarImage src={user.avatar || PlaceholderImage} alt={user.name} />
-                  <AvatarFallback className="text-2xl">{user.name.charAt(0)}</AvatarFallback>
+                <Avatar 
+                  src={user.avatar || PlaceholderImage}
+                  sx={{ width: 96, height: 96, fontSize: '2rem' }}
+                >
+                  {user.name.charAt(0)}
                 </Avatar>
                 <div className="flex flex-col gap-2">
                   <Button variant="outline" size="sm">
@@ -91,89 +88,100 @@ export default function ProfileSettingsPage() {
                 </div>
               </div>
 
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input id="name" defaultValue={user.name} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email Address</Label>
-                  <Input id="email" type="email" defaultValue={user.email} />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <Input 
-                    id="phone" 
-                    type="tel"
-                    value={phoneNumber}
-                    onChange={handlePhoneChange}
-                    placeholder="+998 90 123-45-67"
-                    maxLength={18}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="role">Role</Label>
-                  <Input
-                    id="role"
-                    defaultValue={user.role === "super_admin" ? "Super Administrator" : "Administrator"}
-                    disabled
-                  />
-                </div>
-              </div>
+              <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
+                <TextField
+                  label="Full Name"
+                  defaultValue={user.name}
+                  fullWidth
+                />
+                <TextField
+                  label="Email Address"
+                  type="email"
+                  defaultValue={user.email}
+                  fullWidth
+                />
+                <TextField
+                  label="Phone Number"
+                  type="tel"
+                  value={phoneNumber}
+                  onChange={handlePhoneChange}
+                  placeholder="+998 90 123-45-67"
+                  inputProps={{ maxLength: 18 }}
+                  fullWidth
+                />
+                <TextField
+                  label="Role"
+                  defaultValue={user.role === "super_admin" ? "Super Administrator" : "Administrator"}
+                  disabled
+                  fullWidth
+                />
+              </Box>
 
-              <div className="space-y-2">
-                <Label htmlFor="bio">Bio</Label>
-                <Textarea id="bio" placeholder="Tell us about yourself" />
-              </div>
+              <TextField
+                label="Bio"
+                placeholder="Tell us about yourself"
+                multiline
+                rows={4}
+                fullWidth
+              />
             </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button variant="ghost" onClick={() => navigate(`/${locale}/profile`)}>
-                Cancel
-              </Button>
-              <Button onClick={handleSave} disabled={isSaving}>
-                {isSaving ? "Saving..." : "Save Changes"}
-              </Button>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="password">
-          <Card>
-            <CardHeader>
-              <CardTitle>Change Password</CardTitle>
-              <CardDescription>Update your password to maintain account security.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="current-password">Current Password</Label>
-                <Input id="current-password" type="password" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="new-password">New Password</Label>
-                <Input id="new-password" type="password" />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="confirm-password">Confirm New Password</Label>
-                <Input id="confirm-password" type="password" />
-              </div>
+            <CardContent>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', pt: 2 }}>
+                <Button variant="text" onClick={() => navigate(`/${locale}/profile`)}>
+                  Cancel
+                </Button>
+                <Button variant="contained" onClick={handleSave} disabled={isSaving}>
+                  {isSaving ? "Saving..." : "Save Changes"}
+                </Button>
+              </Box>
             </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button variant="ghost" onClick={() => navigate(`/${locale}/profile`)}>
-                Cancel
-              </Button>
-              <Button onClick={handleSave} disabled={isSaving}>
-                {isSaving ? "Updating..." : "Update Password"}
-              </Button>
-            </CardFooter>
           </Card>
-        </TabsContent>
+        </TabPanel>
 
-        <TabsContent value="notifications">
+        <TabPanel value="password">
           <Card>
-            <CardHeader>
-              <CardTitle>Notification Preferences</CardTitle>
-              <CardDescription>Manage how you receive notifications and alerts.</CardDescription>
-            </CardHeader>
+            <CardHeader
+              title="Change Password"
+              subheader="Update your password to maintain account security."
+            />
+            <CardContent>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <TextField
+                  label="Current Password"
+                  type="password"
+                  fullWidth
+                />
+                <TextField
+                  label="New Password"
+                  type="password"
+                  fullWidth
+                />
+                <TextField
+                  label="Confirm New Password"
+                  type="password"
+                  fullWidth
+                />
+              </Box>
+            </CardContent>
+            <CardContent>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', pt: 2 }}>
+                <Button variant="text" onClick={() => navigate(`/${locale}/profile`)}>
+                  Cancel
+                </Button>
+                <Button variant="contained" onClick={handleSave} disabled={isSaving}>
+                  {isSaving ? "Updating..." : "Update Password"}
+                </Button>
+              </Box>
+            </CardContent>
+          </Card>
+        </TabPanel>
+
+        <TabPanel value="notifications">
+          <Card>
+            <CardHeader
+              title="Notification Preferences"
+              subheader="Manage how you receive notifications and alerts."
+            />
             <CardContent className="space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -231,17 +239,19 @@ export default function ProfileSettingsPage() {
                 </div>
               </div>
             </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button variant="ghost" onClick={() => navigate(`/${locale}/profile`)}>
-                Cancel
-              </Button>
-              <Button onClick={handleSave} disabled={isSaving}>
-                {isSaving ? "Saving..." : "Save Preferences"}
-              </Button>
-            </CardFooter>
+            <CardContent>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', pt: 2 }}>
+                <Button variant="text" onClick={() => navigate(`/${locale}/profile`)}>
+                  Cancel
+                </Button>
+                <Button variant="contained" onClick={handleSave} disabled={isSaving}>
+                  {isSaving ? "Saving..." : "Save Preferences"}
+                </Button>
+              </Box>
+            </CardContent>
           </Card>
-        </TabsContent>
-      </Tabs>
+        </TabPanel>
+      </TabContext>
     </div>
   );
 }

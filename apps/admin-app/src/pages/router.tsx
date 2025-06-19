@@ -14,6 +14,7 @@ import ProfilePage from './ProfilePage';
 import ProfileSettingsPage from './ProfileSettingsPage';
 import PropertiesPage from './PropertiesPage';
 import PropertyDetailsPage from './PropertyDetailsPage';
+import PropertyEditPage from './PropertyEditPage';
 import SettingsPage from './SettingsPage';
 import UsersPage from './UsersPage';
 import UserDetailsPage from './UserDetailsPage';
@@ -142,6 +143,14 @@ export const browserRouter: ReturnType<typeof createBrowserRouter> = createBrows
         element: (
           <ProtectedLayout>
             <PropertyDetailsPage />
+          </ProtectedLayout>
+        ),
+      },
+      {
+        path: 'properties/:id/edit',
+        element: (
+          <ProtectedLayout>
+            <PropertyEditPage />
           </ProtectedLayout>
         ),
       },

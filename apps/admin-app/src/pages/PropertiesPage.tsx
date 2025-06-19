@@ -1,6 +1,6 @@
 import { PropertyTable } from "../components/admin/property-table";
 import { PropertyFilters } from "../components/admin/property-filters";
-import { Button } from "../components/ui/button";
+import { Button, Typography, Box } from "@mui/material";
 import { Plus } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 
@@ -8,22 +8,28 @@ export default function PropertiesPage() {
   const { locale } = useParams();
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Property Management</h1>
-          <p className="text-muted-foreground">Review, approve, and manage property listings.</p>
-        </div>
-        <Button asChild>
-          <Link to={`/${locale}/properties/create`}>
-            <Plus className="mr-2 h-4 w-4" />
-            Add Property
-          </Link>
+    <Box sx={{ py: 3 }}>
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { sm: 'center' }, justifyContent: 'space-between', gap: 2, mb: 3 }}>
+        <Box>
+          <Typography variant="h3" component="h1" gutterBottom>
+            Property Management
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Review, approve, and manage property listings.
+          </Typography>
+        </Box>
+        <Button 
+          variant="contained" 
+          component={Link} 
+          to={`/${locale}/properties/create`}
+          startIcon={<Plus size={16} />}
+        >
+          Add Property
         </Button>
-      </div>
+      </Box>
 
       <PropertyFilters />
       <PropertyTable />
-    </div>
+    </Box>
   );
 }

@@ -1,30 +1,21 @@
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { Button } from "../components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { Badge } from "../components/ui/badge";
+import { Button, Card, CardContent, CardHeader, Tab, Chip, Typography, Box, Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText, IconButton } from "@mui/material";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { useState } from "react";
 import { ArrowLeft, Edit, Trash2, Flag, CheckCircle, X } from "lucide-react";
 import { mockProperties, mockBookings } from "../lib/mock-data";
 import { PlaceholderImage } from "~/assets";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "../components/ui/alert-dialog";
 
 export default function PropertyDetailsPage() {
   const navigate = useNavigate();
   const { id, locale } = useParams();
   const property = mockProperties.find((p) => p.id === id) || mockProperties[0];
   const propertyBookings = mockBookings.filter((b) => b.propertyId === property?.id);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [activeTab, setActiveTab] = useState("bookings");
 
   const handleDelete = () => {
+    setShowDeleteDialog(false);
     navigate(`/${locale}/properties`);
   };
 
@@ -47,28 +38,9 @@ export default function PropertyDetailsPage() {
               Edit Property
             </Link>
           </Button>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="destructive">
-                <Trash2 className="mr-2 h-4 w-4" />
-                Delete Property
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete the property and all associated data.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground">
-                  Delete
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <Button color="error" onClick={() => setShowDeleteDialog(true)} startIcon={<Trash2 size={16} />}>
+            Delete Property
+          </Button>
         </div>
       </div>
 
@@ -83,20 +55,19 @@ export default function PropertyDetailsPage() {
                   className="rounded-md object-cover w-full h-full"
                 />
               </div>
-              <Badge
-                variant={
+              <Chip
+                label={property?.status}
+                color={
                   property?.status === "active"
-                    ? "default"
+                    ? "success"
                     : property?.status === "pending"
-                      ? "secondary"
+                      ? "warning"
                       : property?.status === "flagged"
-                        ? "destructive"
-                        : "outline"
+                        ? "error"
+                        : "default"
                 }
-                className="mb-2"
-              >
-                {property?.status}
-              </Badge>
+                sx={{ mb: 1 }}
+              />
             </div>
 
             <div className="space-y-4">
@@ -151,27 +122,25 @@ export default function PropertyDetailsPage() {
 
         <div className="space-y-6">
           <Card>
-            <CardHeader>
-              <CardTitle>Description</CardTitle>
-            </CardHeader>
+            <CardHeader title="Description" />
             <CardContent>
               <p>{property?.description}</p>
             </CardContent>
           </Card>
 
-          <Tabs defaultValue="bookings" className="space-y-4">
-            <TabsList>
-              <TabsTrigger value="bookings">Bookings</TabsTrigger>
-              <TabsTrigger value="reviews">Reviews</TabsTrigger>
-              <TabsTrigger value="reports">Reports</TabsTrigger>
-            </TabsList>
+          <TabContext value={activeTab}>
+            <TabList onChange={(e, newValue) => setActiveTab(newValue)}>
+              <Tab label="Bookings" value="bookings" />
+              <Tab label="Reviews" value="reviews" />
+              <Tab label="Reports" value="reports" />
+            </TabList>
 
-            <TabsContent value="bookings">
+            <TabPanel value="bookings">
               <Card>
-                <CardHeader>
-                  <CardTitle>Booking History</CardTitle>
-                  <CardDescription>All bookings for this property.</CardDescription>
-                </CardHeader>
+                <CardHeader
+                  title="Booking History"
+                  subheader="All bookings for this property."
+                />
                 <CardContent>
                   {propertyBookings.length > 0 ? (
                     <div className="space-y-4">
@@ -188,19 +157,19 @@ export default function PropertyDetailsPage() {
                               {new Date(booking.endDate).toLocaleDateString()}
                             </p>
                           </div>
-                          <Badge
-                            variant={
+                          <Chip
+                            label={booking.status}
+                            color={
                               booking.status === "active"
-                                ? "default"
+                                ? "primary"
                                 : booking.status === "completed"
-                                  ? "secondary"
+                                  ? "success"
                                   : booking.status === "pending"
-                                    ? "outline"
-                                    : "destructive"
+                                    ? "warning"
+                                    : "error"
                             }
-                          >
-                            {booking.status}
-                          </Badge>
+                            size="small"
+                          />
                         </div>
                       ))}
                     </div>
@@ -209,26 +178,26 @@ export default function PropertyDetailsPage() {
                   )}
                 </CardContent>
               </Card>
-            </TabsContent>
+            </TabPanel>
 
-            <TabsContent value="reviews">
+            <TabPanel value="reviews">
               <Card>
-                <CardHeader>
-                  <CardTitle>Reviews</CardTitle>
-                  <CardDescription>User reviews for this property.</CardDescription>
-                </CardHeader>
+                <CardHeader
+                  title="Reviews"
+                  subheader="User reviews for this property."
+                />
                 <CardContent>
                   <p className="text-muted-foreground">No reviews found for this property.</p>
                 </CardContent>
               </Card>
-            </TabsContent>
+            </TabPanel>
 
-            <TabsContent value="reports">
+            <TabPanel value="reports">
               <Card>
-                <CardHeader>
-                  <CardTitle>Reports</CardTitle>
-                  <CardDescription>Reports filed against this property.</CardDescription>
-                </CardHeader>
+                <CardHeader
+                  title="Reports"
+                  subheader="Reports filed against this property."
+                />
                 <CardContent>
                   {property?.status === "flagged" ? (
                     <div className="space-y-4">
@@ -240,7 +209,7 @@ export default function PropertyDetailsPage() {
                             The listing contains misleading information about the product condition.
                           </p>
                         </div>
-                        <Badge variant="destructive">Unresolved</Badge>
+                        <Chip label="Unresolved" color="error" size="small" />
                       </div>
                     </div>
                   ) : (
@@ -248,10 +217,25 @@ export default function PropertyDetailsPage() {
                   )}
                 </CardContent>
               </Card>
-            </TabsContent>
-          </Tabs>
+            </TabPanel>
+          </TabContext>
         </div>
       </div>
+      
+      <Dialog open={showDeleteDialog} onClose={() => setShowDeleteDialog(false)}>
+        <DialogTitle>Are you absolutely sure?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            This action cannot be undone. This will permanently delete the property and all associated data.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowDeleteDialog(false)}>Cancel</Button>
+          <Button onClick={handleDelete} color="error" variant="contained">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }

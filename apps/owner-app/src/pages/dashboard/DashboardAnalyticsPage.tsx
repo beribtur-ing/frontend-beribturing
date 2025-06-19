@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { StatCard } from "../../components/ui/stat-card";
+import { Card, CardContent, CardHeader, Typography, Box, Grid } from "@mui/material";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 
 interface RevenueData {

@@ -1,9 +1,7 @@
-import { SidebarTrigger } from "../ui/sidebar"
-import { Button } from "../ui/button"
-import { Bell, User, LogOut } from "lucide-react"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../ui/dropdown-menu"
+import { AppBar, Toolbar, IconButton, Avatar, Menu, MenuItem, Typography, Box } from "@mui/material"
+import { Bell, User, LogOut, Menu as MenuIcon } from "lucide-react"
 import { useAuth } from "../../hooks/auth"
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
+import React, { useState } from "react"
 import { Link, useNavigate, useLocation } from "react-router-dom"
 import { PlaceholderImage } from "~/assets"
 
@@ -12,52 +10,105 @@ export function AdminHeader() {
   const navigate = useNavigate()
   const location = useLocation()
   const locale = location.pathname.split('/')[1] || 'en'
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
 
   const handleSignOut = () => {
     signOut()
     navigate(`/${locale}/login`)
+    setAnchorEl(null)
+  }
+
+  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleMenuClose = () => {
+    setAnchorEl(null)
   }
 
   return (
-    <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
-      <SidebarTrigger className="-ml-1" />
-      <div className="ml-auto flex items-center gap-4">
-        <Button variant="ghost" size="icon">
-          <Bell className="h-4 w-4" />
-        </Button>
+    <AppBar position="static" color="default" elevation={1}>
+      <Toolbar sx={{ minHeight: '64px' }}>
+        <IconButton
+          edge="start"
+          color="inherit"
+          aria-label="menu"
+          sx={{ mr: 2 }}
+        >
+          <MenuIcon size={20} />
+        </IconButton>
+        
+        <Box sx={{ flexGrow: 1 }} />
+        
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <IconButton color="inherit">
+            <Bell size={20} />
+          </IconButton>
 
-        {user && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="flex items-center gap-2 px-2">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src={user.avatar || PlaceholderImage} alt={user.name} />
-                  <AvatarFallback>{user.name.charAt(0)}</AvatarFallback>
+          {user && (
+            <>
+              <IconButton
+                onClick={handleMenuClick}
+                sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 1 }}
+              >
+                <Avatar 
+                  src={user.avatar || PlaceholderImage} 
+                  alt={user.name}
+                  sx={{ width: 32, height: 32 }}
+                >
+                  {user.name.charAt(0)}
                 </Avatar>
-                <span className="hidden md:inline-block">{user.name}</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem asChild>
-                <Link to={`/${locale}/profile`}>
-                  <User className="mr-2 h-4 w-4" />
+                <Typography 
+                  variant="body2" 
+                  sx={{ display: { xs: 'none', md: 'block' }, ml: 1 }}
+                >
+                  {user.name}
+                </Typography>
+              </IconButton>
+              
+              <Menu
+                anchorEl={anchorEl}
+                open={Boolean(anchorEl)}
+                onClose={handleMenuClose}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+              >
+                <MenuItem 
+                  component={Link} 
+                  to={`/${locale}/profile`}
+                  onClick={handleMenuClose}
+                  sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                >
+                  <User size={16} />
                   Profile
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to={`/${locale}/profile/settings`}>
-                  <User className="mr-2 h-4 w-4" />
+                </MenuItem>
+                <MenuItem 
+                  component={Link} 
+                  to={`/${locale}/profile/settings`}
+                  onClick={handleMenuClose}
+                  sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                >
+                  <User size={16} />
                   Settings
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={handleSignOut}>
-                <LogOut className="mr-2 h-4 w-4" />
-                Sign out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
-      </div>
-    </header>
+                </MenuItem>
+                <MenuItem 
+                  onClick={handleSignOut}
+                  sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+                >
+                  <LogOut size={16} />
+                  Sign out
+                </MenuItem>
+              </Menu>
+            </>
+          )}
+        </Box>
+      </Toolbar>
+    </AppBar>
   )
 }

@@ -1,45 +1,62 @@
 
 
-import { Button } from "../ui/button"
-import { Input } from "../ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
+import { Button, TextField, Select, MenuItem, FormControl, InputLabel, InputAdornment, Box } from "@mui/material"
+import { useState } from "react"
 import { Search, Filter } from "lucide-react"
 
 export function PropertyFilters() {
+  const [category, setCategory] = useState('all');
+  const [status, setStatus] = useState('all');
+
   return (
-    <div className="flex flex-col sm:flex-row gap-4">
-      <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-        <Input placeholder="Search properties..." className="pl-10" />
-      </div>
-      <Select>
-        <SelectTrigger className="w-full sm:w-[180px]">
-          <SelectValue placeholder="Category" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All Categories</SelectItem>
-          <SelectItem value="electronics">Electronics</SelectItem>
-          <SelectItem value="sports">Sports</SelectItem>
-          <SelectItem value="tools">Tools</SelectItem>
-          <SelectItem value="vehicles">Vehicles</SelectItem>
-        </SelectContent>
-      </Select>
-      <Select>
-        <SelectTrigger className="w-full sm:w-[180px]">
-          <SelectValue placeholder="Status" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All Status</SelectItem>
-          <SelectItem value="active">Active</SelectItem>
-          <SelectItem value="pending">Pending</SelectItem>
-          <SelectItem value="flagged">Flagged</SelectItem>
-          <SelectItem value="rejected">Rejected</SelectItem>
-        </SelectContent>
-      </Select>
-      <Button variant="outline">
-        <Filter className="mr-2 h-4 w-4" />
+    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2 }}>
+      <TextField
+        placeholder="Search properties..."
+        variant="outlined"
+        size="small"
+        sx={{ flex: 1 }}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <Search size={16} />
+            </InputAdornment>
+          ),
+        }}
+      />
+      
+      <FormControl size="small" sx={{ width: { xs: '100%', sm: 180 } }}>
+        <InputLabel>Category</InputLabel>
+        <Select
+          value={category}
+          label="Category"
+          onChange={(e) => setCategory(e.target.value)}
+        >
+          <MenuItem value="all">All Categories</MenuItem>
+          <MenuItem value="electronics">Electronics</MenuItem>
+          <MenuItem value="sports">Sports</MenuItem>
+          <MenuItem value="tools">Tools</MenuItem>
+          <MenuItem value="vehicles">Vehicles</MenuItem>
+        </Select>
+      </FormControl>
+      
+      <FormControl size="small" sx={{ width: { xs: '100%', sm: 180 } }}>
+        <InputLabel>Status</InputLabel>
+        <Select
+          value={status}
+          label="Status"
+          onChange={(e) => setStatus(e.target.value)}
+        >
+          <MenuItem value="all">All Status</MenuItem>
+          <MenuItem value="active">Active</MenuItem>
+          <MenuItem value="pending">Pending</MenuItem>
+          <MenuItem value="flagged">Flagged</MenuItem>
+          <MenuItem value="rejected">Rejected</MenuItem>
+        </Select>
+      </FormControl>
+      
+      <Button variant="outlined" startIcon={<Filter size={16} />}>
         More Filters
       </Button>
-    </div>
+    </Box>
   )
 }

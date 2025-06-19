@@ -1,252 +1,238 @@
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { Button } from "../components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { Badge } from "../components/ui/badge";
-import { Avatar, AvatarFallback } from "../components/ui/avatar";
+import { Button, Card, CardContent, CardHeader, Avatar, Chip, Typography, Box, Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText, IconButton } from "@mui/material";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { Tab } from "@mui/material";
+import { useState } from "react";
 import { ArrowLeft, Edit, Trash2, Ban, CheckCircle } from "lucide-react";
 import { mockUsers } from "../lib/mock-data";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "../components/ui/alert-dialog";
 
 export default function UserDetailsPage() {
   const navigate = useNavigate();
   const { id, locale } = useParams();
   const user = mockUsers.find((u) => u.id === id) || mockUsers[0];
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [activeTab, setActiveTab] = useState("activity");
 
   const handleDelete = () => {
+    setShowDeleteDialog(false);
     navigate(`/${locale}/users`);
   };
 
+
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" onClick={() => navigate(`/${locale}/users`)}>
-            <ArrowLeft className="h-4 w-4" />
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { sm: 'center' }, justifyContent: { sm: 'space-between' }, gap: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <IconButton onClick={() => navigate(`/${locale}/users`)}>
+            <ArrowLeft size={20} />
+          </IconButton>
+          <Box>
+            <Typography variant="h4" fontWeight="bold">{user?.name}</Typography>
+            <Typography variant="body2" color="text.secondary">User details and management.</Typography>
+          </Box>
+        </Box>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button variant="outlined" component={Link} to={`/${locale}/users/${id}/edit`} startIcon={<Edit size={16} />}>
+            Edit User
           </Button>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">{user?.name}</h1>
-            <p className="text-muted-foreground">User details and management.</p>
-          </div>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline" asChild>
-            <Link to={`/${locale}/users/${id}/edit`}>
-              <Edit className="mr-2 h-4 w-4" />
-              Edit User
-            </Link>
+          <Button color="error" onClick={() => setShowDeleteDialog(true)} startIcon={<Trash2 size={16} />}>
+            Delete User
           </Button>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="destructive">
-                <Trash2 className="mr-2 h-4 w-4" />
-                Delete User
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete the user account and all associated data.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground">
-                  Delete
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
-      </div>
+        </Box>
+      </Box>
 
-      <div className="grid gap-6 md:grid-cols-[1fr_2fr]">
+      <Box sx={{ display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: '1fr 2fr' } }}>
         <Card>
-          <CardContent className="pt-6">
-            <div className="flex flex-col items-center text-center mb-6">
-              <Avatar className="h-24 w-24 mb-4">
-                <AvatarFallback>
-                  {user?.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")}
-                </AvatarFallback>
+          <CardContent sx={{ pt: 3 }}>
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', mb: 3 }}>
+              <Avatar sx={{ width: 96, height: 96, mb: 2 }}>
+                {user?.name
+                  .split(" ")
+                  .map((n) => n[0])
+                  .join("")}
               </Avatar>
-              <h2 className="text-xl font-semibold">{user?.name}</h2>
-              <p className="text-muted-foreground mb-2">{user?.email}</p>
-              <Badge variant={user?.type === "lender" ? "default" : "secondary"} className="mb-2">
-                {user?.type}
-              </Badge>
-              <Badge variant={user?.isActive ? "outline" : "destructive"}>{user?.isActive ? "Active" : "Inactive"}</Badge>
-            </div>
+              <Typography variant="h5" fontWeight="600">{user?.name}</Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>{user?.email}</Typography>
+              <Chip 
+                label={user?.type} 
+                color={user?.type === "lender" ? "primary" : "secondary"} 
+                sx={{ mb: 1 }}
+              />
+              <Chip 
+                label={user?.isActive ? "Active" : "Inactive"} 
+                color={user?.isActive ? "success" : "error"}
+              />
+            </Box>
 
-            <div className="space-y-4">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Phone:</span>
-                <span>{user?.phoneNumber}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Joined:</span>
-                <span>{new Date(user?.joinedAt || '').toLocaleDateString()}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">Activity:</span>
-                <span>
+            <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Typography variant="body2" color="text.secondary">Phone:</Typography>
+                <Typography variant="body2">{user?.phoneNumber}</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Typography variant="body2" color="text.secondary">Joined:</Typography>
+                <Typography variant="body2">{new Date(user?.joinedAt || '').toLocaleDateString()}</Typography>
+              </Box>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+                <Typography variant="body2" color="text.secondary">Activity:</Typography>
+                <Typography variant="body2">
                   {user?.totalRentals && `${user?.totalRentals} rentals`}
                   {user?.totalListings && `${user?.totalListings} listings`}
-                </span>
-              </div>
-            </div>
+                </Typography>
+              </Box>
+            </Box>
 
-            <div className="mt-6 space-y-2">
+            <Box sx={{ mt: 3, display: 'flex', flexDirection: 'column', gap: 1 }}>
               {user?.isActive ? (
-                <Button variant="outline" className="w-full">
-                  <Ban className="mr-2 h-4 w-4" />
+                <Button variant="outlined" fullWidth startIcon={<Ban size={16} />}>
                   Deactivate Account
                 </Button>
               ) : (
-                <Button variant="outline" className="w-full">
-                  <CheckCircle className="mr-2 h-4 w-4" />
+                <Button variant="outlined" fullWidth startIcon={<CheckCircle size={16} />}>
                   Activate Account
                 </Button>
               )}
-              <Button variant="outline" className="w-full">
+              <Button variant="outlined" fullWidth>
                 Reset Password
               </Button>
-            </div>
+            </Box>
           </CardContent>
         </Card>
 
-        <div className="space-y-6">
-          <Tabs defaultValue="activity" className="space-y-4">
-            <TabsList>
-              <TabsTrigger value="activity">Activity</TabsTrigger>
-              <TabsTrigger value="rentals">Rentals</TabsTrigger>
-              <TabsTrigger value="listings">Listings</TabsTrigger>
-              <TabsTrigger value="reports">Reports</TabsTrigger>
-            </TabsList>
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+          <TabContext value={activeTab}>
+            <TabList onChange={(e, newValue) => setActiveTab(newValue)}>
+              <Tab label="Activity" value="activity" />
+              <Tab label="Rentals" value="rentals" />
+              <Tab label="Listings" value="listings" />
+              <Tab label="Reports" value="reports" />
+            </TabList>
 
-            <TabsContent value="activity" className="space-y-4">
+            <TabPanel value="activity">
               <Card>
-                <CardHeader>
-                  <CardTitle>Recent Activity</CardTitle>
-                  <CardDescription>User's recent actions on the platform.</CardDescription>
-                </CardHeader>
+                <CardHeader
+                  title="Recent Activity"
+                  subheader="User's recent actions on the platform."
+                />
                 <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="font-medium">Booked a rental</p>
-                        <p className="text-sm text-muted-foreground">Professional Camera Kit</p>
-                      </div>
-                      <p className="text-sm text-muted-foreground">2 days ago</p>
-                    </div>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="font-medium">Updated profile</p>
-                        <p className="text-sm text-muted-foreground">Changed phone number</p>
-                      </div>
-                      <p className="text-sm text-muted-foreground">1 week ago</p>
-                    </div>
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="font-medium">Completed rental</p>
-                        <p className="text-sm text-muted-foreground">Power Drill Set</p>
-                      </div>
-                      <p className="text-sm text-muted-foreground">2 weeks ago</p>
-                    </div>
-                  </div>
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <Box>
+                        <Typography variant="body2" fontWeight="medium">Booked a rental</Typography>
+                        <Typography variant="caption" color="text.secondary">Professional Camera Kit</Typography>
+                      </Box>
+                      <Typography variant="caption" color="text.secondary">2 days ago</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <Box>
+                        <Typography variant="body2" fontWeight="medium">Updated profile</Typography>
+                        <Typography variant="caption" color="text.secondary">Changed phone number</Typography>
+                      </Box>
+                      <Typography variant="caption" color="text.secondary">1 week ago</Typography>
+                    </Box>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <Box>
+                        <Typography variant="body2" fontWeight="medium">Completed rental</Typography>
+                        <Typography variant="caption" color="text.secondary">Power Drill Set</Typography>
+                      </Box>
+                      <Typography variant="caption" color="text.secondary">2 weeks ago</Typography>
+                    </Box>
+                  </Box>
                 </CardContent>
               </Card>
-            </TabsContent>
+            </TabPanel>
 
-            <TabsContent value="rentals">
+            <TabPanel value="rentals">
               <Card>
-                <CardHeader>
-                  <CardTitle>Rental History</CardTitle>
-                  <CardDescription>Items rented by this user.</CardDescription>
-                </CardHeader>
+                <CardHeader
+                  title="Rental History"
+                  subheader="Items rented by this user."
+                />
                 <CardContent>
                   {user?.type === "lendee" ? (
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-medium">Professional Camera Kit</p>
-                          <p className="text-sm text-muted-foreground">Mar 15, 2024 - Mar 20, 2024</p>
-                        </div>
-                        <Badge>Active</Badge>
-                      </div>
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-medium">Power Drill Set</p>
-                          <p className="text-sm text-muted-foreground">Feb 20, 2024 - Feb 25, 2024</p>
-                        </div>
-                        <Badge variant="secondary">Completed</Badge>
-                      </div>
-                    </div>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <Box>
+                          <Typography variant="body2" fontWeight="medium">Professional Camera Kit</Typography>
+                          <Typography variant="caption" color="text.secondary">Mar 15, 2024 - Mar 20, 2024</Typography>
+                        </Box>
+                        <Chip label="Active" color="success" size="small" />
+                      </Box>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <Box>
+                          <Typography variant="body2" fontWeight="medium">Power Drill Set</Typography>
+                          <Typography variant="caption" color="text.secondary">Feb 20, 2024 - Feb 25, 2024</Typography>
+                        </Box>
+                        <Chip label="Completed" color="default" size="small" />
+                      </Box>
+                    </Box>
                   ) : (
-                    <p className="text-muted-foreground">This user is a lender and does not rent items.</p>
+                    <Typography variant="body2" color="text.secondary">This user is a lender and does not rent items.</Typography>
                   )}
                 </CardContent>
               </Card>
-            </TabsContent>
+            </TabPanel>
 
-            <TabsContent value="listings">
+            <TabPanel value="listings">
               <Card>
-                <CardHeader>
-                  <CardTitle>Listed Properties</CardTitle>
-                  <CardDescription>Items listed by this user.</CardDescription>
-                </CardHeader>
+                <CardHeader
+                  title="Listed Properties"
+                  subheader="Items listed by this user."
+                />
                 <CardContent>
                   {user?.type === "lender" ? (
-                    <div className="space-y-4">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-medium">Professional Camera Kit</p>
-                          <p className="text-sm text-muted-foreground">Listed on Feb 25, 2024</p>
-                        </div>
-                        <Badge>Active</Badge>
-                      </div>
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <p className="font-medium">Camping Gear Set</p>
-                          <p className="text-sm text-muted-foreground">Listed on Jan 10, 2024</p>
-                        </div>
-                        <Badge>Active</Badge>
-                      </div>
-                    </div>
+                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <Box>
+                          <Typography variant="body2" fontWeight="medium">Professional Camera Kit</Typography>
+                          <Typography variant="caption" color="text.secondary">Listed on Feb 25, 2024</Typography>
+                        </Box>
+                        <Chip label="Active" color="success" size="small" />
+                      </Box>
+                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <Box>
+                          <Typography variant="body2" fontWeight="medium">Camping Gear Set</Typography>
+                          <Typography variant="caption" color="text.secondary">Listed on Jan 10, 2024</Typography>
+                        </Box>
+                        <Chip label="Active" color="success" size="small" />
+                      </Box>
+                    </Box>
                   ) : (
-                    <p className="text-muted-foreground">This user is a lendee and does not list items.</p>
+                    <Typography variant="body2" color="text.secondary">This user is a lendee and does not list items.</Typography>
                   )}
                 </CardContent>
               </Card>
-            </TabsContent>
+            </TabPanel>
 
-            <TabsContent value="reports">
+            <TabPanel value="reports">
               <Card>
-                <CardHeader>
-                  <CardTitle>Reports</CardTitle>
-                  <CardDescription>Reports involving this user.</CardDescription>
-                </CardHeader>
+                <CardHeader
+                  title="Reports"
+                  subheader="Reports involving this user."
+                />
                 <CardContent>
-                  <p className="text-muted-foreground">No reports found for this user.</p>
+                  <Typography variant="body2" color="text.secondary">No reports found for this user.</Typography>
                 </CardContent>
               </Card>
-            </TabsContent>
-          </Tabs>
-        </div>
-      </div>
-    </div>
+            </TabPanel>
+          </TabContext>
+        </Box>
+      </Box>
+      
+      <Dialog open={showDeleteDialog} onClose={() => setShowDeleteDialog(false)}>
+        <DialogTitle>Are you absolutely sure?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            This action cannot be undone. This will permanently delete the user account and all associated data.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowDeleteDialog(false)}>Cancel</Button>
+          <Button onClick={handleDelete} color="error" variant="contained">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
   );
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { PropertyCard } from "../../components/ui/property-card";
+import { Card, CardContent, CardMedia, Typography, Button, Box, Grid, Skeleton } from "@mui/material";
 import type { Product, ProductVariant } from "../../lib/types";
 import { PlusIcon, BuildingOfficeIcon } from "@heroicons/react/24/outline";
 

@@ -1,67 +1,80 @@
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
+import { Card, CardContent, CardHeader, Tabs, Tab, Box, Typography } from "@mui/material";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { useState } from "react";
 import { SettingsForm } from "../components/admin/settings-form";
 
 export default function SettingsPage() {
+  const [currentTab, setCurrentTab] = useState('general');
+
+  const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
+    setCurrentTab(newValue);
+  };
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">System Settings</h1>
-        <p className="text-muted-foreground">Configure platform-wide settings and preferences.</p>
-      </div>
+    <Box sx={{ py: 3 }}>
+      <Box sx={{ mb: 3 }}>
+        <Typography variant="h3" component="h1" gutterBottom>
+          System Settings
+        </Typography>
+        <Typography variant="body1" color="text.secondary">
+          Configure platform-wide settings and preferences.
+        </Typography>
+      </Box>
 
-      <Tabs defaultValue="general" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="general">General</TabsTrigger>
-          <TabsTrigger value="payments">Payments</TabsTrigger>
-          <TabsTrigger value="notifications">Notifications</TabsTrigger>
-          <TabsTrigger value="security">Security</TabsTrigger>
-        </TabsList>
+      <TabContext value={currentTab}>
+        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <TabList onChange={handleTabChange} aria-label="settings tabs">
+            <Tab label="General" value="general" />
+            <Tab label="Payments" value="payments" />
+            <Tab label="Notifications" value="notifications" />
+            <Tab label="Security" value="security" />
+          </TabList>
+        </Box>
 
-        <TabsContent value="general">
+        <TabPanel value="general">
           <Card>
-            <CardHeader>
-              <CardTitle>General Settings</CardTitle>
-            </CardHeader>
+            <CardHeader 
+              title="General Settings"
+            />
             <CardContent>
               <SettingsForm type="general" />
             </CardContent>
           </Card>
-        </TabsContent>
+        </TabPanel>
 
-        <TabsContent value="payments">
+        <TabPanel value="payments">
           <Card>
-            <CardHeader>
-              <CardTitle>Payment Settings</CardTitle>
-            </CardHeader>
+            <CardHeader 
+              title="Payment Settings"
+            />
             <CardContent>
               <SettingsForm type="payments" />
             </CardContent>
           </Card>
-        </TabsContent>
+        </TabPanel>
 
-        <TabsContent value="notifications">
+        <TabPanel value="notifications">
           <Card>
-            <CardHeader>
-              <CardTitle>Notification Settings</CardTitle>
-            </CardHeader>
+            <CardHeader 
+              title="Notification Settings"
+            />
             <CardContent>
               <SettingsForm type="notifications" />
             </CardContent>
           </Card>
-        </TabsContent>
+        </TabPanel>
 
-        <TabsContent value="security">
+        <TabPanel value="security">
           <Card>
-            <CardHeader>
-              <CardTitle>Security Settings</CardTitle>
-            </CardHeader>
+            <CardHeader 
+              title="Security Settings"
+            />
             <CardContent>
               <SettingsForm type="security" />
             </CardContent>
           </Card>
-        </TabsContent>
-      </Tabs>
-    </div>
+        </TabPanel>
+      </TabContext>
+    </Box>
   );
 }

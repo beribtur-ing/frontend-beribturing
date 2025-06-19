@@ -1,24 +1,29 @@
 import { BookingTable } from "../components/admin/booking-table";
 import { BookingFilters } from "../components/admin/booking-filters";
-import { Button } from "../components/ui/button";
+import { Button, Typography, Box } from "@mui/material";
 import { Calendar } from "lucide-react";
 
 export default function BookingsPage() {
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Booking Management</h1>
-          <p className="text-muted-foreground">Monitor and manage all rental bookings across the platform.</p>
-        </div>
-        <Button>
-          <Calendar className="mr-2 h-4 w-4" />
+    <Box sx={{ py: 3 }}>
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { sm: 'center' }, justifyContent: 'space-between', gap: 2, mb: 3 }}>
+        <Box>
+          <Typography variant="h3" component="h1" gutterBottom>
+            Booking Management
+          </Typography>
+          <Typography variant="body1" color="text.secondary">
+            Monitor and manage all rental bookings across the platform.
+          </Typography>
+        </Box>
+        <Button variant="contained" startIcon={<Calendar size={16} />}>
           Export Bookings
         </Button>
-      </div>
+      </Box>
 
-      <BookingFilters />
+      <Box sx={{ mb: 3 }}>
+        <BookingFilters />
+      </Box>
       <BookingTable />
-    </div>
+    </Box>
   );
 }

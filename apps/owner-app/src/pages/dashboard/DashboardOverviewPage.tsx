@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { StatCard } from "../../components/ui/stat-card";
+import { Card, CardContent, Typography, Box, Grid, Skeleton } from "@mui/material";
 import type { DashboardStats } from "../../lib/types";
 import {
   BuildingOfficeIcon,

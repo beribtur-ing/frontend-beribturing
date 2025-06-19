@@ -1,44 +1,34 @@
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { Button } from "../components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
-import { Badge } from "../components/ui/badge";
+import { Button, Card, CardContent, CardHeader, Chip, Typography, Box, Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText, IconButton } from "@mui/material";
 import { ArrowLeft, Check, X, Calendar, DollarSign, Clock } from "lucide-react";
 import { mockBookings } from "../lib/mock-data";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "../components/ui/alert-dialog";
+import { useState } from "react";
 
 export default function BookingDetailsPage() {
   const navigate = useNavigate();
   const { id, locale } = useParams();
   const booking = mockBookings.find((b) => b.id === id) || mockBookings[0];
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
 
   const handleCancel = () => {
+    setShowCancelDialog(false);
     // In a real app, this would call an API to cancel the booking
     navigate(`/${locale}/bookings`);
   };
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" onClick={() => navigate(`/${locale}/bookings`)}>
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Booking #{booking?.id}</h1>
-            <p className="text-muted-foreground">Booking details and management.</p>
-          </div>
-        </div>
-        <div className="flex gap-2">
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { sm: 'center' }, justifyContent: { sm: 'space-between' }, gap: 2 }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <IconButton onClick={() => navigate(`/${locale}/bookings`)}>
+            <ArrowLeft size={20} />
+          </IconButton>
+          <Box>
+            <Typography variant="h4" fontWeight="bold">Booking #{booking?.id}</Typography>
+            <Typography variant="body2" color="text.secondary">Booking details and management.</Typography>
+          </Box>
+        </Box>
+        <Box sx={{ display: 'flex', gap: 1 }}>
           {booking?.status === "pending" && (
             <Button variant="default">
               <Check className="mr-2 h-4 w-4" />
@@ -46,57 +36,38 @@ export default function BookingDetailsPage() {
             </Button>
           )}
           {booking?.status !== "cancelled" && booking?.status !== "completed" && (
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button variant="destructive">
-                  <X className="mr-2 h-4 w-4" />
-                  Cancel Booking
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This will cancel the booking and notify both the lendee and lender.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>No, keep booking</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleCancel} className="bg-destructive text-destructive-foreground">
-                    Yes, cancel booking
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <Button color="error" onClick={() => setShowCancelDialog(true)} startIcon={<X size={16} />}>
+              Cancel Booking
+            </Button>
           )}
-        </div>
-      </div>
+        </Box>
+      </Box>
 
-      <div className="grid gap-6 md:grid-cols-2">
+      <Box sx={{ display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }}>
         <Card>
-          <CardHeader>
-            <CardTitle>Booking Information</CardTitle>
-            <CardDescription>Details about this booking.</CardDescription>
-          </CardHeader>
+          <CardHeader
+            title="Booking Information"
+            subheader="Details about this booking."
+          />
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Calendar className="h-4 w-4 text-muted-foreground" />
                 <span className="text-muted-foreground">Status:</span>
               </div>
-              <Badge
-                variant={
+              <Chip
+                label={booking?.status}
+                color={
                   booking?.status === "active"
-                    ? "default"
+                    ? "primary"
                     : booking?.status === "completed"
-                      ? "secondary"
+                      ? "success"
                       : booking?.status === "pending"
-                        ? "outline"
-                        : "destructive"
+                        ? "warning"
+                        : "error"
                 }
-              >
-                {booking?.status}
-              </Badge>
+                size="small"
+              />
             </div>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -130,10 +101,10 @@ export default function BookingDetailsPage() {
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle>Parties Involved</CardTitle>
-            <CardDescription>Users involved in this booking.</CardDescription>
-          </CardHeader>
+          <CardHeader
+            title="Parties Involved"
+            subheader="Users involved in this booking."
+          />
           <CardContent className="space-y-6">
             <div>
               <h3 className="text-lg font-medium mb-2">Property</h3>
@@ -170,7 +141,22 @@ export default function BookingDetailsPage() {
             </div>
           </CardContent>
         </Card>
-      </div>
-    </div>
+      </Box>
+      
+      <Dialog open={showCancelDialog} onClose={() => setShowCancelDialog(false)}>
+        <DialogTitle>Are you sure?</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            This will cancel the booking and notify both the lendee and lender.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowCancelDialog(false)}>No, keep booking</Button>
+          <Button onClick={handleCancel} color="error" variant="contained">
+            Yes, cancel booking
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Box>
   );
 }

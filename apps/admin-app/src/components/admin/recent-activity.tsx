@@ -1,6 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card"
-import { Badge } from "../ui/badge"
-import { Avatar, AvatarFallback } from "../ui/avatar"
+import { Card, CardContent, CardHeader, Chip, Avatar, Typography, Box, List, ListItem, ListItemAvatar, ListItemText } from "@mui/material"
 
 const recentActivities = [
   {
@@ -38,44 +36,60 @@ const recentActivities = [
 ]
 
 export function RecentActivity() {
+  const getChipColor = (type: string) => {
+    switch (type) {
+      case "rental":
+        return "primary";
+      case "listing":
+        return "secondary";
+      case "cancellation":
+        return "error";
+      default:
+        return "default";
+    }
+  };
+
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Recent Activity</CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {recentActivities.map((activity) => (
-          <div key={activity.id} className="flex items-center space-x-4">
-            <Avatar className="h-8 w-8">
-              <AvatarFallback>
-                {activity.user
-                  .split(" ")
-                  .map((n) => n[0])
-                  .join("")}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 space-y-1">
-              <p className="text-sm">
-                <span className="font-medium">{activity.user}</span> {activity.action}{" "}
-                <span className="font-medium">{activity.item}</span>
-              </p>
-              <p className="text-xs text-muted-foreground">{activity.time}</p>
-            </div>
-            <Badge
-              variant={
-                activity.type === "rental"
-                  ? "default"
-                  : activity.type === "listing"
-                    ? "secondary"
-                    : activity.type === "cancellation"
-                      ? "destructive"
-                      : "outline"
-              }
-            >
-              {activity.type}
-            </Badge>
-          </div>
-        ))}
+      <CardHeader title="Recent Activity" />
+      <CardContent>
+        <List>
+          {recentActivities.map((activity) => (
+            <ListItem key={activity.id} sx={{ px: 0 }}>
+              <ListItemAvatar>
+                <Avatar sx={{ width: 32, height: 32 }}>
+                  {activity.user
+                    .split(" ")
+                    .map((n) => n[0])
+                    .join("")}
+                </Avatar>
+              </ListItemAvatar>
+              <ListItemText
+                primary={
+                  <Typography variant="body2">
+                    <Typography component="span" fontWeight="medium">
+                      {activity.user}
+                    </Typography>{" "}
+                    {activity.action}{" "}
+                    <Typography component="span" fontWeight="medium">
+                      {activity.item}
+                    </Typography>
+                  </Typography>
+                }
+                secondary={
+                  <Typography variant="caption" color="text.secondary">
+                    {activity.time}
+                  </Typography>
+                }
+              />
+              <Chip
+                label={activity.type}
+                color={getChipColor(activity.type)}
+                size="small"
+              />
+            </ListItem>
+          ))}
+        </List>
       </CardContent>
     </Card>
   )
