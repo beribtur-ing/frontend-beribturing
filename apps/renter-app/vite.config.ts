@@ -1,6 +1,5 @@
 import react from '@vitejs/plugin-react';
-// @ts-ignore
-import {defineConfig} from 'vite';
+import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import path from 'path';
 
@@ -11,36 +10,27 @@ export default defineConfig({
   },
   plugins: [
     tsconfigPaths(),
-    react({
-      include: [/\.tsx?$/, /\.jsx?$/, /\.css$/],
-    }),
+    react(),
   ],
   build: {
-    rollupOptions: {
-      external: (id) => {
-        return id.startsWith('lodash/') ||
-               ['@hookform/resolvers', '@remix-run/router', '@tanstack/query-core', '@tanstack/react-query', 'react-router', 'react-router-dom', 'react-i18next', 'i18next', 'recharts', 'embla-carousel-react', 'use-sync-external-store', 'lucide-react'].includes(id);
-      }
-    }
+    sourcemap: false,
+    commonjsOptions: {
+      include: [/node_modules/],
+    },
   },
   resolve: {
     preserveSymlinks: true,
-    alias: [
-      {
-        find: '@beribturing/api-stub',
-        replacement: path.resolve(__dirname, '../../packages/api-stub/src'),
-      },
-      {
-        find: '@assets',
-        replacement: path.resolve(__dirname, 'public'),
-      },
-    ],
+    alias: {
+      '@beribturing/api-stub': path.resolve(__dirname, '../../packages/api-stub/src'),
+      '@assets': path.resolve(__dirname, './public'),
+      '~': path.resolve(__dirname, './src'),
+      '@': path.resolve(__dirname, './src'),
+    },
   },
   server: {
-    port: 3003,
+    port: 3000,
     proxy: {
       '/api': {
-        // target: 'http://localhost:8888',
         target: 'http://206.189.55.6:8080',
         rewrite: (path) => path.replace('/api', '/'),
         changeOrigin: true,
@@ -51,4 +41,23 @@ export default defineConfig({
     },
   },
   base: '/renter',
+  esbuild: {
+    logOverride: { 
+      'this-is-undefined-in-esm': 'silent',
+      'direct-eval': 'silent'
+    },
+  },
+  optimizeDeps: {
+    include: [
+      '@mui/material',
+      '@mui/icons-material',
+      '@emotion/react',
+      '@emotion/styled',
+      'react',
+      'react-dom',
+      'i18next',
+      'react-i18next',
+      'html-parse-stringify'
+    ],
+  },
 });

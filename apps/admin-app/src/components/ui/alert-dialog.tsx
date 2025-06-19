@@ -1,130 +1,107 @@
 
 
 import * as React from "react"
-import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
+import { Dialog, DialogTitle, DialogContent, DialogActions, Box, Button } from "@mui/material"
+import { styled } from "@mui/material/styles"
 
-import { cn } from "../../lib/utils"
-import { buttonVariants } from "./button"
+const StyledAlertDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialog-paper': {
+    borderRadius: '8px',
+    maxWidth: '512px',
+    width: '100%',
+    margin: '16px',
+  },
+}))
 
-const AlertDialog = AlertDialogPrimitive.Root
+const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
+  padding: '24px',
+}))
 
-const AlertDialogTrigger = AlertDialogPrimitive.Trigger
+export interface AlertDialogProps {
+  open?: boolean
+  onOpenChange?: (open: boolean) => void
+  children: React.ReactNode
+}
 
-const AlertDialogPortal = AlertDialogPrimitive.Portal
+const AlertDialog = ({ open, onOpenChange, children }: AlertDialogProps) => {
+  const handleClose = () => {
+    onOpenChange?.(false)
+  }
 
-const AlertDialogOverlay = React.forwardRef<
-  React.ElementRef<typeof AlertDialogPrimitive.Overlay>,
-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Overlay>
->(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.Overlay
-    className={cn(
-      "fixed inset-0 z-50 bg-black/80  data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0",
-      className
-    )}
-    {...props}
-    ref={ref}
-  />
+  return (
+    <StyledAlertDialog
+      open={open || false}
+      onClose={handleClose}
+      maxWidth={false}
+    >
+      {children}
+    </StyledAlertDialog>
+  )
+}
+
+const AlertDialogTrigger = React.forwardRef<HTMLElement, { children: React.ReactElement; asChild?: boolean }>(({ children, asChild }, ref) => {
+  if (asChild && React.isValidElement(children)) {
+    return React.cloneElement(children, { ref })
+  }
+  return children
+})
+AlertDialogTrigger.displayName = "AlertDialogTrigger"
+
+const AlertDialogPortal = ({ children }: { children: React.ReactNode }) => <>{children}</>
+
+const AlertDialogOverlay = React.forwardRef<HTMLDivElement, { className?: string }>(({ className }, ref) => (
+  <div ref={ref} className={className} />
 ))
-AlertDialogOverlay.displayName = AlertDialogPrimitive.Overlay.displayName
+AlertDialogOverlay.displayName = "AlertDialogOverlay"
 
-const AlertDialogContent = React.forwardRef<
-  React.ElementRef<typeof AlertDialogPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Content>
->(({ className, ...props }, ref) => (
-  <AlertDialogPortal>
-    <AlertDialogOverlay />
-    <AlertDialogPrimitive.Content
-      ref={ref}
-      className={cn(
-        "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-background p-6 shadow-lg duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-lg",
-        className
-      )}
-      {...props}
-    />
-  </AlertDialogPortal>
+const AlertDialogContent = React.forwardRef<HTMLDivElement, { children: React.ReactNode; className?: string }>(({ children, className }, ref) => (
+  <StyledDialogContent ref={ref} className={className}>
+    {children}
+  </StyledDialogContent>
 ))
-AlertDialogContent.displayName = AlertDialogPrimitive.Content.displayName
+AlertDialogContent.displayName = "AlertDialogContent"
 
-const AlertDialogHeader = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn(
-      "flex flex-col space-y-2 text-center sm:text-left",
-      className
-    )}
-    {...props}
-  />
-)
+const AlertDialogHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, children, ...props }, ref) => (
+  <Box ref={ref} className={className} sx={{ display: 'flex', flexDirection: 'column', gap: 2, textAlign: { xs: 'center', sm: 'left' } }} {...props}>
+    {children}
+  </Box>
+))
 AlertDialogHeader.displayName = "AlertDialogHeader"
 
-const AlertDialogFooter = ({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <div
-    className={cn(
-      "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2",
-      className
-    )}
-    {...props}
-  />
-)
+const AlertDialogFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, children, ...props }, ref) => (
+  <DialogActions ref={ref} className={className} sx={{ flexDirection: { xs: 'column-reverse', sm: 'row' }, gap: 1, marginTop: 2 }} {...props}>
+    {children}
+  </DialogActions>
+))
 AlertDialogFooter.displayName = "AlertDialogFooter"
 
-const AlertDialogTitle = React.forwardRef<
-  React.ElementRef<typeof AlertDialogPrimitive.Title>,
-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Title>
->(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.Title
-    ref={ref}
-    className={cn("text-lg font-semibold", className)}
-    {...props}
-  />
+const AlertDialogTitle = React.forwardRef<HTMLHeadingElement, { children: React.ReactNode; className?: string }>(({ children, className }, ref) => (
+  <DialogTitle ref={ref} className={className} sx={{ fontSize: '18px', fontWeight: 600, padding: 0 }}>
+    {children}
+  </DialogTitle>
 ))
-AlertDialogTitle.displayName = AlertDialogPrimitive.Title.displayName
+AlertDialogTitle.displayName = "AlertDialogTitle"
 
-const AlertDialogDescription = React.forwardRef<
-  React.ElementRef<typeof AlertDialogPrimitive.Description>,
-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Description>
->(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.Description
-    ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
-    {...props}
-  />
+const AlertDialogDescription = React.forwardRef<HTMLParagraphElement, { children: React.ReactNode; className?: string }>(({ children, className }, ref) => (
+  <Box ref={ref} component="p" className={className} sx={{ fontSize: '14px', color: 'text.secondary', margin: 0 }}>
+    {children}
+  </Box>
 ))
-AlertDialogDescription.displayName =
-  AlertDialogPrimitive.Description.displayName
+AlertDialogDescription.displayName = "AlertDialogDescription"
 
-const AlertDialogAction = React.forwardRef<
-  React.ElementRef<typeof AlertDialogPrimitive.Action>,
-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Action>
->(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.Action
-    ref={ref}
-    className={cn(buttonVariants(), className)}
-    {...props}
-  />
+const AlertDialogAction = React.forwardRef<HTMLButtonElement, { children: React.ReactNode; className?: string; onClick?: () => void }>(({ children, className, onClick }, ref) => (
+  <Button ref={ref} className={className} variant="contained" onClick={onClick}>
+    {children}
+  </Button>
 ))
-AlertDialogAction.displayName = AlertDialogPrimitive.Action.displayName
+AlertDialogAction.displayName = "AlertDialogAction"
 
-const AlertDialogCancel = React.forwardRef<
-  React.ElementRef<typeof AlertDialogPrimitive.Cancel>,
-  React.ComponentPropsWithoutRef<typeof AlertDialogPrimitive.Cancel>
->(({ className, ...props }, ref) => (
-  <AlertDialogPrimitive.Cancel
-    ref={ref}
-    className={cn(
-      buttonVariants({ variant: "outline" }),
-      "mt-2 sm:mt-0",
-      className
-    )}
-    {...props}
-  />
+const AlertDialogCancel = React.forwardRef<HTMLButtonElement, { children: React.ReactNode; className?: string; onClick?: () => void }>(({ children, className, onClick }, ref) => (
+  <Button ref={ref} className={className} variant="outlined" onClick={onClick}>
+    {children}
+  </Button>
 ))
-AlertDialogCancel.displayName = AlertDialogPrimitive.Cancel.displayName
+AlertDialogCancel.displayName = "AlertDialogCancel"
 
 export {
   AlertDialog,

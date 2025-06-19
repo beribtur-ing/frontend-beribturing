@@ -1,43 +1,66 @@
 
 import * as React from "react"
-import * as RadioGroupPrimitive from "@radix-ui/react-radio-group"
+import {
+  RadioGroup as MuiRadioGroup,
+  FormControlLabel,
+  Radio,
+} from "@mui/material"
 import {Circle} from "lucide-react"
 
 import {cn} from "../../lib/utils"
 
+interface RadioGroupProps {
+  value?: string
+  onValueChange?: (value: string) => void
+  defaultValue?: string
+  className?: string
+  children: React.ReactNode
+}
+
 const RadioGroup = React.forwardRef<
-  React.ElementRef<typeof RadioGroupPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>
->(({ className, ...props }, ref) => {
+  HTMLDivElement,
+  RadioGroupProps
+>(({ className, value, onValueChange, defaultValue, children, ...props }, ref) => {
   return (
-    <RadioGroupPrimitive.Root
+    <MuiRadioGroup
+      ref={ref}
+      value={value}
+      onChange={(e) => onValueChange?.(e.target.value)}
+      defaultValue={defaultValue}
       className={cn("grid gap-2", className)}
       {...props}
-      ref={ref}
-    />
+    >
+      {children}
+    </MuiRadioGroup>
   )
 })
-RadioGroup.displayName = RadioGroupPrimitive.Root.displayName
+RadioGroup.displayName = "RadioGroup"
+
+interface RadioGroupItemProps {
+  value: string
+  id?: string
+  className?: string
+  disabled?: boolean
+}
 
 const RadioGroupItem = React.forwardRef<
-  React.ElementRef<typeof RadioGroupPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Item>
->(({ className, ...props }, ref) => {
+  HTMLButtonElement,
+  RadioGroupItemProps
+>(({ className, value, ...props }, ref) => {
   return (
-    <RadioGroupPrimitive.Item
+    <Radio
       ref={ref}
+      value={value}
       className={cn(
         "aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
+      icon={<Circle className="h-2.5 w-2.5" />}
+      checkedIcon={<Circle className="h-2.5 w-2.5 fill-current text-current" />}
       {...props}
-    >
-      <RadioGroupPrimitive.Indicator className="flex items-center justify-center">
-        <Circle className="h-2.5 w-2.5 fill-current text-current" />
-      </RadioGroupPrimitive.Indicator>
-    </RadioGroupPrimitive.Item>
+    />
   )
 })
-RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName
+RadioGroupItem.displayName = "RadioGroupItem"
 
 export { RadioGroup, RadioGroupItem }

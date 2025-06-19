@@ -1,47 +1,72 @@
-
 import * as React from "react"
-import * as ScrollAreaPrimitive from "@radix-ui/react-scroll-area"
+import { Box, BoxProps } from "@mui/material"
+import { styled } from "@mui/material/styles"
 
-import {cn} from "../../lib/utils"
+import { cn } from "../../lib/utils"
 
-const ScrollArea = React.forwardRef<
-  React.ElementRef<typeof ScrollAreaPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root>
->(({ className, children, ...props }, ref) => (
-  <ScrollAreaPrimitive.Root
-    ref={ref}
-    className={cn("relative overflow-hidden", className)}
-    {...props}
-  >
-    <ScrollAreaPrimitive.Viewport className="h-full w-full rounded-[inherit]">
-      {children}
-    </ScrollAreaPrimitive.Viewport>
-    <ScrollBar />
-    <ScrollAreaPrimitive.Corner />
-  </ScrollAreaPrimitive.Root>
+const StyledScrollBox = styled(Box)(({ theme }) => ({
+  position: 'relative',
+  overflow: 'auto',
+  '&::-webkit-scrollbar': {
+    width: '10px',
+    height: '10px',
+  },
+  '&::-webkit-scrollbar-track': {
+    background: 'transparent',
+    borderRadius: '4px',
+  },
+  '&::-webkit-scrollbar-thumb': {
+    background: theme.palette.divider,
+    borderRadius: '4px',
+    border: `1px solid transparent`,
+    backgroundClip: 'padding-box',
+  },
+  '&::-webkit-scrollbar-thumb:hover': {
+    background: theme.palette.action.hover,
+  },
+  '&::-webkit-scrollbar-corner': {
+    background: 'transparent',
+  },
+}))
+
+interface ScrollAreaProps extends BoxProps {
+  orientation?: 'vertical' | 'horizontal' | 'both'
+}
+
+const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
+  ({ className, children, orientation = 'vertical', ...props }, ref) => {
+    const overflowStyle = React.useMemo(() => {
+      switch (orientation) {
+        case 'horizontal':
+          return { overflowX: 'auto' as const, overflowY: 'hidden' as const }
+        case 'both':
+          return { overflow: 'auto' as const }
+        default:
+          return { overflowY: 'auto' as const, overflowX: 'hidden' as const }
+      }
+    }, [orientation])
+
+    return (
+      <StyledScrollBox
+        ref={ref}
+        className={cn("rounded-[inherit]", className)}
+        sx={overflowStyle}
+        {...props}
+      >
+        {children}
+      </StyledScrollBox>
+    )
+  }
+)
+ScrollArea.displayName = "ScrollArea"
+
+// Compatibility component - not needed with CSS scrollbars but kept for API compatibility
+const ScrollBar = React.forwardRef<HTMLDivElement, {
+  className?: string
+  orientation?: 'vertical' | 'horizontal'
+}>(({ className, orientation = "vertical" }, ref) => (
+  <div ref={ref} className={className} style={{ display: 'none' }} />
 ))
-ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName
-
-const ScrollBar = React.forwardRef<
-  React.ElementRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>,
-  React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>
->(({ className, orientation = "vertical", ...props }, ref) => (
-  <ScrollAreaPrimitive.ScrollAreaScrollbar
-    ref={ref}
-    orientation={orientation}
-    className={cn(
-      "flex touch-none select-none transition-colors",
-      orientation === "vertical" &&
-        "h-full w-2.5 border-l border-l-transparent p-[1px]",
-      orientation === "horizontal" &&
-        "h-2.5 flex-col border-t border-t-transparent p-[1px]",
-      className
-    )}
-    {...props}
-  >
-    <ScrollAreaPrimitive.ScrollAreaThumb className="relative flex-1 rounded-full bg-border" />
-  </ScrollAreaPrimitive.ScrollAreaScrollbar>
-))
-ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName
+ScrollBar.displayName = "ScrollBar"
 
 export { ScrollArea, ScrollBar }

@@ -1,7 +1,31 @@
 
+import React from "react";
+import { Box, BoxProps } from "@mui/material";
 
-import * as AspectRatioPrimitive from "@radix-ui/react-aspect-ratio"
+interface AspectRatioProps extends Omit<BoxProps, 'children'> {
+  ratio?: number;
+  children: React.ReactNode;
+}
 
-const AspectRatio = AspectRatioPrimitive.Root
+const AspectRatio = React.forwardRef<HTMLDivElement, AspectRatioProps>(
+  ({ ratio = 1, children, sx, ...props }, ref) => {
+    return (
+      <Box
+        ref={ref}
+        sx={{
+          position: "relative",
+          width: "100%",
+          aspectRatio: ratio.toString(),
+          ...sx,
+        }}
+        {...props}
+      >
+        {children}
+      </Box>
+    );
+  }
+);
 
-export { AspectRatio }
+AspectRatio.displayName = "AspectRatio";
+
+export { AspectRatio };

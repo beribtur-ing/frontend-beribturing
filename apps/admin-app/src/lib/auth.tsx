@@ -1,5 +1,3 @@
-"use client"
-
 import type React from "react"
 import { createContext, useContext, useEffect, useState } from "react"
 import { AccountSignInTokenRdo } from '@beribturing/api-stub'
@@ -36,7 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       try {
         const storedUser = localStorage.getItem("admin_user")
         const storedTokens = localStorage.getItem("admin_tokens")
-        
+
         if (storedUser && storedTokens) {
           setUser(JSON.parse(storedUser))
           setTokens(JSON.parse(storedTokens))
@@ -86,13 +84,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider 
-      value={{ 
-        user, 
-        loading, 
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
         tokens,
-        signIn, 
-        signOut, 
+        signIn,
+        signOut,
         setUser: updateUser,
         setTokens: updateTokens
       }}

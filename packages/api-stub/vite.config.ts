@@ -10,7 +10,6 @@ export default defineConfig({
   plugins: [
     tsconfigPaths(),
     react({
-      exclude: /\.stories\.(mdx|[tj]sx?)$/,
       include: [/\.tsx?$/, /\.jsx?$/, /\.css$/],
     }),
   ],

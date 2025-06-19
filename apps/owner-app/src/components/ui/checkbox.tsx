@@ -1,4 +1,3 @@
-
 import * as React from "react"
 import { Checkbox as MUICheckbox, CheckboxProps as MUICheckboxProps } from "@mui/material"
 import { styled } from "@mui/material/styles"

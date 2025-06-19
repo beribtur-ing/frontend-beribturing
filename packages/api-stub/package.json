@@ -1,6 +1,6 @@
 {
   "name": "@beribturing/api-stub",
-  "version": "0.0.0",
+  "version": "1.0.0",
   "license": "UNLICENSED",
   "main": "./dist/index.umd.js",
   "module": "./dist/index.es.js",
@@ -15,7 +15,7 @@
     "dist"
   ],
   "scripts": {
-    "build": "vite build && tsc -p src/tsconfig.json"
+    "build": "vite build && ttsc -p src/tsconfig.json"
   },
   "dependencies": {
     "axios": "^1"

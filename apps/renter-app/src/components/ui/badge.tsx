@@ -1,36 +1,87 @@
 import * as React from "react"
-import {cva, type VariantProps} from "class-variance-authority"
+import { Chip, ChipProps, styled } from "@mui/material"
 
-import {cn} from "../../lib/utils"
-
-const badgeVariants = cva(
-  "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-  {
-    variants: {
-      variant: {
-        default:
-          "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
-        secondary:
-          "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
-        destructive:
-          "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
-        outline: "text-foreground",
-      },
+const StyledChip = styled(Chip, {
+  shouldForwardProp: (prop) => prop !== 'variant',
+})<{
+  variant?: 'default' | 'secondary' | 'destructive' | 'outline'
+}>(({ theme, variant = 'default' }) => ({
+  display: 'inline-flex',
+  alignItems: 'center',
+  borderRadius: '9999px',
+  padding: theme.spacing(0.5, 1.25),
+  fontSize: '0.75rem',
+  fontWeight: 600,
+  lineHeight: 1,
+  transition: theme.transitions.create(['background-color', 'color', 'border-color']),
+  border: '1px solid transparent',
+  
+  '&:focus': {
+    outline: 'none',
+    boxShadow: `0 0 0 2px ${theme.palette.primary.main}`,
+  },
+  
+  // Variant styles
+  ...(variant === 'default' && {
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.primary.contrastText,
+    borderColor: 'transparent',
+    '&:hover': {
+      backgroundColor: theme.palette.primary.dark,
     },
-    defaultVariants: {
-      variant: "default",
+  }),
+  
+  ...(variant === 'secondary' && {
+    backgroundColor: theme.palette.grey[100],
+    color: theme.palette.text.primary,
+    borderColor: 'transparent',
+    '&:hover': {
+      backgroundColor: theme.palette.grey[200],
     },
-  }
-)
+  }),
+  
+  ...(variant === 'destructive' && {
+    backgroundColor: theme.palette.error.main,
+    color: theme.palette.error.contrastText,
+    borderColor: 'transparent',
+    '&:hover': {
+      backgroundColor: theme.palette.error.dark,
+    },
+  }),
+  
+  ...(variant === 'outline' && {
+    backgroundColor: 'transparent',
+    color: theme.palette.text.primary,
+    borderColor: theme.palette.divider,
+    '&:hover': {
+      backgroundColor: theme.palette.action.hover,
+    },
+  }),
+  
+  // Override MUI chip styles
+  '& .MuiChip-label': {
+    padding: 0,
+    fontSize: 'inherit',
+    fontWeight: 'inherit',
+  },
+}))
 
-export interface BadgeProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof badgeVariants> {}
+export interface BadgeProps extends Omit<ChipProps, 'variant'> {
+  variant?: 'default' | 'secondary' | 'destructive' | 'outline'
+}
 
-function Badge({ className, variant, ...props }: BadgeProps) {
+function Badge({ variant = 'default', children, ...props }: BadgeProps) {
   return (
-    <div className={cn(badgeVariants({ variant }), className)} {...props} />
+    <StyledChip 
+      variant={variant}
+      label={children}
+      size="small"
+      {...props}
+    />
   )
 }
 
-export { Badge, badgeVariants }
+// For backward compatibility
+export const badgeVariants = () => ""
+
+export { Badge }

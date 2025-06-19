@@ -1,18 +1,83 @@
 import * as React from "react"
+import { TextField, TextFieldProps, styled } from "@mui/material"
 
-import {cn} from "../../lib/utils"
+const StyledTextField = styled(TextField)(({ theme }) => ({
+  '& .MuiOutlinedInput-root': {
+    height: '2.5rem',
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: theme.palette.background.paper,
+    fontSize: '0.875rem',
+    
+    '& fieldset': {
+      borderColor: theme.palette.divider,
+    },
+    
+    '&:hover fieldset': {
+      borderColor: theme.palette.action.hover,
+    },
+    
+    '&.Mui-focused fieldset': {
+      borderColor: theme.palette.primary.main,
+      borderWidth: '2px',
+    },
+    
+    '&.Mui-disabled': {
+      cursor: 'not-allowed',
+      opacity: 0.5,
+    },
+  },
+  
+  '& .MuiInputBase-input': {
+    padding: theme.spacing(1, 1.5),
+    fontSize: '0.875rem',
+    
+    '&::placeholder': {
+      color: theme.palette.text.secondary,
+      opacity: 1,
+    },
+    
+    '&[type="file"]': {
+      border: 0,
+      backgroundColor: 'transparent',
+      fontSize: '0.875rem',
+      fontWeight: 500,
+      color: theme.palette.text.primary,
+    },
+  },
+  
+  '& .MuiInputLabel-root': {
+    fontSize: '0.875rem',
+    
+    '&.Mui-focused': {
+      color: theme.palette.primary.main,
+    },
+  },
+  
+  '@media (min-width: 768px)': {
+    '& .MuiInputBase-input': {
+      fontSize: '0.875rem',
+    },
+  },
+}))
 
-const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
-  ({ className, type, ...props }, ref) => {
+export interface InputProps extends Omit<TextFieldProps, 'variant'> {
+  className?: string
+}
+
+const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  ({ className, type = "text", ...props }, ref) => {
     return (
-      <input
+      <StyledTextField
+        variant="outlined"
         type={type}
-        className={cn(
-          "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-base ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-          className
-        )}
-        ref={ref}
+        inputRef={ref}
+        fullWidth
+        size="small"
         {...props}
+        sx={{
+          width: '100%',
+          ...props.sx,
+        }}
       />
     )
   }

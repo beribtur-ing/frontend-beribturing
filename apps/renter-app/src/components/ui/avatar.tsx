@@ -1,49 +1,75 @@
 
 import * as React from "react"
-import * as AvatarPrimitive from "@radix-ui/react-avatar"
+import { Avatar as MUIAvatar, AvatarProps as MUIAvatarProps } from "@mui/material"
+import { styled } from "@mui/material/styles"
 
-import {cn} from "../../lib/utils"
+const StyledAvatar = styled(MUIAvatar)<{ className?: string }>(({ theme }) => ({
+  width: 40,
+  height: 40,
+  fontSize: '14px',
+  backgroundColor: theme.palette.grey[300],
+  color: theme.palette.text.primary,
+}))
 
-const Avatar = React.forwardRef<
-  React.ElementRef<typeof AvatarPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Root>
->(({ className, ...props }, ref) => (
-  <AvatarPrimitive.Root
-    ref={ref}
-    className={cn(
-      "relative flex h-10 w-10 shrink-0 overflow-hidden rounded-full",
-      className
-    )}
-    {...props}
-  />
-))
-Avatar.displayName = AvatarPrimitive.Root.displayName
+export interface AvatarProps extends Omit<MUIAvatarProps, 'children'> {
+  children?: React.ReactNode
+}
 
-const AvatarImage = React.forwardRef<
-  React.ElementRef<typeof AvatarPrimitive.Image>,
-  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Image>
->(({ className, ...props }, ref) => (
-  <AvatarPrimitive.Image
-    ref={ref}
-    className={cn("aspect-square h-full w-full", className)}
-    {...props}
-  />
-))
-AvatarImage.displayName = AvatarPrimitive.Image.displayName
+const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
+  ({ className, children, ...props }, ref) => {
+    // If children contains AvatarImage or AvatarFallback, handle them specially
+    const processedChildren = React.Children.map(children, (child) => {
+      if (React.isValidElement(child)) {
+        if (child.type === AvatarImage) {
+          return React.cloneElement(child as React.ReactElement<AvatarImageProps>)
+        }
+        if (child.type === AvatarFallback) {
+          return child.props.children
+        }
+      }
+      return child
+    })
 
-const AvatarFallback = React.forwardRef<
-  React.ElementRef<typeof AvatarPrimitive.Fallback>,
-  React.ComponentPropsWithoutRef<typeof AvatarPrimitive.Fallback>
->(({ className, ...props }, ref) => (
-  <AvatarPrimitive.Fallback
-    ref={ref}
-    className={cn(
-      "flex h-full w-full items-center justify-center rounded-full bg-muted",
-      className
-    )}
-    {...props}
-  />
-))
-AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName
+    // Extract src from AvatarImage if present
+    let src: string | undefined
+    React.Children.forEach(children, (child) => {
+      if (React.isValidElement(child) && child.type === AvatarImage) {
+        src = (child as React.ReactElement<AvatarImageProps>).props.src
+      }
+    })
+
+    return (
+      <StyledAvatar
+        ref={ref}
+        className={className}
+        src={src}
+        {...props}
+      >
+        {processedChildren}
+      </StyledAvatar>
+    )
+  }
+)
+Avatar.displayName = "Avatar"
+
+export interface AvatarImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {}
+
+const AvatarImage = React.forwardRef<HTMLImageElement, AvatarImageProps>(
+  ({ src, alt, ...props }, ref) => {
+    // This component is processed by Avatar component above
+    return null
+  }
+)
+AvatarImage.displayName = "AvatarImage"
+
+export interface AvatarFallbackProps extends React.HTMLAttributes<HTMLDivElement> {}
+
+const AvatarFallback = React.forwardRef<HTMLDivElement, AvatarFallbackProps>(
+  ({ className, children, ...props }, ref) => {
+    // This component is processed by Avatar component above
+    return null
+  }
+)
+AvatarFallback.displayName = "AvatarFallback"
 
 export { Avatar, AvatarImage, AvatarFallback }

@@ -1,6 +1,6 @@
 
 import * as React from "react"
-import * as TogglePrimitive from "@radix-ui/react-toggle"
+import { ToggleButton } from "@mui/material"
 import {cva, type VariantProps} from "class-variance-authority"
 
 import {cn} from "../../lib/utils"
@@ -27,18 +27,30 @@ const toggleVariants = cva(
   }
 )
 
+interface ToggleProps {
+  pressed?: boolean
+  onPressedChange?: (pressed: boolean) => void
+  variant?: "default" | "outline"
+  size?: "default" | "sm" | "lg"
+  className?: string
+  children?: React.ReactNode
+}
+
 const Toggle = React.forwardRef<
-  React.ElementRef<typeof TogglePrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof TogglePrimitive.Root> &
-    VariantProps<typeof toggleVariants>
->(({ className, variant, size, ...props }, ref) => (
-  <TogglePrimitive.Root
+  HTMLButtonElement,
+  ToggleProps & React.ButtonHTMLAttributes<HTMLButtonElement>
+>(({ className, variant, size, pressed, onPressedChange, children, ...props }, ref) => (
+  <ToggleButton
     ref={ref}
+    selected={pressed || false}
+    onChange={(e, selected) => onPressedChange?.(selected)}
     className={cn(toggleVariants({ variant, size, className }))}
     {...props}
-  />
+  >
+    {children}
+  </ToggleButton>
 ))
 
-Toggle.displayName = TogglePrimitive.Root.displayName
+Toggle.displayName = "Toggle"
 
 export { Toggle, toggleVariants }

@@ -1,7 +1,6 @@
 import React from 'react';
-import {createBrowserRouter, Navigate, Outlet} from 'react-router-dom';
-import {Header} from '~/components/header';
-import {Footer} from '~/components/footer';
+import {createBrowserRouter, Navigate} from 'react-router-dom';
+import {LocalizedLayout} from '~/components/localized-layout';
 
 // Import pages
 import HomePage from './HomePage';
@@ -19,28 +18,14 @@ import SettingsPage from './SettingsPage';
 import ProductPage from './ProductPage';
 import CategoryPage from './CategoryPage';
 
-const DefaultLayout = ({children}: { children: React.ReactNode }) => (
-  <div className="min-h-screen flex flex-col">
-    <Header/>
-    <main className="flex-grow">
-      {children}
-    </main>
-    <Footer/>
-  </div>
-);
-
 export const browserRouter: ReturnType<typeof createBrowserRouter> = createBrowserRouter([
   {
     path: '/',
-    element: <Navigate to="/en" replace/>,
+    element: <Navigate to="/uz" replace/>,
   },
   {
     path: '/:locale',
-    element: (
-      <DefaultLayout>
-        <Outlet/>
-      </DefaultLayout>
-    ),
+    element: <LocalizedLayout/>,
     children: [
       {
         index: true,
@@ -102,6 +87,6 @@ export const browserRouter: ReturnType<typeof createBrowserRouter> = createBrows
   },
   {
     path: '*',
-    element: <Navigate to="/en" replace/>,
+    element: <Navigate to="/uz" replace/>,
   },
 ], {basename: '/renter'});

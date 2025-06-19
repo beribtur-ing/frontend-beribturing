@@ -1,30 +1,76 @@
-
-
 import * as React from "react"
-import * as TooltipPrimitive from "@radix-ui/react-tooltip"
+import { Tooltip as MUITooltip, TooltipProps as MUITooltipProps } from "@mui/material"
+import { styled } from "@mui/material/styles"
 
-import { cn } from "../../lib/utils"
+const StyledTooltip = styled(MUITooltip)(({ theme }) => ({
+  '& .MuiTooltip-tooltip': {
+    backgroundColor: theme.palette.grey[900],
+    color: theme.palette.common.white,
+    fontSize: '12px',
+    padding: '6px 8px',
+    borderRadius: '4px',
+    maxWidth: '300px',
+  },
+  '& .MuiTooltip-arrow': {
+    color: theme.palette.grey[900],
+  },
+}))
 
-const TooltipProvider = TooltipPrimitive.Provider
+export interface TooltipProps extends Omit<MUITooltipProps, 'title'> {
+  children: React.ReactElement
+  content?: React.ReactNode
+  side?: 'top' | 'right' | 'bottom' | 'left'
+  sideOffset?: number
+  delayDuration?: number
+}
 
-const Tooltip = TooltipPrimitive.Root
+const TooltipProvider = ({ children }: { children: React.ReactNode }) => <>{children}</>
 
-const TooltipTrigger = TooltipPrimitive.Trigger
+const Tooltip = ({ 
+  children, 
+  content, 
+  side = 'top', 
+  sideOffset = 4, 
+  delayDuration = 700,
+  ...props 
+}: TooltipProps) => {
+  if (!content) {
+    return children
+  }
 
-const TooltipContent = React.forwardRef<
-  React.ElementRef<typeof TooltipPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof TooltipPrimitive.Content>
->(({ className, sideOffset = 4, ...props }, ref) => (
-  <TooltipPrimitive.Content
-    ref={ref}
-    sideOffset={sideOffset}
-    className={cn(
-      "z-50 overflow-hidden rounded-md border bg-popover px-3 py-1.5 text-sm text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=closed]:zoom-out-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2",
-      className
-    )}
-    {...props}
-  />
+  return (
+    <StyledTooltip
+      title={content}
+      placement={side}
+      arrow
+      enterDelay={delayDuration}
+      {...props}
+    >
+      {children}
+    </StyledTooltip>
+  )
+}
+
+const TooltipTrigger = React.forwardRef<HTMLElement, { children: React.ReactElement; asChild?: boolean }>(
+  ({ children, asChild }, ref) => {
+    if (asChild && React.isValidElement(children)) {
+      return React.cloneElement(children, { ref })
+    }
+    return children
+  }
+)
+TooltipTrigger.displayName = "TooltipTrigger"
+
+const TooltipContent = React.forwardRef<HTMLDivElement, { 
+  children: React.ReactNode
+  className?: string
+  side?: 'top' | 'right' | 'bottom' | 'left'
+  sideOffset?: number
+}>(({ children, className }, ref) => (
+  <div ref={ref} className={className}>
+    {children}
+  </div>
 ))
-TooltipContent.displayName = TooltipPrimitive.Content.displayName
+TooltipContent.displayName = "TooltipContent"
 
 export { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider }

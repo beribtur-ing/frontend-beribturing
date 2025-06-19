@@ -1,55 +1,137 @@
 
 
 import * as React from "react"
-import * as TabsPrimitive from "@radix-ui/react-tabs"
+import { Tabs as MUITabs, Tab, TabPanel, Box } from "@mui/material"
+import { styled } from "@mui/material/styles"
 
-import { cn } from "../../lib/utils"
+const StyledTabs = styled(MUITabs)(({ theme }) => ({
+  minHeight: 40,
+  '& .MuiTabs-indicator': {
+    display: 'none',
+  },
+}))
 
-const Tabs = TabsPrimitive.Root
+const StyledTab = styled(Tab)(({ theme }) => ({
+  textTransform: 'none',
+  fontSize: '14px',
+  fontWeight: 500,
+  minHeight: 40,
+  padding: '6px 12px',
+  margin: '0 2px',
+  borderRadius: '4px',
+  color: theme.palette.text.secondary,
+  backgroundColor: 'transparent',
+  '&.Mui-selected': {
+    backgroundColor: theme.palette.background.paper,
+    color: theme.palette.text.primary,
+    boxShadow: theme.shadows[1],
+  },
+  '&:hover': {
+    backgroundColor: theme.palette.action.hover,
+  },
+}))
 
-const TabsList = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.List>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.List>
->(({ className, ...props }, ref) => (
-  <TabsPrimitive.List
-    ref={ref}
-    className={cn(
-      "inline-flex h-10 items-center justify-center rounded-md bg-muted p-1 text-muted-foreground",
-      className
-    )}
-    {...props}
-  />
-))
-TabsList.displayName = TabsPrimitive.List.displayName
+const StyledTabPanel = styled(Box)(({ theme }) => ({
+  marginTop: '8px',
+  '&:focus-visible': {
+    outline: `2px solid ${theme.palette.primary.main}`,
+    outlineOffset: '2px',
+  },
+}))
 
-const TabsTrigger = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Trigger>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Trigger>
->(({ className, ...props }, ref) => (
-  <TabsPrimitive.Trigger
-    ref={ref}
-    className={cn(
-      "inline-flex items-center justify-center whitespace-nowrap rounded-sm px-3 py-1.5 text-sm font-medium ring-offset-background transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm",
-      className
-    )}
-    {...props}
-  />
-))
-TabsTrigger.displayName = TabsPrimitive.Trigger.displayName
+export interface TabsProps {
+  value?: string
+  onValueChange?: (value: string) => void
+  children: React.ReactNode
+  className?: string
+}
 
-const TabsContent = React.forwardRef<
-  React.ElementRef<typeof TabsPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof TabsPrimitive.Content>
->(({ className, ...props }, ref) => (
-  <TabsPrimitive.Content
-    ref={ref}
-    className={cn(
-      "mt-2 ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-      className
-    )}
-    {...props}
-  />
-))
-TabsContent.displayName = TabsPrimitive.Content.displayName
+const Tabs = React.forwardRef<HTMLDivElement, TabsProps>(
+  ({ value, onValueChange, children, className, ...props }, ref) => {
+    const [activeTab, setActiveTab] = React.useState(value || '')
+
+    const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+      setActiveTab(newValue)
+      onValueChange?.(newValue)
+    }
+
+    return (
+      <div ref={ref} className={className} {...props}>
+        {React.Children.map(children, (child) => {
+          if (React.isValidElement(child)) {
+            return React.cloneElement(child, { value: activeTab, onChange: handleChange })
+          }
+          return child
+        })}
+      </div>
+    )
+  }
+)
+Tabs.displayName = "Tabs"
+
+export interface TabsListProps {
+  children: React.ReactNode
+  className?: string
+  value?: string
+  onChange?: (event: React.SyntheticEvent, value: string) => void
+}
+
+const TabsList = React.forwardRef<HTMLDivElement, TabsListProps>(
+  ({ children, className, value, onChange, ...props }, ref) => (
+    <StyledTabs
+      ref={ref}
+      value={value}
+      onChange={onChange}
+      className={className}
+      variant="scrollable"
+      scrollButtons="auto"
+      {...props}
+    >
+      {children}
+    </StyledTabs>
+  )
+)
+TabsList.displayName = "TabsList"
+
+export interface TabsTriggerProps {
+  value: string
+  children: React.ReactNode
+  className?: string
+  disabled?: boolean
+}
+
+const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
+  ({ value, children, className, disabled, ...props }, ref) => (
+    <StyledTab
+      ref={ref}
+      value={value}
+      label={children}
+      disabled={disabled}
+      className={className}
+      {...props}
+    />
+  )
+)
+TabsTrigger.displayName = "TabsTrigger"
+
+export interface TabsContentProps {
+  value: string
+  children: React.ReactNode
+  className?: string
+}
+
+const TabsContent = React.forwardRef<HTMLDivElement, TabsContentProps>(
+  ({ value, children, className, ...props }, ref) => (
+    <StyledTabPanel
+      ref={ref}
+      role="tabpanel"
+      className={className}
+      {...props}
+    >
+      {children}
+    </StyledTabPanel>
+  )
+)
+TabsContent.displayName = "TabsContent"
 
 export { Tabs, TabsList, TabsTrigger, TabsContent }

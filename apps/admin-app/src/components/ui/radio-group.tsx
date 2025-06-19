@@ -1,44 +1,82 @@
 
 
-import * as React from "react"
-import * as RadioGroupPrimitive from "@radix-ui/react-radio-group"
-import { Circle } from "lucide-react"
+import * as React from "react";
+import { 
+  RadioGroup as MuiRadioGroup, 
+  Radio as MuiRadio, 
+  FormControlLabel,
+  RadioGroupProps as MuiRadioGroupProps,
+  RadioProps as MuiRadioProps,
+  styled
+} from "@mui/material";
 
-import { cn } from "../../lib/utils"
+const StyledRadioGroup = styled(MuiRadioGroup)(({ theme }) => ({
+  gap: theme.spacing(1),
+}));
 
-const RadioGroup = React.forwardRef<
-  React.ElementRef<typeof RadioGroupPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Root>
->(({ className, ...props }, ref) => {
-  return (
-    <RadioGroupPrimitive.Root
-      className={cn("grid gap-2", className)}
-      {...props}
-      ref={ref}
-    />
-  )
-})
-RadioGroup.displayName = RadioGroupPrimitive.Root.displayName
+const StyledRadio = styled(MuiRadio)(({ theme }) => ({
+  width: 16,
+  height: 16,
+  padding: 0,
+  '& .MuiSvgIcon-root': {
+    fontSize: 16,
+  },
+  '&.Mui-focusVisible': {
+    outline: `2px solid ${theme.palette.primary.main}`,
+    outlineOffset: 2,
+  },
+  '&:hover': {
+    backgroundColor: 'transparent',
+  },
+}));
 
-const RadioGroupItem = React.forwardRef<
-  React.ElementRef<typeof RadioGroupPrimitive.Item>,
-  React.ComponentPropsWithoutRef<typeof RadioGroupPrimitive.Item>
->(({ className, ...props }, ref) => {
-  return (
-    <RadioGroupPrimitive.Item
-      ref={ref}
-      className={cn(
-        "aspect-square h-4 w-4 rounded-full border border-primary text-primary ring-offset-background focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-        className
-      )}
-      {...props}
-    >
-      <RadioGroupPrimitive.Indicator className="flex items-center justify-center">
-        <Circle className="h-2.5 w-2.5 fill-current text-current" />
-      </RadioGroupPrimitive.Indicator>
-    </RadioGroupPrimitive.Item>
-  )
-})
-RadioGroupItem.displayName = RadioGroupPrimitive.Item.displayName
+interface RadioGroupProps extends Omit<MuiRadioGroupProps, 'value' | 'defaultValue' | 'onChange'> {
+  value?: string;
+  defaultValue?: string;
+  onValueChange?: (value: string) => void;
+  className?: string;
+}
 
-export { RadioGroup, RadioGroupItem }
+const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
+  ({ className, value, defaultValue, onValueChange, onChange, ...props }, ref) => {
+    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const newValue = event.target.value;
+      onValueChange?.(newValue);
+      onChange?.(event, newValue);
+    };
+
+    return (
+      <StyledRadioGroup
+        ref={ref}
+        className={className}
+        value={value}
+        defaultValue={defaultValue}
+        onChange={handleChange}
+        {...props}
+      />
+    );
+  }
+);
+
+RadioGroup.displayName = "RadioGroup";
+
+interface RadioGroupItemProps extends Omit<MuiRadioProps, 'value'> {
+  value: string;
+  className?: string;
+}
+
+const RadioGroupItem = React.forwardRef<HTMLButtonElement, RadioGroupItemProps>(
+  ({ className, ...props }, ref) => {
+    return (
+      <StyledRadio
+        ref={ref}
+        className={className}
+        {...props}
+      />
+    );
+  }
+);
+
+RadioGroupItem.displayName = "RadioGroupItem";
+
+export { RadioGroup, RadioGroupItem };

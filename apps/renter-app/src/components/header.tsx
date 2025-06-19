@@ -6,9 +6,11 @@ import { Link } from "react-router-dom"
 import { LanguageSwitcher } from "./language-switcher"
 import { useTranslation } from "react-i18next"
 import { PlaceholderUserImage } from "~/assets"
+import { useLocale } from "../contexts/locale-context"
 
 export function Header() {
   const { t } = useTranslation();
+  const { getLocalizedPath } = useLocale();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isCatalogOpen, setIsCatalogOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
@@ -53,7 +55,7 @@ export function Header() {
             </button>
 
             {/* Logo */}
-            <Link to="/" className="flex items-center space-x-2">
+            <Link to={getLocalizedPath("")} className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">R</span>
               </div>
@@ -125,7 +127,7 @@ export function Header() {
                     <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-50">
                       <div className="py-2">
                         <Link
-                          to="/profile"
+                          to={getLocalizedPath("profile")}
                           className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                           onClick={() => setIsUserMenuOpen(false)}
                         >
@@ -133,7 +135,7 @@ export function Header() {
                           <span>{t("profile")}</span>
                         </Link>
                         <Link
-                          to="/settings"
+                          to={getLocalizedPath("settings")}
                           className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                           onClick={() => setIsUserMenuOpen(false)}
                         >
@@ -155,7 +157,7 @@ export function Header() {
               ) : (
                 // Non-authenticated user actions
                 <Link
-                  to="/auth/signin"
+                  to={getLocalizedPath("auth/signin")}
                   className="flex items-center space-x-1 px-3 py-2 text-gray-700 hover:text-purple-600 transition-colors"
                 >
                   <User className="h-4 w-4" />
@@ -164,7 +166,7 @@ export function Header() {
               )}
 
               <Link
-                to="/favorites"
+                to={getLocalizedPath("favorites")}
                 className="flex items-center space-x-1 px-3 py-2 text-gray-700 hover:text-purple-600 transition-colors"
               >
                 <Heart className="h-4 w-4" />
@@ -176,7 +178,7 @@ export function Header() {
             <div className="flex lg:hidden items-center space-x-2">
               <LanguageSwitcher />
               {user ? (
-                <Link to="/profile" className="p-2">
+                <Link to={getLocalizedPath("profile")} className="p-2">
                   <img
                     src={user.avatar || "/placeholder.svg"}
                     alt={user.name}
@@ -184,11 +186,11 @@ export function Header() {
                   />
                 </Link>
               ) : (
-                <Link to="/auth/signin" className="p-2">
+                <Link to={getLocalizedPath("auth/signin")} className="p-2">
                   <User className="h-5 w-5" />
                 </Link>
               )}
-              <Link to="/favorites" className="p-2">
+              <Link to={getLocalizedPath("favorites")} className="p-2">
                 <Heart className="h-5 w-5" />
               </Link>
             </div>
@@ -220,7 +222,7 @@ export function Header() {
               {user ? (
                 <div className="space-y-2">
                   <Link
-                    to="/profile"
+                    to={getLocalizedPath("profile")}
                     className="flex items-center space-x-2 w-full text-left py-2"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
@@ -240,7 +242,7 @@ export function Header() {
                 </div>
               ) : (
                 <Link
-                  to="/auth/signin"
+                  to={getLocalizedPath("auth/signin")}
                   className="flex items-center space-x-2 w-full text-left py-2"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
