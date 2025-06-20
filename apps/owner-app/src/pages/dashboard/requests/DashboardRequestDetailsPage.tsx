@@ -14,12 +14,13 @@ export default function DashboardRequestDetailsPage() {
     fetch(`/api/reservations/${id}`)
       .then((res) => res.json())
       .then((data) => {
-        setRequest(data);
+        setRequest(data || null);
         setLoading(false);
       })
       .catch(() => {
-        alert("Failed to load request");
-        navigate(`/${locale}/dashboard/requests`);
+        console.error("Failed to load request");
+        setRequest(null);
+        setLoading(false);
       });
   }, [id, navigate, locale]);
 
@@ -86,12 +87,26 @@ export default function DashboardRequestDetailsPage() {
     );
   }
 
-  if (!request) {
-    return <div>Request not found</div>;
+  if (!request || !request.period || !request.productVariant || !request.requester) {
+    return (
+      <div className="bg-white rounded-lg shadow p-6">
+        <h1 className="text-xl font-bold text-gray-900 mb-4">Request not found</h1>
+        <p className="text-gray-600">The reservation request could not be loaded or does not exist.</p>
+        <Link
+          to={`/${locale}/dashboard/requests`}
+          className="inline-flex items-center text-blue-600 hover:text-blue-800 mt-4"
+        >
+          <ArrowLeftIcon className="w-4 h-4 mr-1" />
+          Back to Requests
+        </Link>
+      </div>
+    );
   }
 
-  const days = calculateDays(request.period.startDate, request.period.endDate);
-  const totalCost = days * request.productVariant.price.daily;
+  const days = request.period?.startDate && request.period?.endDate 
+    ? calculateDays(request.period.startDate, request.period.endDate)
+    : 0;
+  const totalCost = days * (request.productVariant?.price?.daily || 0);
 
   return (
     <div>
@@ -169,11 +184,15 @@ export default function DashboardRequestDetailsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <div>
             <label className="text-sm font-medium text-gray-500">Start Date</label>
-            <p className="text-gray-900">{formatDate(request.period.startDate)}</p>
+            <p className="text-gray-900">
+              {request.period?.startDate ? formatDate(request.period.startDate) : "Not specified"}
+            </p>
           </div>
           <div>
             <label className="text-sm font-medium text-gray-500">End Date</label>
-            <p className="text-gray-900">{formatDate(request.period.endDate)}</p>
+            <p className="text-gray-900">
+              {request.period?.endDate ? formatDate(request.period.endDate) : "Not specified"}
+            </p>
           </div>
           <div>
             <label className="text-sm font-medium text-gray-500">Duration</label>
@@ -190,7 +209,7 @@ export default function DashboardRequestDetailsPage() {
           <div className="space-y-1 text-sm">
             <div className="flex justify-between">
               <span>Daily rate:</span>
-              <span>${request.productVariant.price.daily}/day</span>
+              <span>${request.productVariant?.price?.daily || 0}/day</span>
             </div>
             <div className="flex justify-between">
               <span>Duration:</span>

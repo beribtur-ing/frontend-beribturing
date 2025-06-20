@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, Typography, Box, Grid } from "@mui/material";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
+import {useEffect, useState} from "react";
+import {Bar, BarChart, CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from "recharts";
+import {StatCard} from "../../components/dashboard/StatCard";
 
 interface RevenueData {
   month: string;
@@ -16,7 +16,12 @@ export default function DashboardAnalyticsPage() {
     fetch("/api/analytics/revenue")
       .then((res) => res.json())
       .then((data) => {
-        setRevenueData(data);
+        setRevenueData(Array.isArray(data) ? data : []);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching revenue data:", error);
+        setRevenueData([]);
         setLoading(false);
       });
   }, []);
@@ -52,7 +57,7 @@ export default function DashboardAnalyticsPage() {
           change="+15% from last period"
           changeType="positive"
         />
-        <StatCard title="Total Bookings" value={totalBookings} change="+8% from last period" changeType="positive" />
+        <StatCard title="Total Bookings" value={totalBookings} change="+8% from last period" changeType="positive"/>
         <StatCard
           title="Average Monthly Revenue"
           value={`$${avgRevenue.toFixed(0)}`}
@@ -67,11 +72,11 @@ export default function DashboardAnalyticsPage() {
           <div className="h-64 md:h-80">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={revenueData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip formatter={(value) => [`$${value}`, "Revenue"]} />
-                <Line type="monotone" dataKey="revenue" stroke="#3B82F6" strokeWidth={2} dot={{ fill: "#3B82F6" }} />
+                <CartesianGrid strokeDasharray="3 3"/>
+                <XAxis dataKey="month"/>
+                <YAxis/>
+                <Tooltip formatter={(value) => [`$${value}`, "Revenue"]}/>
+                <Line type="monotone" dataKey="revenue" stroke="#3B82F6" strokeWidth={2} dot={{fill: "#3B82F6"}}/>
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -82,11 +87,11 @@ export default function DashboardAnalyticsPage() {
           <div className="h-64 md:h-80">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={revenueData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="month" />
-                <YAxis />
-                <Tooltip formatter={(value) => [value, "Bookings"]} />
-                <Bar dataKey="bookings" fill="#10B981" />
+                <CartesianGrid strokeDasharray="3 3"/>
+                <XAxis dataKey="month"/>
+                <YAxis/>
+                <Tooltip formatter={(value) => [value, "Bookings"]}/>
+                <Bar dataKey="bookings" fill="#10B981"/>
               </BarChart>
             </ResponsiveContainer>
           </div>

@@ -1,6 +1,6 @@
 
 import { BellIcon, UserCircleIcon, ArrowRightOnRectangleIcon, Bars3Icon } from "@heroicons/react/24/outline"
-import { useAuth } from "../../lib/auth-context"
+import { useAuthContext } from "../../lib/auth"
 import {useNavigate} from "react-router-dom";
 
 interface HeaderProps {
@@ -9,11 +9,11 @@ interface HeaderProps {
 }
 
 export function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
-  const { user, logout } = useAuth()
+  const { user, signOut } = useAuthContext()
   const navigate = useNavigate()
 
   const handleLogout = () => {
-    logout()
+    signOut()
     navigate("/login")
   }
 

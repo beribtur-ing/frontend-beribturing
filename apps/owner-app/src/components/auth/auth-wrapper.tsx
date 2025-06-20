@@ -1,11 +1,11 @@
 import type React from "react"
 
-import { useAuth } from "../../lib/auth-context"
+import { useAuthContext } from "../../lib/auth"
 import { useNavigate } from "react-router-dom"
 import { useEffect } from "react"
 
 export function AuthWrapper({ children }: { children: React.ReactNode }) {
-  const { user, loading } = useAuth()
+  const { user, loading } = useAuthContext()
   const navigate = useNavigate()
 
   useEffect(() => {

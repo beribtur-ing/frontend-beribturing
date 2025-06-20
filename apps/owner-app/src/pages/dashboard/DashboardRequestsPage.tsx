@@ -12,7 +12,12 @@ export default function DashboardRequestsPage() {
     fetch("/api/reservations")
       .then((res) => res.json())
       .then((data) => {
-        setRequests(data);
+        setRequests(Array.isArray(data) ? data : []);
+        setLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error fetching requests:", error);
+        setRequests([]);
         setLoading(false);
       });
   }, []);

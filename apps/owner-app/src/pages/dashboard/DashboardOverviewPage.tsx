@@ -1,12 +1,12 @@
-import { useEffect, useState } from "react";
-import { Card, CardContent, Typography, Box, Grid, Skeleton } from "@mui/material";
-import type { DashboardStats } from "../../lib/types";
+import {useEffect, useState} from "react";
+import type {DashboardStats} from "../../lib/types";
 import {
   BuildingOfficeIcon,
   CalendarDaysIcon,
-  CurrencyDollarIcon,
   ChatBubbleLeftRightIcon,
+  CurrencyDollarIcon,
 } from "@heroicons/react/24/outline";
+import {StatCard} from "../../components/dashboard/StatCard";
 
 export default function DashboardOverviewPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -48,28 +48,28 @@ export default function DashboardOverviewPage() {
           value={stats.totalProperties}
           change="+2 this month"
           changeType="positive"
-          icon={<BuildingOfficeIcon className="w-6 h-6 md:w-8 md:h-8" />}
+          icon={<BuildingOfficeIcon className="w-6 h-6 md:w-8 md:h-8"/>}
         />
         <StatCard
           title="Active Bookings"
           value={stats.activeBookings}
           change="3 ending soon"
           changeType="neutral"
-          icon={<CalendarDaysIcon className="w-6 h-6 md:w-8 md:h-8" />}
+          icon={<CalendarDaysIcon className="w-6 h-6 md:w-8 md:h-8"/>}
         />
         <StatCard
           title="Monthly Revenue"
           value={`$${stats.monthlyRevenue}`}
           change="+12% from last month"
           changeType="positive"
-          icon={<CurrencyDollarIcon className="w-6 h-6 md:w-8 md:h-8" />}
+          icon={<CurrencyDollarIcon className="w-6 h-6 md:w-8 md:h-8"/>}
         />
         <StatCard
           title="Messages"
           value={stats.pendingMessages}
           change="2 unread"
           changeType="neutral"
-          icon={<ChatBubbleLeftRightIcon className="w-6 h-6 md:w-8 md:h-8" />}
+          icon={<ChatBubbleLeftRightIcon className="w-6 h-6 md:w-8 md:h-8"/>}
         />
       </div>
 
@@ -109,7 +109,7 @@ export default function DashboardOverviewPage() {
               <span className="text-sm font-medium text-gray-900">{stats.occupancyRate}%</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
-              <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${stats.occupancyRate}%` }}></div>
+              <div className="bg-blue-600 h-2 rounded-full" style={{width: `${stats.occupancyRate}%`}}></div>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-600">Total Revenue</span>
