@@ -1,28 +1,23 @@
 {
-  "extends": "@beribturing/typescript-config/nextjs.json",
+    "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "outDir": "dist",
-    "plugins": [
-      {
-        "name": "next"
-      }
-    ],
-    "baseUrl": ".",
+    "baseUrl": "src",
+    "composite": true,
     "paths": {
-      "@/*": ["./*"]
+      "~/*": ["*"],
+      "@assets/*": ["./public/*"],
+      "@beribturing/api-stub": ["../../packages/api-stub/src/*"]
     }
   },
   "references": [
-    {
-      "path": "../../packages/api-stub"
-    }
+    { "path": "../../packages/api-stub", "prepend": true },
   ],
   "include": [
-    "**/*.ts",
-    "**/*.tsx",
-    "next-env.d.ts",
-    "next.config.ts",
-    ".next/types/**/*.ts"
+    "src",
+    "src/**/*.json"
   ],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules"
+  ]
 }
+
