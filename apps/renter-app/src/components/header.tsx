@@ -1,47 +1,45 @@
-import {useEffect, useRef, useState} from "react"
-import {ChevronDown, Heart, LogOut, Menu, Search, Settings, User, UserCircle, X} from "lucide-react"
-import {CatalogMenu} from "./catalog-menu"
-import {useAuth} from "../hooks"
-import { Link } from "react-router-dom"
-import { LanguageSwitcher } from "./language-switcher"
-import { useTranslation } from "react-i18next"
-import { PlaceholderUserImage } from "~/assets"
-import { useLocale } from "../contexts/locale-context"
+import { useEffect, useRef, useState } from 'react';
+import { ChevronDown, Heart, LogOut, Menu, Search, Settings, User, UserCircle, X } from 'lucide-react';
+import { CatalogMenu } from './catalog-menu';
+import { useAuth } from '../hooks';
+import { Link } from 'react-router-dom';
+import { LanguageSwitcher } from './language-switcher';
+import { useTranslation } from 'react-i18next';
+import { PlaceholderUserImage } from '~/assets';
 
 export function Header() {
   const { t } = useTranslation();
-  const { getLocalizedPath } = useLocale();
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [isCatalogOpen, setIsCatalogOpen] = useState(false)
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
-  const catalogRef = useRef<HTMLDivElement>(null)
-  const userMenuRef = useRef<HTMLDivElement>(null)
-  const { user, signOut } = useAuth()
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isCatalogOpen, setIsCatalogOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const catalogRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+  const { user, signOut } = useAuth();
 
   // Close catalog when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (catalogRef.current && !catalogRef.current.contains(event.target as Node)) {
-        setIsCatalogOpen(false)
+        setIsCatalogOpen(false);
       }
       if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
-        setIsUserMenuOpen(false)
+        setIsUserMenuOpen(false);
       }
-    }
+    };
 
     if (isCatalogOpen || isUserMenuOpen) {
-      document.addEventListener("mousedown", handleClickOutside)
+      document.addEventListener('mousedown', handleClickOutside);
     }
 
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [isCatalogOpen, isUserMenuOpen])
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isCatalogOpen, isUserMenuOpen]);
 
   const handleSignOut = () => {
-    signOut()
-    setIsUserMenuOpen(false)
-  }
+    signOut();
+    setIsUserMenuOpen(false);
+  };
 
   return (
     <>
@@ -55,7 +53,7 @@ export function Header() {
             </button>
 
             {/* Logo */}
-            <Link to={getLocalizedPath("")} className="flex items-center space-x-2">
+            <Link to={'/'} className="flex items-center space-x-2">
               <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-lg">R</span>
               </div>
@@ -67,12 +65,12 @@ export function Header() {
               <button
                 onClick={() => setIsCatalogOpen(!isCatalogOpen)}
                 className={`flex items-center space-x-2 px-4 py-2 border rounded-lg transition-colors ${
-                  isCatalogOpen ? "border-purple-500 bg-purple-50 text-purple-600" : "border-gray-300 hover:bg-gray-50"
+                  isCatalogOpen ? 'border-purple-500 bg-purple-50 text-purple-600' : 'border-gray-300 hover:bg-gray-50'
                 }`}
               >
                 <Menu className="h-4 w-4" />
-                <span>{t("catalog")}</span>
-                <ChevronDown className={`h-4 w-4 transition-transform ${isCatalogOpen ? "rotate-180" : ""}`} />
+                <span>{t('catalog')}</span>
+                <ChevronDown className={`h-4 w-4 transition-transform ${isCatalogOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {/* Desktop Catalog Dropdown */}
@@ -119,7 +117,7 @@ export function Header() {
                       className="w-8 h-8 rounded-full object-cover"
                     />
                     <span className="font-medium">{user.name}</span>
-                    <ChevronDown className={`h-4 w-4 transition-transform ${isUserMenuOpen ? "rotate-180" : ""}`} />
+                    <ChevronDown className={`h-4 w-4 transition-transform ${isUserMenuOpen ? 'rotate-180' : ''}`} />
                   </button>
 
                   {/* User Dropdown Menu */}
@@ -127,20 +125,20 @@ export function Header() {
                     <div className="absolute right-0 top-full mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-xl z-50">
                       <div className="py-2">
                         <Link
-                          to={getLocalizedPath("profile")}
+                          to={'/profile'}
                           className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                           onClick={() => setIsUserMenuOpen(false)}
                         >
                           <UserCircle className="h-4 w-4" />
-                          <span>{t("profile")}</span>
+                          <span>{t('profile')}</span>
                         </Link>
                         <Link
-                          to={getLocalizedPath("settings")}
+                          to={'/settings'}
                           className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                           onClick={() => setIsUserMenuOpen(false)}
                         >
                           <Settings className="h-4 w-4" />
-                          <span>{t("settings")}</span>
+                          <span>{t('settings')}</span>
                         </Link>
                         <div className="border-t border-gray-100 my-1"></div>
                         <button
@@ -148,7 +146,7 @@ export function Header() {
                           className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 w-full text-left"
                         >
                           <LogOut className="h-4 w-4" />
-                          <span>{t("signOut")}</span>
+                          <span>{t('signOut')}</span>
                         </button>
                       </div>
                     </div>
@@ -157,20 +155,20 @@ export function Header() {
               ) : (
                 // Non-authenticated user actions
                 <Link
-                  to={getLocalizedPath("auth/signin")}
+                  to={'/auth/signin'}
                   className="flex items-center space-x-1 px-3 py-2 text-gray-700 hover:text-purple-600 transition-colors"
                 >
                   <User className="h-4 w-4" />
-                  <span>{t("signIn")}</span>
+                  <span>{t('signIn')}</span>
                 </Link>
               )}
 
               <Link
-                to={getLocalizedPath("favorites")}
+                to={'/favorites'}
                 className="flex items-center space-x-1 px-3 py-2 text-gray-700 hover:text-purple-600 transition-colors"
               >
                 <Heart className="h-4 w-4" />
-                <span>{t("favorites")}</span>
+                <span>{t('favorites')}</span>
               </Link>
             </div>
 
@@ -178,19 +176,19 @@ export function Header() {
             <div className="flex lg:hidden items-center space-x-2">
               <LanguageSwitcher />
               {user ? (
-                <Link to={getLocalizedPath("profile")} className="p-2">
+                <Link to={'/profile'} className="p-2">
                   <img
-                    src={user.avatar || "/placeholder.svg"}
+                    src={user.avatar || '/placeholder.svg'}
                     alt={user.name}
                     className="w-6 h-6 rounded-full object-cover"
                   />
                 </Link>
               ) : (
-                <Link to={getLocalizedPath("auth/signin")} className="p-2">
+                <Link to={'/auth/signin'} className="p-2">
                   <User className="h-5 w-5" />
                 </Link>
               )}
-              <Link to={getLocalizedPath("favorites")} className="p-2">
+              <Link to={'/favorites'} className="p-2">
                 <Heart className="h-5 w-5" />
               </Link>
             </div>
@@ -222,32 +220,32 @@ export function Header() {
               {user ? (
                 <div className="space-y-2">
                   <Link
-                    to={getLocalizedPath("profile")}
+                    to={'/profile'}
                     className="flex items-center space-x-2 w-full text-left py-2"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <UserCircle className="h-4 w-4" />
-                    <span>{t("profile")}</span>
+                    <span>{t('profile')}</span>
                   </Link>
                   <button
                     onClick={() => {
-                      handleSignOut()
-                      setIsMobileMenuOpen(false)
+                      handleSignOut();
+                      setIsMobileMenuOpen(false);
                     }}
                     className="flex items-center space-x-2 w-full text-left py-2 text-red-600"
                   >
                     <LogOut className="h-4 w-4" />
-                    <span>{t("signOut")}</span>
+                    <span>{t('signOut')}</span>
                   </button>
                 </div>
               ) : (
                 <Link
-                  to={getLocalizedPath("auth/signin")}
+                  to={'/auth/signin'}
                   className="flex items-center space-x-2 w-full text-left py-2"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <User className="h-4 w-4" />
-                  <span>{t("signIn")}</span>
+                  <span>{t('signIn')}</span>
                 </Link>
               )}
             </div>
@@ -255,5 +253,5 @@ export function Header() {
         )}
       </header>
     </>
-  )
+  );
 }

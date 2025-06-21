@@ -3,7 +3,6 @@ import { RouterProvider } from 'react-router-dom';
 import { browserRouter } from './pages/router';
 import { ThemeProvider } from './components/theme-provider';
 import { AuthProvider } from './lib/auth';
-import './globals.css';
 import React, { useMemo } from 'react';
 
 const App = () => {

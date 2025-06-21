@@ -1,45 +1,46 @@
-
-import { Globe } from "lucide-react"
-import { useLocation, useNavigate } from "react-router-dom"
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect } from 'react';
+import { Globe } from 'lucide-react';
+import { I18N_LANGUAGE } from '~/utils';
+import i18n from '~/locales/i18n'; // or hardcode it as 'lang'
 
 const languages = [
-    { code: "uz", name: "O'zbekcha" },
-    { code: "ru", name: "Русский" },
-  { code: "en", name: "English" },
-]
+  { code: 'uz', name: "O'zbekcha" },
+  { code: 'ru', name: 'Русский' },
+  { code: 'en', name: 'English' },
+];
 
 export function LanguageSwitcher() {
-  const [isOpen, setIsOpen] = useState(false)
-  const dropdownRef = useRef<HTMLDivElement>(null)
-  const location = useLocation()
-  const navigate = useNavigate()
-  // Router hook already imported as navigate
-  const currentLocale = location.pathname.split('/')[1] || 'uz'
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const currentLang = localStorage.getItem(I18N_LANGUAGE) || 'uz';
+
+  const handleLanguageChange = (locale: string) => {
+    console.log(`Changing language to: ${locale}`);
+    if (i18n.hasResourceBundle(locale, 'translation')) {
+      i18n.changeLanguage(locale);
+      localStorage.setItem(I18N_LANGUAGE, locale);
+      setIsOpen(false);
+    } else {
+      console.error(`Missing translations for: ${locale}`);
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setIsOpen(false)
+        setIsOpen(false);
       }
-    }
-
+    };
     if (isOpen) {
-      document.addEventListener("mousedown", handleClickOutside)
+      document.addEventListener('mousedown', handleClickOutside);
     }
-
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [isOpen])
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
 
-  const handleLanguageChange = (locale: string) => {
-    const newPath = location.pathname.replace(`/${currentLocale}`, `/${locale}`)
-    navigate(newPath)
-    setIsOpen(false)
-  }
-
-  const currentLanguage = languages.find(lang => lang.code === currentLocale) || languages[0]
+  const currentLanguage = languages.find((lang) => lang.code === currentLang) || languages[0];
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -59,9 +60,7 @@ export function LanguageSwitcher() {
                 key={language.code}
                 onClick={() => handleLanguageChange(language.code)}
                 className={`w-full text-left px-4 py-2 text-sm ${
-                  language.code === currentLocale
-                    ? "bg-purple-50 text-purple-600"
-                    : "text-gray-700 hover:bg-gray-50"
+                  language.code === currentLang ? 'bg-purple-50 text-purple-600' : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
                 {language.name}
@@ -71,5 +70,5 @@ export function LanguageSwitcher() {
         </div>
       )}
     </div>
-  )
-} 
+  );
+}
