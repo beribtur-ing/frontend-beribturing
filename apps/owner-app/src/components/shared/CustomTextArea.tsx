@@ -1,29 +1,23 @@
 import React from 'react';
 
-interface CustomSelectProps<T = any> extends React.SelectHTMLAttributes<HTMLSelectElement> {
+interface CustomTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   label?: string;
   name: string;
-  value: string | number;
-  onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  options: T[];
-  dataItemKey: keyof T;
-  textField: keyof T;
-  placeholder?: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
-export function CustomSelect<T>({
+export const CustomTextarea: React.FC<CustomTextareaProps> = ({
   label,
   name,
   value,
   onChange,
-  options,
-  dataItemKey,
-  textField,
-  required = false,
   placeholder,
+  rows = 4,
+  required = false,
   className = '',
   ...rest
-}: CustomSelectProps<T>) {
+}) => {
   return (
     <div className="w-full">
       {label && (
@@ -32,23 +26,17 @@ export function CustomSelect<T>({
           {required && <span className="text-red-500 ml-1">*</span>}
         </label>
       )}
-      <select
+      <textarea
         id={name}
         name={name}
         value={value}
         onChange={onChange}
+        placeholder={placeholder}
         required={required}
+        rows={rows}
         className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
         {...rest}
-      >
-        {placeholder && <option value="">{placeholder}</option>}
-
-        {options.map((item) => (
-          <option key={String(item[dataItemKey])} value={String(item[dataItemKey])}>
-            {String(item[textField])}
-          </option>
-        ))}
-      </select>
+      />
     </div>
   );
-}
+};
