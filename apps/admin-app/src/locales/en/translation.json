@@ -1,0 +1,22 @@
+{
+  "Profile": "Profile",
+  "Settings": "Settings",
+  "SignOut": "Sign Out",
+  "SignIn": "Sign In",
+  "Dashboard": "Dashboard",
+  "Overview": "Overview",
+  "Analytics": "Analytics",
+  "Bookings": "Bookings",
+  "Properties": "Properties",
+  "Requests": "Requests",
+  "Calendar": "Calendar",
+  "AddProperty": "Add Property",
+  "EditProperty": "Edit Property",
+  "TotalRevenue": "Total Revenue",
+  "TotalBookings": "Total Bookings",
+  "TotalProperties": "Total Properties",
+  "OccupancyRate": "Occupancy Rate",
+  "Home": "Home",
+  "Login": "Login",
+  "Logout": "Logout"
+}
