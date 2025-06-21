@@ -1,43 +1,42 @@
-import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useAuth } from "../hooks/auth";
-import { Button, Card, CardContent, CardHeader, TextField, Typography, Alert, Box } from "@mui/material";
-import { Shield } from "lucide-react";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/auth';
+import { Button, Card, CardContent, CardHeader, TextField, Typography, Alert, Box } from '@mui/material';
+import { Shield } from 'lucide-react';
 
 export default function LoginPage() {
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const { signIn, isSigningIn } = useAuth();
   const navigate = useNavigate();
-  const { locale } = useParams();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setError('');
 
     if (!phoneNumber || !password) {
-      setError("Please enter both phone number and password");
+      setError('Please enter both phone number and password');
       return;
     }
 
     const success = await signIn(phoneNumber, password);
     if (success) {
-      navigate(`/${locale}/overview`);
+      navigate(`/overview`);
     } else {
-      setError("Invalid phone number or password");
+      setError('Invalid phone number or password');
     }
   };
 
   return (
-    <Box 
-      sx={{ 
-        minHeight: '100vh', 
-        display: 'flex', 
-        alignItems: 'center', 
-        justifyContent: 'center', 
-        bgcolor: 'grey.50', 
-        px: 2 
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        bgcolor: 'grey.50',
+        px: 2,
       }}
     >
       <Card sx={{ width: '100%', maxWidth: 400 }}>
@@ -79,14 +78,8 @@ export default function LoginPage() {
               margin="normal"
             />
           </CardContent>
-          <Button 
-            type="submit" 
-            variant="contained" 
-            fullWidth 
-            disabled={isSigningIn}
-            sx={{ mt: 3 }}
-          >
-            {isSigningIn ? "Signing in..." : "Sign In"}
+          <Button type="submit" variant="contained" fullWidth disabled={isSigningIn} sx={{ mt: 3 }}>
+            {isSigningIn ? 'Signing in...' : 'Sign In'}
           </Button>
         </Box>
       </Card>

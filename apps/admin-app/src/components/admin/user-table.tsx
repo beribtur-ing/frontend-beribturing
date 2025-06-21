@@ -1,24 +1,33 @@
-import { Table, TableBody, TableCell, TableHead, TableRow, Card, Chip, IconButton, Menu, MenuItem } from "@mui/material"
-import { useState } from "react"
-import { MoreHorizontal, Shield, ShieldOff, Edit, Eye } from "lucide-react"
-import { mockUsers } from "../../lib/mock-data"
-import { Link, useLocation } from "react-router-dom"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Card,
+  Chip,
+  IconButton,
+  Menu,
+  MenuItem,
+} from '@mui/material';
+import { useState } from 'react';
+import { MoreHorizontal, Shield, Edit, Eye } from 'lucide-react';
+import { mockUsers } from '../../lib/mock-data';
+import { Link } from 'react-router-dom';
 
 export function UserTable() {
-  const location = useLocation()
-  const locale = location.pathname.split('/')[1] || 'en'
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const [selectedUserId, setSelectedUserId] = useState<string | null>(null)
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
 
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>, userId: string) => {
-    setAnchorEl(event.currentTarget)
-    setSelectedUserId(userId)
-  }
+    setAnchorEl(event.currentTarget);
+    setSelectedUserId(userId);
+  };
 
   const handleMenuClose = () => {
-    setAnchorEl(null)
-    setSelectedUserId(null)
-  }
+    setAnchorEl(null);
+    setSelectedUserId(null);
+  };
 
   return (
     <Card sx={{ overflow: 'hidden' }}>
@@ -39,22 +48,18 @@ export function UserTable() {
           {mockUsers.map((user) => (
             <TableRow key={user.id}>
               <TableCell sx={{ fontWeight: 'medium' }}>
-                <Link to={`/${locale}/users/${user.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                <Link to={`/users/${user.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                   {user.name}
                 </Link>
               </TableCell>
               <TableCell>{user.email}</TableCell>
               <TableCell>
-                <Chip 
-                  label={user.type} 
-                  color={user.type === "lender" ? "primary" : "secondary"} 
-                  size="small"
-                />
+                <Chip label={user.type} color={user.type === 'lender' ? 'primary' : 'secondary'} size="small" />
               </TableCell>
               <TableCell>
-                <Chip 
-                  label={user.isActive ? "Active" : "Inactive"}
-                  color={user.isActive ? "success" : "error"}
+                <Chip
+                  label={user.isActive ? 'Active' : 'Inactive'}
+                  color={user.isActive ? 'success' : 'error'}
                   size="small"
                 />
               </TableCell>
@@ -65,63 +70,54 @@ export function UserTable() {
                 {user.totalListings && `${user.totalListings} listings`}
               </TableCell>
               <TableCell>
-                <IconButton
-                  size="small"
-                  onClick={(e) => handleMenuClick(e, user.id)}
-                >
+                <IconButton size="small" onClick={(e) => handleMenuClick(e, user.id)}>
                   <MoreHorizontal size={16} />
                 </IconButton>
               </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-        
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleMenuClose}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'right',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'right',
-          }}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={handleMenuClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'right',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'right',
+        }}
+      >
+        <MenuItem
+          component={Link}
+          to={`/users/${selectedUserId}`}
+          onClick={handleMenuClose}
+          sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
         >
-          <MenuItem 
-            component={Link} 
-            to={`/${locale}/users/${selectedUserId}`}
-            onClick={handleMenuClose}
-            sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
-          >
-            <Eye size={16} />
-            View Details
-          </MenuItem>
-          <MenuItem 
-            component={Link} 
-            to={`/${locale}/users/${selectedUserId}/edit`}
-            onClick={handleMenuClose}
-            sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
-          >
-            <Edit size={16} />
-            Edit User
-          </MenuItem>
-          <MenuItem 
-            onClick={handleMenuClose}
-            sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
-          >
-            <Shield size={16} />
-            Toggle Status
-          </MenuItem>
-          <MenuItem 
-            onClick={handleMenuClose}
-            sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'error.main' }}
-          >
-            Delete User
-          </MenuItem>
-        </Menu>
+          <Eye size={16} />
+          View Details
+        </MenuItem>
+        <MenuItem
+          component={Link}
+          to={`/users/${selectedUserId}/edit`}
+          onClick={handleMenuClose}
+          sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
+        >
+          <Edit size={16} />
+          Edit User
+        </MenuItem>
+        <MenuItem onClick={handleMenuClose} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          <Shield size={16} />
+          Toggle Status
+        </MenuItem>
+        <MenuItem onClick={handleMenuClose} sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'error.main' }}>
+          Delete User
+        </MenuItem>
+      </Menu>
     </Card>
-  )
+  );
 }

@@ -1,35 +1,39 @@
-import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useAuth } from "../hooks/auth";
-import { Button, Card, CardContent, CardHeader, TextField, Tab, FormControlLabel, Switch, Avatar, Typography, Box } from "@mui/material";
-import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { PlaceholderImage } from "~/assets";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/auth';
+import { Button, Card, CardContent, CardHeader, TextField, Tab, Switch, Avatar, Box } from '@mui/material';
+import { TabContext, TabList, TabPanel } from '@mui/lab';
+import { PlaceholderImage } from '~/assets';
 
 export default function ProfileSettingsPage() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const { locale } = useParams();
   const [isSaving, setIsSaving] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState("+998 90 123-45-67");
-  const [activeTab, setActiveTab] = useState("general");
+  const [phoneNumber, setPhoneNumber] = useState('+998 90 123-45-67');
+  const [activeTab, setActiveTab] = useState('general');
 
   const formatPhoneNumber = (value: string) => {
-    let phoneNumber = value.replace(/\D/g, "");
-    
+    let phoneNumber = value.replace(/\D/g, '');
+
     if (phoneNumber.length > 0 && !phoneNumber.startsWith('998')) {
       phoneNumber = '998' + phoneNumber;
     }
 
     if (phoneNumber.length >= 12) {
-      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(8, 10)}-${phoneNumber.slice(10, 12)}`;
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(
+        8,
+        10,
+      )}-${phoneNumber.slice(10, 12)}`;
     } else if (phoneNumber.length >= 8) {
-      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(8)}`;
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(
+        8,
+      )}`;
     } else if (phoneNumber.length >= 5) {
       return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5)}`;
     } else if (phoneNumber.length >= 3) {
       return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3)}`;
     } else {
-      return phoneNumber ? `+${phoneNumber}` : "";
+      return phoneNumber ? `+${phoneNumber}` : '';
     }
   };
 
@@ -46,7 +50,7 @@ export default function ProfileSettingsPage() {
     setIsSaving(true);
     setTimeout(() => {
       setIsSaving(false);
-      navigate(`/${locale}/profile`);
+      navigate(`/profile`);
     }, 1000);
   };
 
@@ -66,16 +70,10 @@ export default function ProfileSettingsPage() {
 
         <TabPanel value="general">
           <Card>
-            <CardHeader
-              title="General Information"
-              subheader="Update your personal details and profile information."
-            />
+            <CardHeader title="General Information" subheader="Update your personal details and profile information." />
             <CardContent className="space-y-6">
               <div className="flex flex-col items-center sm:flex-row sm:items-start gap-6">
-                <Avatar 
-                  src={user.avatar || PlaceholderImage}
-                  sx={{ width: 96, height: 96, fontSize: '2rem' }}
-                >
+                <Avatar src={user.avatar || PlaceholderImage} sx={{ width: 96, height: 96, fontSize: '2rem' }}>
                   {user.name.charAt(0)}
                 </Avatar>
                 <div className="flex flex-col gap-2">
@@ -89,17 +87,8 @@ export default function ProfileSettingsPage() {
               </div>
 
               <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
-                <TextField
-                  label="Full Name"
-                  defaultValue={user.name}
-                  fullWidth
-                />
-                <TextField
-                  label="Email Address"
-                  type="email"
-                  defaultValue={user.email}
-                  fullWidth
-                />
+                <TextField label="Full Name" defaultValue={user.name} fullWidth />
+                <TextField label="Email Address" type="email" defaultValue={user.email} fullWidth />
                 <TextField
                   label="Phone Number"
                   type="tel"
@@ -111,27 +100,21 @@ export default function ProfileSettingsPage() {
                 />
                 <TextField
                   label="Role"
-                  defaultValue={user.role === "super_admin" ? "Super Administrator" : "Administrator"}
+                  defaultValue={user.role === 'super_admin' ? 'Super Administrator' : 'Administrator'}
                   disabled
                   fullWidth
                 />
               </Box>
 
-              <TextField
-                label="Bio"
-                placeholder="Tell us about yourself"
-                multiline
-                rows={4}
-                fullWidth
-              />
+              <TextField label="Bio" placeholder="Tell us about yourself" multiline rows={4} fullWidth />
             </CardContent>
             <CardContent>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', pt: 2 }}>
-                <Button variant="text" onClick={() => navigate(`/${locale}/profile`)}>
+                <Button variant="text" onClick={() => navigate(`/profile`)}>
                   Cancel
                 </Button>
                 <Button variant="contained" onClick={handleSave} disabled={isSaving}>
-                  {isSaving ? "Saving..." : "Save Changes"}
+                  {isSaving ? 'Saving...' : 'Save Changes'}
                 </Button>
               </Box>
             </CardContent>
@@ -140,36 +123,21 @@ export default function ProfileSettingsPage() {
 
         <TabPanel value="password">
           <Card>
-            <CardHeader
-              title="Change Password"
-              subheader="Update your password to maintain account security."
-            />
+            <CardHeader title="Change Password" subheader="Update your password to maintain account security." />
             <CardContent>
               <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <TextField
-                  label="Current Password"
-                  type="password"
-                  fullWidth
-                />
-                <TextField
-                  label="New Password"
-                  type="password"
-                  fullWidth
-                />
-                <TextField
-                  label="Confirm New Password"
-                  type="password"
-                  fullWidth
-                />
+                <TextField label="Current Password" type="password" fullWidth />
+                <TextField label="New Password" type="password" fullWidth />
+                <TextField label="Confirm New Password" type="password" fullWidth />
               </Box>
             </CardContent>
             <CardContent>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', pt: 2 }}>
-                <Button variant="text" onClick={() => navigate(`/${locale}/profile`)}>
+                <Button variant="text" onClick={() => navigate(`/profile`)}>
                   Cancel
                 </Button>
                 <Button variant="contained" onClick={handleSave} disabled={isSaving}>
-                  {isSaving ? "Updating..." : "Update Password"}
+                  {isSaving ? 'Updating...' : 'Update Password'}
                 </Button>
               </Box>
             </CardContent>
@@ -178,10 +146,7 @@ export default function ProfileSettingsPage() {
 
         <TabPanel value="notifications">
           <Card>
-            <CardHeader
-              title="Notification Preferences"
-              subheader="Manage how you receive notifications and alerts."
-            />
+            <CardHeader title="Notification Preferences" subheader="Manage how you receive notifications and alerts." />
             <CardContent className="space-y-6">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
@@ -241,11 +206,11 @@ export default function ProfileSettingsPage() {
             </CardContent>
             <CardContent>
               <Box sx={{ display: 'flex', justifyContent: 'space-between', pt: 2 }}>
-                <Button variant="text" onClick={() => navigate(`/${locale}/profile`)}>
+                <Button variant="text" onClick={() => navigate(`/profile`)}>
                   Cancel
                 </Button>
                 <Button variant="contained" onClick={handleSave} disabled={isSaving}>
-                  {isSaving ? "Saving..." : "Save Preferences"}
+                  {isSaving ? 'Saving...' : 'Save Preferences'}
                 </Button>
               </Box>
             </CardContent>

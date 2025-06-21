@@ -1,41 +1,67 @@
-import { useNavigate, useParams, Link } from "react-router-dom";
-import { Button, Card, CardContent, CardHeader, Chip, Typography, Box, Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText, IconButton } from "@mui/material";
-import { ArrowLeft, Check, X, Calendar, DollarSign, Clock } from "lucide-react";
-import { mockBookings } from "../lib/mock-data";
-import { useState } from "react";
+import { useNavigate, useParams, Link } from 'react-router-dom';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Chip,
+  Typography,
+  Box,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  DialogContentText,
+  IconButton,
+} from '@mui/material';
+import { ArrowLeft, Check, X, Calendar, DollarSign, Clock } from 'lucide-react';
+import { mockBookings } from '../lib/mock-data';
+import { useState } from 'react';
 
 export default function BookingDetailsPage() {
   const navigate = useNavigate();
-  const { id, locale } = useParams();
+  const { id } = useParams();
   const booking = mockBookings.find((b) => b.id === id) || mockBookings[0];
   const [showCancelDialog, setShowCancelDialog] = useState(false);
 
   const handleCancel = () => {
     setShowCancelDialog(false);
     // In a real app, this would call an API to cancel the booking
-    navigate(`/${locale}/bookings`);
+    navigate(`/bookings`);
   };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { sm: 'center' }, justifyContent: { sm: 'space-between' }, gap: 2 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { sm: 'center' },
+          justifyContent: { sm: 'space-between' },
+          gap: 2,
+        }}
+      >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <IconButton onClick={() => navigate(`/${locale}/bookings`)}>
+          <IconButton onClick={() => navigate(`/bookings`)}>
             <ArrowLeft size={20} />
           </IconButton>
           <Box>
-            <Typography variant="h4" fontWeight="bold">Booking #{booking?.id}</Typography>
-            <Typography variant="body2" color="text.secondary">Booking details and management.</Typography>
+            <Typography variant="h4" fontWeight="bold">
+              Booking #{booking?.id}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Booking details and management.
+            </Typography>
           </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 1 }}>
-          {booking?.status === "pending" && (
+          {booking?.status === 'pending' && (
             <Button variant="default">
               <Check className="mr-2 h-4 w-4" />
               Approve Booking
             </Button>
           )}
-          {booking?.status !== "cancelled" && booking?.status !== "completed" && (
+          {booking?.status !== 'cancelled' && booking?.status !== 'completed' && (
             <Button color="error" onClick={() => setShowCancelDialog(true)} startIcon={<X size={16} />}>
               Cancel Booking
             </Button>
@@ -45,10 +71,7 @@ export default function BookingDetailsPage() {
 
       <Box sx={{ display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' } }}>
         <Card>
-          <CardHeader
-            title="Booking Information"
-            subheader="Details about this booking."
-          />
+          <CardHeader title="Booking Information" subheader="Details about this booking." />
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -58,13 +81,13 @@ export default function BookingDetailsPage() {
               <Chip
                 label={booking?.status}
                 color={
-                  booking?.status === "active"
-                    ? "primary"
-                    : booking?.status === "completed"
-                      ? "success"
-                      : booking?.status === "pending"
-                        ? "warning"
-                        : "error"
+                  booking?.status === 'active'
+                    ? 'primary'
+                    : booking?.status === 'completed'
+                    ? 'success'
+                    : booking?.status === 'pending'
+                    ? 'warning'
+                    : 'error'
                 }
                 size="small"
               />
@@ -101,18 +124,12 @@ export default function BookingDetailsPage() {
         </Card>
 
         <Card>
-          <CardHeader
-            title="Parties Involved"
-            subheader="Users involved in this booking."
-          />
+          <CardHeader title="Parties Involved" subheader="Users involved in this booking." />
           <CardContent className="space-y-6">
             <div>
               <h3 className="text-lg font-medium mb-2">Property</h3>
               <div className="p-4 border rounded-md">
-                <Link 
-                  to={`/${locale}/properties/${booking?.propertyId}`} 
-                  className="font-medium hover:underline"
-                >
+                <Link to={`/properties/${booking?.propertyId}`} className="font-medium hover:underline">
                   {booking?.propertyTitle}
                 </Link>
               </div>
@@ -120,10 +137,7 @@ export default function BookingDetailsPage() {
             <div>
               <h3 className="text-lg font-medium mb-2">Lendee (Renter)</h3>
               <div className="p-4 border rounded-md">
-                <Link 
-                  to={`/${locale}/users/${booking?.lendeeId}`} 
-                  className="font-medium hover:underline"
-                >
+                <Link to={`/users/${booking?.lendeeId}`} className="font-medium hover:underline">
                   {booking?.lendeeName}
                 </Link>
               </div>
@@ -131,10 +145,7 @@ export default function BookingDetailsPage() {
             <div>
               <h3 className="text-lg font-medium mb-2">Lender (Owner)</h3>
               <div className="p-4 border rounded-md">
-                <Link 
-                  to={`/${locale}/users/${booking?.lenderId}`} 
-                  className="font-medium hover:underline"
-                >
+                <Link to={`/users/${booking?.lenderId}`} className="font-medium hover:underline">
                   {booking?.lenderName}
                 </Link>
               </div>
@@ -142,13 +153,11 @@ export default function BookingDetailsPage() {
           </CardContent>
         </Card>
       </Box>
-      
+
       <Dialog open={showCancelDialog} onClose={() => setShowCancelDialog(false)}>
         <DialogTitle>Are you sure?</DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            This will cancel the booking and notify both the lendee and lender.
-          </DialogContentText>
+          <DialogContentText>This will cancel the booking and notify both the lendee and lender.</DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setShowCancelDialog(false)}>No, keep booking</Button>

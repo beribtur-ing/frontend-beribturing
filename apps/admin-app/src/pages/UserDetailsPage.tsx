@@ -1,38 +1,64 @@
-import { useNavigate, useParams, Link } from "react-router-dom";
-import { Button, Card, CardContent, CardHeader, Avatar, Chip, Typography, Box, Dialog, DialogTitle, DialogContent, DialogActions, DialogContentText, IconButton } from "@mui/material";
-import { TabContext, TabList, TabPanel } from "@mui/lab";
-import { Tab } from "@mui/material";
-import { useState } from "react";
-import { ArrowLeft, Edit, Trash2, Ban, CheckCircle } from "lucide-react";
-import { mockUsers } from "../lib/mock-data";
+import { useNavigate, useParams, Link } from 'react-router-dom';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Avatar,
+  Chip,
+  Typography,
+  Box,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  DialogContentText,
+  IconButton,
+} from '@mui/material';
+import { TabContext, TabList, TabPanel } from '@mui/lab';
+import { Tab } from '@mui/material';
+import { useState } from 'react';
+import { ArrowLeft, Edit, Trash2, Ban, CheckCircle } from 'lucide-react';
+import { mockUsers } from '../lib/mock-data';
 
 export default function UserDetailsPage() {
   const navigate = useNavigate();
-  const { id, locale } = useParams();
+  const { id } = useParams();
   const user = mockUsers.find((u) => u.id === id) || mockUsers[0];
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [activeTab, setActiveTab] = useState("activity");
+  const [activeTab, setActiveTab] = useState('activity');
 
   const handleDelete = () => {
     setShowDeleteDialog(false);
-    navigate(`/${locale}/users`);
+    navigate(`/users`);
   };
-
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
-      <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { sm: 'center' }, justifyContent: { sm: 'space-between' }, gap: 2 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: { xs: 'column', sm: 'row' },
+          alignItems: { sm: 'center' },
+          justifyContent: { sm: 'space-between' },
+          gap: 2,
+        }}
+      >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <IconButton onClick={() => navigate(`/${locale}/users`)}>
+          <IconButton onClick={() => navigate(`/users`)}>
             <ArrowLeft size={20} />
           </IconButton>
           <Box>
-            <Typography variant="h4" fontWeight="bold">{user?.name}</Typography>
-            <Typography variant="body2" color="text.secondary">User details and management.</Typography>
+            <Typography variant="h4" fontWeight="bold">
+              {user?.name}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              User details and management.
+            </Typography>
           </Box>
         </Box>
         <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button variant="outlined" component={Link} to={`/${locale}/users/${id}/edit`} startIcon={<Edit size={16} />}>
+          <Button variant="outlined" component={Link} to={`/users/${id}/edit`} startIcon={<Edit size={16} />}>
             Edit User
           </Button>
           <Button color="error" onClick={() => setShowDeleteDialog(true)} startIcon={<Trash2 size={16} />}>
@@ -47,34 +73,37 @@ export default function UserDetailsPage() {
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', mb: 3 }}>
               <Avatar sx={{ width: 96, height: 96, mb: 2 }}>
                 {user?.name
-                  .split(" ")
+                  .split(' ')
                   .map((n) => n[0])
-                  .join("")}
+                  .join('')}
               </Avatar>
-              <Typography variant="h5" fontWeight="600">{user?.name}</Typography>
-              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>{user?.email}</Typography>
-              <Chip 
-                label={user?.type} 
-                color={user?.type === "lender" ? "primary" : "secondary"} 
-                sx={{ mb: 1 }}
-              />
-              <Chip 
-                label={user?.isActive ? "Active" : "Inactive"} 
-                color={user?.isActive ? "success" : "error"}
-              />
+              <Typography variant="h5" fontWeight="600">
+                {user?.name}
+              </Typography>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                {user?.email}
+              </Typography>
+              <Chip label={user?.type} color={user?.type === 'lender' ? 'primary' : 'secondary'} sx={{ mb: 1 }} />
+              <Chip label={user?.isActive ? 'Active' : 'Inactive'} color={user?.isActive ? 'success' : 'error'} />
             </Box>
 
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Typography variant="body2" color="text.secondary">Phone:</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Phone:
+                </Typography>
                 <Typography variant="body2">{user?.phoneNumber}</Typography>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Typography variant="body2" color="text.secondary">Joined:</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Joined:
+                </Typography>
                 <Typography variant="body2">{new Date(user?.joinedAt || '').toLocaleDateString()}</Typography>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Typography variant="body2" color="text.secondary">Activity:</Typography>
+                <Typography variant="body2" color="text.secondary">
+                  Activity:
+                </Typography>
                 <Typography variant="body2">
                   {user?.totalRentals && `${user?.totalRentals} rentals`}
                   {user?.totalListings && `${user?.totalListings} listings`}
@@ -110,32 +139,47 @@ export default function UserDetailsPage() {
 
             <TabPanel value="activity">
               <Card>
-                <CardHeader
-                  title="Recent Activity"
-                  subheader="User's recent actions on the platform."
-                />
+                <CardHeader title="Recent Activity" subheader="User's recent actions on the platform." />
                 <CardContent>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                       <Box>
-                        <Typography variant="body2" fontWeight="medium">Booked a rental</Typography>
-                        <Typography variant="caption" color="text.secondary">Professional Camera Kit</Typography>
+                        <Typography variant="body2" fontWeight="medium">
+                          Booked a rental
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          Professional Camera Kit
+                        </Typography>
                       </Box>
-                      <Typography variant="caption" color="text.secondary">2 days ago</Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        2 days ago
+                      </Typography>
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                       <Box>
-                        <Typography variant="body2" fontWeight="medium">Updated profile</Typography>
-                        <Typography variant="caption" color="text.secondary">Changed phone number</Typography>
+                        <Typography variant="body2" fontWeight="medium">
+                          Updated profile
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          Changed phone number
+                        </Typography>
                       </Box>
-                      <Typography variant="caption" color="text.secondary">1 week ago</Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        1 week ago
+                      </Typography>
                     </Box>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                       <Box>
-                        <Typography variant="body2" fontWeight="medium">Completed rental</Typography>
-                        <Typography variant="caption" color="text.secondary">Power Drill Set</Typography>
+                        <Typography variant="body2" fontWeight="medium">
+                          Completed rental
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          Power Drill Set
+                        </Typography>
                       </Box>
-                      <Typography variant="caption" color="text.secondary">2 weeks ago</Typography>
+                      <Typography variant="caption" color="text.secondary">
+                        2 weeks ago
+                      </Typography>
                     </Box>
                   </Box>
                 </CardContent>
@@ -144,30 +188,37 @@ export default function UserDetailsPage() {
 
             <TabPanel value="rentals">
               <Card>
-                <CardHeader
-                  title="Rental History"
-                  subheader="Items rented by this user."
-                />
+                <CardHeader title="Rental History" subheader="Items rented by this user." />
                 <CardContent>
-                  {user?.type === "lendee" ? (
+                  {user?.type === 'lendee' ? (
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <Box>
-                          <Typography variant="body2" fontWeight="medium">Professional Camera Kit</Typography>
-                          <Typography variant="caption" color="text.secondary">Mar 15, 2024 - Mar 20, 2024</Typography>
+                          <Typography variant="body2" fontWeight="medium">
+                            Professional Camera Kit
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            Mar 15, 2024 - Mar 20, 2024
+                          </Typography>
                         </Box>
                         <Chip label="Active" color="success" size="small" />
                       </Box>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <Box>
-                          <Typography variant="body2" fontWeight="medium">Power Drill Set</Typography>
-                          <Typography variant="caption" color="text.secondary">Feb 20, 2024 - Feb 25, 2024</Typography>
+                          <Typography variant="body2" fontWeight="medium">
+                            Power Drill Set
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            Feb 20, 2024 - Feb 25, 2024
+                          </Typography>
                         </Box>
                         <Chip label="Completed" color="default" size="small" />
                       </Box>
                     </Box>
                   ) : (
-                    <Typography variant="body2" color="text.secondary">This user is a lender and does not rent items.</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      This user is a lender and does not rent items.
+                    </Typography>
                   )}
                 </CardContent>
               </Card>
@@ -175,30 +226,37 @@ export default function UserDetailsPage() {
 
             <TabPanel value="listings">
               <Card>
-                <CardHeader
-                  title="Listed Properties"
-                  subheader="Items listed by this user."
-                />
+                <CardHeader title="Listed Properties" subheader="Items listed by this user." />
                 <CardContent>
-                  {user?.type === "lender" ? (
+                  {user?.type === 'lender' ? (
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <Box>
-                          <Typography variant="body2" fontWeight="medium">Professional Camera Kit</Typography>
-                          <Typography variant="caption" color="text.secondary">Listed on Feb 25, 2024</Typography>
+                          <Typography variant="body2" fontWeight="medium">
+                            Professional Camera Kit
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            Listed on Feb 25, 2024
+                          </Typography>
                         </Box>
                         <Chip label="Active" color="success" size="small" />
                       </Box>
                       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                         <Box>
-                          <Typography variant="body2" fontWeight="medium">Camping Gear Set</Typography>
-                          <Typography variant="caption" color="text.secondary">Listed on Jan 10, 2024</Typography>
+                          <Typography variant="body2" fontWeight="medium">
+                            Camping Gear Set
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary">
+                            Listed on Jan 10, 2024
+                          </Typography>
                         </Box>
                         <Chip label="Active" color="success" size="small" />
                       </Box>
                     </Box>
                   ) : (
-                    <Typography variant="body2" color="text.secondary">This user is a lendee and does not list items.</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      This user is a lendee and does not list items.
+                    </Typography>
                   )}
                 </CardContent>
               </Card>
@@ -206,19 +264,18 @@ export default function UserDetailsPage() {
 
             <TabPanel value="reports">
               <Card>
-                <CardHeader
-                  title="Reports"
-                  subheader="Reports involving this user."
-                />
+                <CardHeader title="Reports" subheader="Reports involving this user." />
                 <CardContent>
-                  <Typography variant="body2" color="text.secondary">No reports found for this user.</Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    No reports found for this user.
+                  </Typography>
                 </CardContent>
               </Card>
             </TabPanel>
           </TabContext>
         </Box>
       </Box>
-      
+
       <Dialog open={showDeleteDialog} onClose={() => setShowDeleteDialog(false)}>
         <DialogTitle>Are you absolutely sure?</DialogTitle>
         <DialogContent>

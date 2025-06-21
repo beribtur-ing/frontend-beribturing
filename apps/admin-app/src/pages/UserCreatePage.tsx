@@ -1,31 +1,50 @@
-import React, { useState } from "react";
-import { useNavigate, useParams, Link } from "react-router-dom";
-import { Button, Card, CardContent, CardHeader, TextField, Select, MenuItem, FormControl, InputLabel, FormControlLabel, Switch, Typography, Box, IconButton } from "@mui/material";
-import { ArrowLeft } from "lucide-react";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  FormControlLabel,
+  Switch,
+  Typography,
+  Box,
+  IconButton,
+} from '@mui/material';
+import { ArrowLeft } from 'lucide-react';
 
 export default function UserCreatePage() {
   const navigate = useNavigate();
-  const { locale } = useParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState('');
 
   const formatPhoneNumber = (value: string) => {
-    let phoneNumber = value.replace(/\D/g, "");
-    
+    let phoneNumber = value.replace(/\D/g, '');
+
     if (phoneNumber.length > 0 && !phoneNumber.startsWith('998')) {
       phoneNumber = '998' + phoneNumber;
     }
 
     if (phoneNumber.length >= 12) {
-      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(8, 10)}-${phoneNumber.slice(10, 12)}`;
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(
+        8,
+        10,
+      )}-${phoneNumber.slice(10, 12)}`;
     } else if (phoneNumber.length >= 8) {
-      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(8)}`;
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(
+        8,
+      )}`;
     } else if (phoneNumber.length >= 5) {
       return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5)}`;
     } else if (phoneNumber.length >= 3) {
       return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3)}`;
     } else {
-      return phoneNumber ? `+${phoneNumber}` : "";
+      return phoneNumber ? `+${phoneNumber}` : '';
     }
   };
 
@@ -40,14 +59,14 @@ export default function UserCreatePage() {
 
     setTimeout(() => {
       setIsSubmitting(false);
-      navigate(`/${locale}/users`);
+      navigate(`/users`);
     }, 1000);
   };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <IconButton onClick={() => navigate(`/${locale}/users`)}>
+        <IconButton onClick={() => navigate(`/users`)}>
           <ArrowLeft size={20} />
         </IconButton>
         <Box>
@@ -62,26 +81,12 @@ export default function UserCreatePage() {
 
       <Card>
         <form onSubmit={handleSubmit}>
-          <CardHeader 
-            title="User Information"
-            subheader="Enter the details for the new user."
-          />
+          <CardHeader title="User Information" subheader="Enter the details for the new user." />
           <CardContent>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
               <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr' }, gap: 2 }}>
-                <TextField
-                  label="Full Name"
-                  placeholder="John Doe"
-                  required
-                  fullWidth
-                />
-                <TextField
-                  label="Email Address"
-                  type="email"
-                  placeholder="john@example.com"
-                  required
-                  fullWidth
-                />
+                <TextField label="Full Name" placeholder="John Doe" required fullWidth />
+                <TextField label="Email Address" type="email" placeholder="john@example.com" required fullWidth />
                 <TextField
                   label="Phone Number"
                   type="tel"
@@ -93,10 +98,7 @@ export default function UserCreatePage() {
                 />
                 <FormControl fullWidth required>
                   <InputLabel>User Type</InputLabel>
-                  <Select
-                    label="User Type"
-                    defaultValue=""
-                  >
+                  <Select label="User Type" defaultValue="">
                     <MenuItem value="lendee">Lendee</MenuItem>
                     <MenuItem value="lender">Lender</MenuItem>
                   </Select>
@@ -111,17 +113,14 @@ export default function UserCreatePage() {
                 fullWidth
               />
 
-              <FormControlLabel
-                control={<Switch defaultChecked />}
-                label="Active Account"
-              />
-              
+              <FormControlLabel control={<Switch defaultChecked />} label="Active Account" />
+
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Button variant="text" type="button" onClick={() => navigate(`/${locale}/users`)}>
+                <Button variant="text" type="button" onClick={() => navigate(`/users`)}>
                   Cancel
                 </Button>
                 <Button type="submit" variant="contained" disabled={isSubmitting}>
-                  {isSubmitting ? "Creating..." : "Create User"}
+                  {isSubmitting ? 'Creating...' : 'Create User'}
                 </Button>
               </Box>
             </Box>

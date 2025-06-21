@@ -1,21 +1,36 @@
-import React, { useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { Button, Card, CardContent, CardHeader, TextField, Select, MenuItem, FormControl, InputLabel, FormControlLabel, Switch, Typography, Box, IconButton } from "@mui/material";
-import { ArrowLeft } from "lucide-react";
-import { mockProperties } from "../lib/mock-data";
+import React, { useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import {
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  TextField,
+  Select,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  FormControlLabel,
+  Switch,
+  Typography,
+  Box,
+  IconButton,
+} from '@mui/material';
+import { ArrowLeft } from 'lucide-react';
+import { mockProperties } from '../lib/mock-data';
 
 export default function PropertyEditPage() {
   const navigate = useNavigate();
-  const { id, locale } = useParams();
+  const { id } = useParams();
   const property = mockProperties.find((p) => p.id === id) || mockProperties[0];
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
-    title: property?.title || "",
-    description: property?.description || "",
-    category: property?.category || "",
-    price: property?.price || "",
-    currency: property?.currency || "USD",
-    isActive: property?.status === "active",
+    title: property?.title || '',
+    description: property?.description || '',
+    category: property?.category || '',
+    price: property?.price || '',
+    currency: property?.currency || 'USD',
+    isActive: property?.status === 'active',
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -24,28 +39,29 @@ export default function PropertyEditPage() {
 
     setTimeout(() => {
       setIsSubmitting(false);
-      navigate(`/${locale}/properties/${id}`);
+      navigate(`/properties/${id}`);
     }, 1000);
   };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-        <IconButton onClick={() => navigate(`/${locale}/properties/${id}`)}>
+        <IconButton onClick={() => navigate(`/properties/${id}`)}>
           <ArrowLeft size={20} />
         </IconButton>
         <Box>
-          <Typography variant="h4" fontWeight="bold">Edit Property</Typography>
-          <Typography variant="body2" color="text.secondary">Update property information.</Typography>
+          <Typography variant="h4" fontWeight="bold">
+            Edit Property
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Update property information.
+          </Typography>
         </Box>
       </Box>
 
       <Card>
         <Box component="form" onSubmit={handleSubmit}>
-          <CardHeader 
-            title="Property Information"
-            subheader="Edit the property's details."
-          />
+          <CardHeader title="Property Information" subheader="Edit the property's details." />
           <CardContent>
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
               <TextField
@@ -55,7 +71,7 @@ export default function PropertyEditPage() {
                 required
                 fullWidth
               />
-              
+
               <TextField
                 label="Description"
                 value={formData.description}
@@ -115,13 +131,13 @@ export default function PropertyEditPage() {
                 }
                 label="Active Property"
               />
-              
+
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                <Button variant="text" type="button" onClick={() => navigate(`/${locale}/properties/${id}`)}>
+                <Button variant="text" type="button" onClick={() => navigate(`/properties/${id}`)}>
                   Cancel
                 </Button>
                 <Button type="submit" variant="contained" disabled={isSubmitting}>
-                  {isSubmitting ? "Saving..." : "Save Changes"}
+                  {isSubmitting ? 'Saving...' : 'Save Changes'}
                 </Button>
               </Box>
             </Box>

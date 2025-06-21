@@ -1,39 +1,48 @@
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Card,
+  Chip,
+  IconButton,
+  Menu,
+  MenuItem,
+  Box,
+  Typography,
+} from '@mui/material';
+import { useState } from 'react';
+import { MoreHorizontal, Check, X, Flag, Eye, Edit } from 'lucide-react';
+import { mockProperties } from '../../lib/mock-data';
+import { PlaceholderImage } from '~/assets';
 
-
-import { Table, TableBody, TableCell, TableHead, TableRow, Card, Chip, IconButton, Menu, MenuItem, Box, Typography, Button } from "@mui/material"
-import { useState } from "react"
-import { MoreHorizontal, Check, X, Flag, Eye, Edit } from "lucide-react"
-import { mockProperties } from "../../lib/mock-data"
-import { PlaceholderImage } from "~/assets"
-
-import { Link, useLocation } from "react-router-dom"
+import { Link } from 'react-router-dom';
 
 export function PropertyTable() {
-  const location = useLocation()
-  const locale = location.pathname.split('/')[1] || 'en'
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null)
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [selectedPropertyId, setSelectedPropertyId] = useState<string | null>(null);
 
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>, propertyId: string) => {
-    setAnchorEl(event.currentTarget)
-    setSelectedPropertyId(propertyId)
-  }
+    setAnchorEl(event.currentTarget);
+    setSelectedPropertyId(propertyId);
+  };
 
   const handleMenuClose = () => {
-    setAnchorEl(null)
-    setSelectedPropertyId(null)
-  }
+    setAnchorEl(null);
+    setSelectedPropertyId(null);
+  };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "active":
-        return "success";
-      case "pending":
-        return "warning";
-      case "flagged":
-        return "error";
+      case 'active':
+        return 'success';
+      case 'pending':
+        return 'warning';
+      case 'flagged':
+        return 'error';
       default:
-        return "default";
+        return 'default';
     }
   };
 
@@ -66,34 +75,34 @@ export function PropertyTable() {
                   />
                   <Box>
                     <Typography variant="body2" fontWeight="medium">
-                      <Link to={`/${locale}/properties/${property.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                      <Link to={`/properties/${property.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                         {property.title}
                       </Link>
                     </Typography>
-                    <Typography variant="caption" color="text.secondary" sx={{ 
-                      display: 'block', 
-                      overflow: 'hidden', 
-                      textOverflow: 'ellipsis', 
-                      whiteSpace: 'nowrap',
-                      maxWidth: 200
-                    }}>
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{
+                        display: 'block',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        maxWidth: 200,
+                      }}
+                    >
                       {property.description}
                     </Typography>
                   </Box>
                 </Box>
               </TableCell>
               <TableCell>
-                <Link to={`/${locale}/users/${property.ownerId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                <Link to={`/users/${property.ownerId}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                   {property.owner}
                 </Link>
               </TableCell>
               <TableCell>{property.category}</TableCell>
               <TableCell>
-                <Chip
-                  label={property.status}
-                  color={getStatusColor(property.status)}
-                  size="small"
-                />
+                <Chip label={property.status} color={getStatusColor(property.status)} size="small" />
               </TableCell>
               <TableCell>
                 ${property.price}/{property.currency}
@@ -101,10 +110,7 @@ export function PropertyTable() {
               <TableCell>{property.totalBookings}</TableCell>
               <TableCell>{new Date(property.createdAt).toLocaleDateString()}</TableCell>
               <TableCell>
-                <IconButton
-                  size="small"
-                  onClick={(e) => handleMenuClick(e, property.id)}
-                >
+                <IconButton size="small" onClick={(e) => handleMenuClick(e, property.id)}>
                   <MoreHorizontal size={16} />
                 </IconButton>
               </TableCell>
@@ -112,7 +118,7 @@ export function PropertyTable() {
           ))}
         </TableBody>
       </Table>
-      
+
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
@@ -126,34 +132,34 @@ export function PropertyTable() {
           horizontal: 'right',
         }}
       >
-        <MenuItem 
-          component={Link} 
-          to={`/${locale}/properties/${selectedPropertyId}`}
+        <MenuItem
+          component={Link}
+          to={`/properties/${selectedPropertyId}`}
           onClick={handleMenuClose}
           sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
         >
           <Eye size={16} />
           View Details
         </MenuItem>
-        <MenuItem 
-          component={Link} 
-          to={`/${locale}/properties/${selectedPropertyId}/edit`}
+        <MenuItem
+          component={Link}
+          to={`/properties/${selectedPropertyId}/edit`}
           onClick={handleMenuClose}
           sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
         >
           <Edit size={16} />
           Edit Property
         </MenuItem>
-        {mockProperties.find(p => p.id === selectedPropertyId)?.status === "pending" && (
+        {mockProperties.find((p) => p.id === selectedPropertyId)?.status === 'pending' && (
           <>
-            <MenuItem 
+            <MenuItem
               onClick={handleMenuClose}
               sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'success.main' }}
             >
               <Check size={16} />
               Approve
             </MenuItem>
-            <MenuItem 
+            <MenuItem
               onClick={handleMenuClose}
               sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'error.main' }}
             >
@@ -162,7 +168,7 @@ export function PropertyTable() {
             </MenuItem>
           </>
         )}
-        <MenuItem 
+        <MenuItem
           onClick={handleMenuClose}
           sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'warning.main' }}
         >
@@ -171,5 +177,5 @@ export function PropertyTable() {
         </MenuItem>
       </Menu>
     </Card>
-  )
+  );
 }

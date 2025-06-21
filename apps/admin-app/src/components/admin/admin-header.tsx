@@ -2,20 +2,18 @@ import { AppBar, Toolbar, IconButton, Avatar, Menu, MenuItem, Typography, Box } 
 import { Bell, User, LogOut, Menu as MenuIcon } from 'lucide-react';
 import { useAuth } from '../../hooks/auth';
 import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { PlaceholderImage } from '~/assets';
 import { LanguageSelector } from '~/components/layout/LanguageSelector';
 
 export function AdminHeader() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-  const locale = location.pathname.split('/')[1] || 'en';
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
   const handleSignOut = () => {
     signOut();
-    navigate(`/${locale}/login`);
+    navigate(`/login`);
     setAnchorEl(null);
   };
 
@@ -68,7 +66,7 @@ export function AdminHeader() {
               >
                 <MenuItem
                   component={Link}
-                  to={`/${locale}/profile`}
+                  to={`/profile`}
                   onClick={handleMenuClose}
                   sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
                 >
@@ -77,7 +75,7 @@ export function AdminHeader() {
                 </MenuItem>
                 <MenuItem
                   component={Link}
-                  to={`/${locale}/profile/settings`}
+                  to={`/profile/settings`}
                   onClick={handleMenuClose}
                   sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
                 >
