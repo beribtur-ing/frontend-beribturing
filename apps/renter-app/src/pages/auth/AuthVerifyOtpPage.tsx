@@ -1,102 +1,102 @@
-import type React from "react"
-import {useEffect, useRef, useState} from "react"
+import type React from 'react';
+import { useEffect, useRef, useState } from 'react';
 
-import {ArrowLeft, Check, Phone, RefreshCw} from "lucide-react"
-import { Link, useNavigate, useSearchParams } from "react-router-dom"
-import {useOtpAuth} from "../../hooks/auth"
-import {LenderType, Profile, Gender } from '@beribturing/api-stub'
+import { ArrowLeft, Check, Phone, RefreshCw } from 'lucide-react';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useOtpAuth } from '../../hooks/auth';
+import { LenderType, Profile } from '@beribturing/api-stub';
 
 export default function AuthVerifyOtpPage() {
-  const [otp, setOtp] = useState(["", "", "", "", "", ""])
-  const [timeLeft, setTimeLeft] = useState(60)
-  const [isVerified, setIsVerified] = useState(false)
-  const [error, setError] = useState("")
-  const [signupData, setSignupData] = useState<any>(null)
+  const [otp, setOtp] = useState(['', '', '', '', '', '']);
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [isVerified, setIsVerified] = useState(false);
+  const [error, setError] = useState('');
+  const [signupData, setSignupData] = useState<any>(null);
 
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([])
-  const [searchParams] = useSearchParams()
-  const navigate = useNavigate()
-  const { verifyOtpAndSignUp, sendOtp, isVerifyingOtp, isSendingOtp } = useOtpAuth()
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { verifyOtpAndSignUp, sendOtp, isVerifyingOtp, isSendingOtp } = useOtpAuth();
 
-  const phone = searchParams.get("phone") || ""
-  const type = searchParams.get("type") || "signin" // signin or signup
-  const userType = searchParams.get("userType") || "renter" // renter or lender
+  const phone = searchParams.get('phone') || '';
+  const type = searchParams.get('type') || 'signin'; // signin or signup
+  const userType = searchParams.get('userType') || 'renter'; // renter or lender
 
   // Get signup data from sessionStorage for signup flow
   useEffect(() => {
-    if (type === "signup") {
-      const storedData = sessionStorage.getItem('signupData')
+    if (type === 'signup') {
+      const storedData = sessionStorage.getItem('signupData');
       if (storedData) {
-        setSignupData(JSON.parse(storedData))
+        setSignupData(JSON.parse(storedData));
       } else {
         // Redirect back to signup if no data
-        navigate('/auth/signup')
+        navigate('/auth/signup');
       }
     }
-  }, [type, navigate])
+  }, [type, navigate]);
 
   // Countdown timer
   useEffect(() => {
     if (timeLeft > 0) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000)
-      return () => clearTimeout(timer)
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearTimeout(timer);
     }
-  }, [timeLeft])
+  }, [timeLeft]);
 
   // Auto-focus first input on mount
   useEffect(() => {
     if (inputRefs.current[0]) {
-      inputRefs.current[0].focus()
+      inputRefs.current[0].focus();
     }
-  }, [])
+  }, []);
 
   const handleOtpChange = (index: number, value: string) => {
-    if (value.length > 1) return // Prevent multiple characters
+    if (value.length > 1) return; // Prevent multiple characters
 
-    const newOtp = [...otp]
-    newOtp[index] = value
-    setOtp(newOtp)
-    setError("")
+    const newOtp = [...otp];
+    newOtp[index] = value;
+    setOtp(newOtp);
+    setError('');
 
     // Auto-focus next input
     if (value && index < 5) {
-      inputRefs.current[index + 1]?.focus()
+      inputRefs.current[index + 1]?.focus();
     }
 
     // Auto-submit when all fields are filled
-    if (newOtp.every((digit) => digit !== "") && newOtp.join("").length === 6) {
-      handleVerifyOtp(newOtp.join(""))
+    if (newOtp.every((digit) => digit !== '') && newOtp.join('').length === 6) {
+      handleVerifyOtp(newOtp.join(''));
     }
-  }
+  };
 
   const handleKeyDown = (index: number, e: React.KeyboardEvent) => {
-    if (e.key === "Backspace" && !otp[index] && index > 0) {
-      inputRefs.current[index - 1]?.focus()
+    if (e.key === 'Backspace' && !otp[index] && index > 0) {
+      inputRefs.current[index - 1]?.focus();
     }
-  }
+  };
 
   const handlePaste = (e: React.ClipboardEvent) => {
-    e.preventDefault()
-    const pastedData = e.clipboardData.getData("text").replace(/\D/g, "").slice(0, 6)
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
 
     if (pastedData.length === 6) {
-      const newOtp = pastedData.split("")
-      setOtp(newOtp)
-      setError("")
-      handleVerifyOtp(pastedData)
+      const newOtp = pastedData.split('');
+      setOtp(newOtp);
+      setError('');
+      handleVerifyOtp(pastedData);
     }
-  }
+  };
 
   const handleVerifyOtp = async (otpCode: string) => {
-    setError("")
+    setError('');
 
-    if (type === "signup" && signupData) {
+    if (type === 'signup' && signupData) {
       // Create profile object with required fields
       // @ts-ignore
-      const profile: Profile = {}
+      const profile: Profile = {};
 
       // Clean phone number for API (remove +, spaces, and hyphens)
-      const cleanPhone = phone.replace(/[\s\-+]/g, '')
+      const cleanPhone = phone.replace(/[\s\-+]/g, '');
 
       const success = await verifyOtpAndSignUp(
         cleanPhone,
@@ -105,62 +105,68 @@ export default function AuthVerifyOtpPage() {
         `${signupData.firstName} ${signupData.lastName}`,
         profile,
         signupData.userType as 'renter' | 'lender',
-        signupData.userType === 'lender' ? LenderType.Individual : undefined
-      )
+        signupData.userType === 'lender' ? LenderType.Individual : undefined,
+      );
 
       if (success) {
-        setIsVerified(true)
+        setIsVerified(true);
         // Clear stored data
-        sessionStorage.removeItem('signupData')
+        sessionStorage.removeItem('signupData');
         setTimeout(() => {
           // Conditional redirect based on user type
           if (signupData.userType === 'lender') {
             // Redirect to owner app signin
-            window.location.href = process.env.NODE_ENV === 'development'
-              ? 'http://localhost:3001/login?message=Account created successfully'
-              : 'https://owner.renthub.com/login?message=Account created successfully'
+            const path = '/auth/signin?message=Account created successfully';
+
+            if (process.env.NODE_ENV === 'development') {
+              // use client-side navigation in dev
+              navigate(path);
+            } else {
+              // use full reload in production (different domain)
+              window.location.href = `https://owner.renthub.com/login?message=Account created successfully`;
+            }
           } else {
             // Redirect to renter signin
-            navigate("/auth/signin?message=Account created successfully")
+            navigate('/auth/signin?message=Account created successfully');
           }
-        }, 2000)
+        }, 2000);
       } else {
-        setError("Invalid verification code. Please try again.")
-        setOtp(["", "", "", "", "", ""])
-        inputRefs.current[0]?.focus()
+        setError('Invalid verification code. Please try again.');
+        setOtp(['', '', '', '', '', '']);
+        inputRefs.current[0]?.focus();
       }
     } else {
       // For signin OTP verification, implement direct signin logic here
       // This would typically involve a different API call
-      setError("OTP signin not implemented yet")
+      setError('OTP signin not implemented yet');
     }
-  }
+  };
 
   const handleResendOtp = async () => {
-    setError("")
+    setError('');
 
-    if (!phone) return
+    if (!phone) return;
 
     // Clean phone number for API (remove +, spaces, and hyphens)
-    const cleanPhone = phone.replace(/[\s\-+]/g, '')
+    const cleanPhone = phone.replace(/[\s\-+]/g, '');
 
-    const success = await sendOtp(cleanPhone, userType as 'renter' | 'lender')
+    const success = await sendOtp(cleanPhone, userType as 'renter' | 'lender');
     if (success) {
-      setTimeLeft(60)
-      setOtp(["", "", "", "", "", ""])
-      inputRefs.current[0]?.focus()
+      setTimeLeft(60);
+      setOtp(['', '', '', '', '', '']);
+      inputRefs.current[0]?.focus();
     } else {
-      setError("Failed to resend OTP")
+      setError('Failed to resend OTP');
     }
-  }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    const otpCode = otp.join("")
+    e.preventDefault();
+    const otpCode = otp.join('');
     if (otpCode.length === 6) {
-      handleVerifyOtp(otpCode)
+      handleVerifyOtp(otpCode);
     }
-  }
+  };
 
   if (isVerified) {
     return (
@@ -179,15 +185,15 @@ export default function AuthVerifyOtpPage() {
             </div>
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Phone Verified!</h2>
             <p className="text-gray-600 mb-8">
-              {type === "signup"
-                ? "Your account has been created successfully. Welcome to RentHub!"
+              {type === 'signup'
+                ? 'Your account has been created successfully. Welcome to RentHub!'
                 : "You've been signed in successfully. Welcome back!"}
             </p>
             <div className="animate-pulse text-sm text-gray-500">Redirecting you to the platform...</div>
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -224,7 +230,9 @@ export default function AuthVerifyOtpPage() {
                 {otp.map((digit, index) => (
                   <input
                     key={index}
-                    ref={(el) => { inputRefs.current[index] = el }}
+                    ref={(el) => {
+                      inputRefs.current[index] = el;
+                    }}
                     type="text"
                     inputMode="numeric"
                     pattern="[0-9]"
@@ -233,7 +241,7 @@ export default function AuthVerifyOtpPage() {
                     onChange={(e) => handleOtpChange(index, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(index, e)}
                     className={`w-12 h-12 text-center text-lg font-semibold border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 ${
-                      error ? "border-red-300" : "border-gray-300"
+                      error ? 'border-red-300' : 'border-gray-300'
                     }`}
                     disabled={isVerifyingOtp}
                   />
@@ -247,7 +255,7 @@ export default function AuthVerifyOtpPage() {
             <div>
               <button
                 type="submit"
-                disabled={isVerifyingOtp || otp.some((digit) => digit === "")}
+                disabled={isVerifyingOtp || otp.some((digit) => digit === '')}
                 className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 {isVerifyingOtp ? (
@@ -256,7 +264,7 @@ export default function AuthVerifyOtpPage() {
                     Verifying...
                   </div>
                 ) : (
-                  "Verify Code"
+                  'Verify Code'
                 )}
               </button>
             </div>
@@ -280,7 +288,7 @@ export default function AuthVerifyOtpPage() {
                     Sending...
                   </>
                 ) : (
-                  "Resend verification code"
+                  'Resend verification code'
                 )}
               </button>
             )}
@@ -289,7 +297,7 @@ export default function AuthVerifyOtpPage() {
           {/* Change phone number */}
           <div className="mt-4 text-center">
             <Link
-              to={type === "signup" ? "/auth/signup" : "/auth/phone-signin"}
+              to={type === 'signup' ? '/auth/signup' : '/auth/phone-signin'}
               className="text-sm text-gray-600 hover:text-purple-600 transition-colors"
             >
               Wrong phone number? Change it
@@ -300,14 +308,11 @@ export default function AuthVerifyOtpPage() {
 
       {/* Back to home */}
       <div className="mt-8 text-center">
-        <Link
-          to="/"
-          className="inline-flex items-center text-sm text-gray-600 hover:text-purple-600 transition-colors"
-        >
+        <Link to="/" className="inline-flex items-center text-sm text-gray-600 hover:text-purple-600 transition-colors">
           <ArrowLeft className="h-4 w-4 mr-1" />
           Back to RentHub
         </Link>
       </div>
     </div>
-  )
+  );
 }
