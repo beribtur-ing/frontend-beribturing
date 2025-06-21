@@ -73,12 +73,13 @@ export function AdminSidebar() {
         </Typography>
         <List>
           {menuItems.map((item) => {
-            const isActive = location.pathname === `${item.url}`;
+            console.log(location.pathname);
+            const isActive = location.pathname.startsWith(item.url);
             return (
               <ListItem key={item.title} disablePadding>
                 <ListItemButton
                   component={Link}
-                  to={`/${item.url}`}
+                  to={`${item.url}`}
                   selected={isActive}
                   sx={{
                     mx: 1,
