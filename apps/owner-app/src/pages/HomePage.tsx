@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useAuthContext } from '../lib/auth';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 export default function HomePage() {
   const { user, loading } = useAuthContext();

@@ -1,21 +1,21 @@
-
-import { BellIcon, UserCircleIcon, ArrowRightOnRectangleIcon, Bars3Icon } from "@heroicons/react/24/outline"
-import { useAuthContext } from "../../lib/auth"
-import {useNavigate} from "react-router-dom";
+import { BellIcon, UserCircleIcon, ArrowRightOnRectangleIcon, Bars3Icon } from '@heroicons/react/24/outline';
+import { useAuthContext } from '../../lib/auth';
+import { useNavigate } from 'react-router-dom';
+import { LanguageSelector } from '~/components/layout/LanguageSelector';
 
 interface HeaderProps {
-  sidebarOpen: boolean
-  setSidebarOpen: (isOpen: boolean) => void
+  sidebarOpen: boolean;
+  setSidebarOpen: (isOpen: boolean) => void;
 }
 
 export function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
-  const { user, signOut } = useAuthContext()
-  const navigate = useNavigate()
+  const { user, signOut } = useAuthContext();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    signOut()
-    navigate("/login")
-  }
+    signOut();
+    navigate('/login');
+  };
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
@@ -37,9 +37,10 @@ export function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
           </button>
 
           <div className="flex items-center">
+            <LanguageSelector />
             <UserCircleIcon className="w-8 h-8 text-gray-400 hidden sm:block" />
             <div className="hidden sm:block ml-3">
-              <p className="font-medium text-gray-700 text-sm">{user?.name || "John Doe"}</p>
+              <p className="font-medium text-gray-700 text-sm">{user?.name || 'John Doe'}</p>
               <p className="text-gray-500 text-xs">Owner</p>
             </div>
             <button
@@ -54,5 +55,5 @@ export function Header({ sidebarOpen, setSidebarOpen }: HeaderProps) {
         </div>
       </div>
     </header>
-  )
+  );
 }

@@ -1,0 +1,22 @@
+{
+  "Profile": "Профиль",
+  "Settings": "Настройки",
+  "SignOut": "Выйти",
+  "SignIn": "Войти",
+  "Dashboard": "Панель управления",
+  "Overview": "Обзор",
+  "Analytics": "Аналитика",
+  "Bookings": "Бронирования",
+  "Properties": "Объекты",
+  "Requests": "Запросы",
+  "Calendar": "Календарь",
+  "AddProperty": "Добавить объект",
+  "EditProperty": "Редактировать объект",
+  "TotalRevenue": "Общий доход",
+  "TotalBookings": "Всего бронирований",
+  "TotalProperties": "Всего объектов",
+  "OccupancyRate": "Процент занятости",
+  "Home": "Главная",
+  "Login": "Войти",
+  "Logout": "Выйти"
+}

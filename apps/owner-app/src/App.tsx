@@ -4,7 +4,6 @@ import { browserRouter } from './pages/router';
 import { ThemeProvider } from './components/theme-provider';
 import { AuthProvider } from './lib/auth';
 import './globals.css';
-import './i18n';
 import React, { useMemo } from 'react';
 
 const App = () => {

@@ -8,6 +8,7 @@ import {
   XMarkIcon,
 } from '@heroicons/react/24/outline';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const navigation = [
   { name: 'Overview', href: '/dashboard/overview', icon: HomeIcon },
@@ -25,6 +26,7 @@ interface SidebarProps {
 
 export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
   const location = useLocation();
+  const { t } = useTranslation();
 
   return (
     <>
@@ -36,7 +38,6 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
           aria-hidden="true"
         ></div>
       )}
-
       {/* Sidebar for mobile */}
       <div
         className={`fixed inset-y-0 left-0 z-30 w-64 transform bg-white shadow-lg transition duration-300 lg:translate-x-0 lg:static lg:inset-auto lg:z-auto ${
@@ -72,7 +73,7 @@ export function Sidebar({ isOpen, setIsOpen }: SidebarProps) {
                 }}
               >
                 <item.icon className="w-5 h-5 mr-3" />
-                {item.name}
+                {t(item.name)}
               </Link>
             );
           })}

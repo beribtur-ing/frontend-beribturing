@@ -1,0 +1,22 @@
+{
+  "Profile": "Profil",
+  "Settings": "Sozlamalar",
+  "SignOut": "Chiqish",
+  "SignIn": "Kirish",
+  "Dashboard": "Boshqaruv paneli",
+  "Overview": "Umumiy ko'rinish",
+  "Analytics": "Tahlil",
+  "Bookings": "Buyurtmalar",
+  "Properties": "Mulklar",
+  "Requests": "So'rovlar",
+  "Calendar": "Kalendar",
+  "AddProperty": "Mulk qo‘shish",
+  "EditProperty": "Mulkni tahrirlash",
+  "TotalRevenue": "Umumiy daromad",
+  "TotalBookings": "Jami buyurtmalar",
+  "TotalProperties": "Jami mulklar",
+  "OccupancyRate": "Bandlik darajasi",
+  "Home": "Bosh sahifa",
+  "Login": "Kirish",
+  "Logout": "Chiqish"
+}
