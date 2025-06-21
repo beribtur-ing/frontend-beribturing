@@ -5,17 +5,16 @@ import { useNavigate, useParams } from 'react-router-dom';
 export default function HomePage() {
   const { user, loading } = useAuthContext();
   const navigate = useNavigate();
-  const { locale } = useParams();
 
   useEffect(() => {
     if (!loading) {
       if (user) {
-        navigate(`/${locale}/dashboard/overview`);
+        navigate(`/dashboard/overview`);
       } else {
-        navigate(`/${locale}/login`);
+        navigate(`/login`);
       }
     }
-  }, [user, loading, navigate, locale]);
+  }, [user, loading, navigate]);
 
   if (loading) {
     return (
