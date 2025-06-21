@@ -1,6 +1,7 @@
-import React, { useState } from "react";
-import { useNavigate, Link, useParams } from "react-router-dom";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import React, { useState } from 'react';
+import { useNavigate, Link, useParams } from 'react-router-dom';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { useProductCategoryRdos } from '~/hooks';
 
 interface PropertyForm {
   title: string;
@@ -18,22 +19,23 @@ interface PropertyForm {
 }
 
 export default function DashboardPropertiesAddPage() {
+  const { data: categories } = useProductCategoryRdos({});
   const navigate = useNavigate();
   const { locale } = useParams();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<PropertyForm>({
-    title: "",
-    description: "",
-    categoryId: "electronics",
-    brand: "",
-    model: "",
-    color: "",
-    size: "",
-    material: "",
+    title: '',
+    description: '',
+    categoryId: 'electronics',
+    brand: '',
+    model: '',
+    color: '',
+    size: '',
+    material: '',
     dailyPrice: 0,
     weeklyPrice: 0,
     monthlyPrice: 0,
-    notes: "",
+    notes: '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -41,10 +43,10 @@ export default function DashboardPropertiesAddPage() {
     setLoading(true);
 
     try {
-      const response = await fetch("/api/products", {
-        method: "POST",
+      const response = await fetch('/api/products', {
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(form),
       });
@@ -52,10 +54,10 @@ export default function DashboardPropertiesAddPage() {
       if (response.ok) {
         navigate(`/${locale}/dashboard/properties`);
       } else {
-        alert("Failed to create property");
+        alert('Failed to create property');
       }
     } catch (error) {
-      alert("Error creating property");
+      alert('Error creating property');
     } finally {
       setLoading(false);
     }
@@ -65,7 +67,7 @@ export default function DashboardPropertiesAddPage() {
     const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: name.includes("Price") ? Number.parseFloat(value) || 0 : value,
+      [name]: name.includes('Price') ? Number.parseFloat(value) || 0 : value,
     }));
   };
 
@@ -129,6 +131,7 @@ export default function DashboardPropertiesAddPage() {
             />
           </div>
 
+          {/*
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Brand</label>
@@ -249,6 +252,7 @@ export default function DashboardPropertiesAddPage() {
               placeholder="Any additional information about the property..."
             />
           </div>
+          */}
 
           <div className="flex justify-end space-x-4">
             <Link
@@ -262,7 +266,7 @@ export default function DashboardPropertiesAddPage() {
               disabled={loading}
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
             >
-              {loading ? "Creating..." : "Create Property"}
+              {loading ? 'Creating...' : 'Create Property'}
             </button>
           </div>
         </form>

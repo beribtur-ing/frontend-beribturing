@@ -1,8 +1,8 @@
-import {useQuery, UseQueryResult} from '@tanstack/react-query';
-import {FindProductCategoryRdosOwnQuery, ItemOwnSeekApi, ProductCategoryRdo, QueryResponse} from '@beribturing/api-stub';
-import {useState} from 'react';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { FindProductCategoryRdosOwnQuery, ItemOwnSeekApi, ProductCategoryRdo, QueryResponse } from '@beribturing/api-stub';
+import { useState } from 'react';
 
-export const useProductCategoryRdos = ({limit}: { limit?: number }) => {
+export const useProductCategoryRdos = ({ limit }: { limit?: number }) => {
   //
   const initialQuery: FindProductCategoryRdosOwnQuery = {
     offset: {
@@ -13,13 +13,13 @@ export const useProductCategoryRdos = ({limit}: { limit?: number }) => {
   const [query, setQuery] = useState(initialQuery);
   const [searchQuery, setSearchQuery] = useState(initialQuery);
 
-  const {queryKey, queryFn} = ItemOwnSeekApi.query.findProductCategoryRdos({...query});
+  const { queryKey, queryFn } = ItemOwnSeekApi.query.findProductCategoryRdos({ ...query });
 
-  const {data, refetch, isLoading}: UseQueryResult<QueryResponse<ProductCategoryRdo[]>> = useQuery(
+  const { data, refetch, isLoading }: UseQueryResult<QueryResponse<ProductCategoryRdo[]>> = useQuery(
     {
       queryKey,
       queryFn,
-    }
+    },
   );
 
   const changeCurrentPage = (offset: number) => {
@@ -28,7 +28,7 @@ export const useProductCategoryRdos = ({limit}: { limit?: number }) => {
       if (prev.offset) {
         return {
           ...prev,
-          offset: {...prev.offset, offset},
+          offset: { ...prev.offset, offset },
         };
       }
       return prev;
@@ -41,7 +41,7 @@ export const useProductCategoryRdos = ({limit}: { limit?: number }) => {
       if (prev.offset) {
         return {
           ...prev,
-          offset: {offset: 0, limit},
+          offset: { offset: 0, limit },
         };
       }
       return prev;
@@ -61,14 +61,14 @@ export const useProductCategoryRdos = ({limit}: { limit?: number }) => {
 
   const fetchByNewQuery = (
     key?: keyof FindProductCategoryRdosOwnQuery,
-    value?: string | number | boolean | undefined
+    value?: string | number | boolean | undefined,
   ) => {
     setSearchQuery((prev) => {
       let newSearchQuery = {
         ...searchQuery,
         offset: initialQuery.offset,
       };
-      newSearchQuery = !!key ? {...newSearchQuery, [key]: value} : newSearchQuery;
+      newSearchQuery = !!key ? { ...newSearchQuery, [key]: value } : newSearchQuery;
       setQuery(newSearchQuery);
       return newSearchQuery;
     });
@@ -81,6 +81,7 @@ export const useProductCategoryRdos = ({limit}: { limit?: number }) => {
   };
 
   return {
+    data,
     query: searchQuery,
     productCategories: data?.result || [],
     total: data?.offset?.totalCount || 0,

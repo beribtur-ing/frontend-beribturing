@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { Card, CardContent, CardMedia, Typography, Button, Box, Grid, Skeleton } from "@mui/material";
-import type { Product, ProductVariant } from "../../lib/types";
-import { PlusIcon, BuildingOfficeIcon } from "@heroicons/react/24/outline";
-import { PropertyCard } from "../../components/dashboard/PropertyCard";
+import { useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Card, CardContent, CardMedia, Typography, Button, Box, Grid, Skeleton } from '@mui/material';
+import type { Product, ProductVariant } from '../../lib/types';
+import { PlusIcon, BuildingOfficeIcon } from '@heroicons/react/24/outline';
+import { PropertyCard } from '../../components/dashboard/PropertyCard';
 
 type ProductWithVariants = Product & { variants: ProductVariant[] };
+
+const productCategorys = [];
 
 export default function DashboardPropertiesPage() {
   const [properties, setProperties] = useState<ProductWithVariants[]>([]);
@@ -14,14 +16,14 @@ export default function DashboardPropertiesPage() {
   const { locale } = useParams();
 
   useEffect(() => {
-    fetch("/api/products")
+    fetch('/api/products')
       .then((res) => res.json())
       .then((data) => {
         setProperties(Array.isArray(data) ? data : []);
         setLoading(false);
       })
       .catch((error) => {
-        console.error("Error fetching properties:", error);
+        console.error('Error fetching properties:', error);
         setProperties([]);
         setLoading(false);
       });
@@ -32,7 +34,7 @@ export default function DashboardPropertiesPage() {
   };
 
   const handleDelete = (productId: string) => {
-    console.log("Delete product:", productId);
+    console.log('Delete product:', productId);
     // Implement delete functionality
   };
 
