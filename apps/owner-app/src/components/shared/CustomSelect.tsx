@@ -24,6 +24,7 @@ export function CustomSelect<T>({
   placeholder,
   className = '',
   error,
+  required,
   ...rest
 }: CustomSelectProps<T>) {
   return (
@@ -31,18 +32,19 @@ export function CustomSelect<T>({
       {label && (
         <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-2">
           {label}
-          {error && <span className="text-red-500 ml-1">*</span>}
+          {required && <span className="text-red-500 ml-1">*</span>}
         </label>
       )}
       <select
+        {...rest}
         id={name}
         name={name}
         value={value}
         onChange={onChange}
+        required={false}
         className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 ${
           error ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
         } ${className}`}
-        {...rest}
       >
         {placeholder && <option value="">{placeholder}</option>}
         {options.map((item) => (

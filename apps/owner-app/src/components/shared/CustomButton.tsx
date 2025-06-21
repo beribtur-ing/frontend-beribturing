@@ -3,18 +3,16 @@ import { Link, LinkProps } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
 
 interface CustomButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  loading?: boolean;
+  isLoading?: boolean;
   children: React.ReactNode;
-  as?: 'button' | 'link';
   to?: LinkProps['to']; // only used if as="link"
   variant?: 'primary' | 'secondary' | 'danger';
 }
 
 export const CustomButton: React.FC<CustomButtonProps> = ({
-  as = 'button',
   to,
   type = 'button',
-  loading = false,
+  isLoading = false,
   disabled = false,
   children,
   variant = 'primary',
@@ -32,7 +30,7 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
 
   const combinedClass = `${baseClass} ${variantClass} ${className}`.trim();
 
-  if (as === 'link' && to) {
+  if (to) {
     return (
       <Link to={to} className={combinedClass}>
         {children}
@@ -41,8 +39,8 @@ export const CustomButton: React.FC<CustomButtonProps> = ({
   }
 
   return (
-    <button type={type} disabled={disabled || loading} className={combinedClass} {...rest}>
-      {loading && <CircularProgress size={16} color="inherit" />}
+    <button type={type} disabled={disabled || isLoading} className={combinedClass} {...rest}>
+      {isLoading && <CircularProgress size={16} color="inherit" />}
       {children}
     </button>
   );

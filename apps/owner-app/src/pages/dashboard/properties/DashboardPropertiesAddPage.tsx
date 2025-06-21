@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
-import { useNavigate, Link, useParams } from 'react-router-dom';
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { useProductCategoryRdos } from '~/hooks';
+import * as yup from 'yup';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { CustomInput } from '~/components/shared/CustomInput';
+import { CustomSelect } from '~/components/shared/CustomSelect';
+import { CustomTextarea } from '~/components/shared/CustomTextarea';
+import { CustomButton } from '~/components/shared/CustomButton';
 
 interface PropertyForm {
   title: string;
@@ -18,256 +24,121 @@ interface PropertyForm {
   notes: string;
 }
 
+const formSchema = yup.object({
+  title: yup.string().required('Title is required'),
+  description: yup.string().required('Description is required'),
+  categoryId: yup.string().required('Category is required'),
+});
+
+const categoryOptions = [
+  { id: 'electronics', name: 'Electronics' },
+  { id: 'sports', name: 'Sports & Recreation' },
+  { id: 'tools', name: 'Tools & Equipment' },
+  { id: 'vehicles', name: 'Vehicles' },
+  { id: 'home', name: 'Home & Garden' },
+];
+
 export default function DashboardPropertiesAddPage() {
-  const { data: categories } = useProductCategoryRdos({});
   const navigate = useNavigate();
-  const { locale } = useParams();
-  const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState<PropertyForm>({
-    title: '',
-    description: '',
-    categoryId: 'electronics',
-    brand: '',
-    model: '',
-    color: '',
-    size: '',
-    material: '',
-    dailyPrice: 0,
-    weeklyPrice: 0,
-    monthlyPrice: 0,
-    notes: '',
+  const form = useForm<PropertyForm>({
+    defaultValues: {},
+    resolver: yupResolver(formSchema) as any,
   });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+  const { handleSubmit, control, formState } = form;
+  const { errors } = formState;
 
+  const onSubmit = async (data: PropertyForm) => {
+    console.log(data);
     try {
       const response = await fetch('/api/products', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify(data),
       });
 
       if (response.ok) {
-        navigate(`/${locale}/dashboard/properties`);
+        navigate(`/dashboard/properties`);
       } else {
         alert('Failed to create property');
       }
     } catch (error) {
       alert('Error creating property');
     } finally {
-      setLoading(false);
     }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: name.includes('Price') ? Number.parseFloat(value) || 0 : value,
-    }));
   };
 
   return (
     <div>
       <div className="mb-8">
         <Link
-          to={`/${locale}/dashboard/properties`}
+          to={`/dashboard/properties`}
           className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-4"
         >
           <ArrowLeftIcon className="w-4 h-4 mr-1" />
           Back to Properties
         </Link>
         <h1 className="text-2xl font-bold text-gray-900">Add New Property</h1>
-        <p className="text-gray-600">Create a new rental listing</p>
       </div>
 
       <div className="bg-white rounded-lg shadow p-6">
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Property Title</label>
-              <input
-                type="text"
-                name="title"
-                value={form.title}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="e.g., Professional DSLR Camera"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-              <select
-                name="categoryId"
-                value={form.categoryId}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="electronics">Electronics</option>
-                <option value="sports">Sports & Recreation</option>
-                <option value="tools">Tools & Equipment</option>
-                <option value="vehicles">Vehicles</option>
-                <option value="home">Home & Garden</option>
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-            <textarea
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              required
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Describe your property in detail..."
+            <Controller
+              name="title"
+              control={control}
+              render={({ field }) => (
+                <CustomInput
+                  {...field}
+                  label="Property Title"
+                  placeholder="e.g., Professional DSLR Camera"
+                  required
+                  error={errors?.title}
+                />
+              )}
+            />
+            <Controller
+              name="categoryId"
+              control={control}
+              render={({ field }) => (
+                <CustomSelect
+                  {...field}
+                  options={categoryOptions}
+                  dataItemKey={'id'}
+                  textField={'name'}
+                  label="Category"
+                  placeholder="Select a category"
+                  required
+                  error={errors?.categoryId}
+                />
+              )}
             />
           </div>
 
-          {/*
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Brand</label>
-              <input
-                type="text"
-                name="brand"
-                value={form.brand}
-                onChange={handleChange}
+          <Controller
+            name="description"
+            control={control}
+            render={({ field }) => (
+              <CustomTextarea
+                {...field}
+                label="Description"
+                placeholder="Describe your property in detail..."
                 required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="e.g., Canon"
+                error={errors?.description}
               />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Model</label>
-              <input
-                type="text"
-                name="model"
-                value={form.model}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="e.g., EOS R5"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Color</label>
-              <input
-                type="text"
-                name="color"
-                value={form.color}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="e.g., Black"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Size</label>
-              <input
-                type="text"
-                name="size"
-                value={form.size}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="e.g., Large"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Material</label>
-            <input
-              type="text"
-              name="material"
-              value={form.material}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="e.g., Metal/Plastic"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Daily Price ($)</label>
-              <input
-                type="number"
-                name="dailyPrice"
-                value={form.dailyPrice}
-                onChange={handleChange}
-                required
-                min="0"
-                step="0.01"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="50.00"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Weekly Price ($)</label>
-              <input
-                type="number"
-                name="weeklyPrice"
-                value={form.weeklyPrice}
-                onChange={handleChange}
-                min="0"
-                step="0.01"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="300.00"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Monthly Price ($)</label>
-              <input
-                type="number"
-                name="monthlyPrice"
-                value={form.monthlyPrice}
-                onChange={handleChange}
-                min="0"
-                step="0.01"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="1000.00"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Additional Notes</label>
-            <textarea
-              name="notes"
-              value={form.notes}
-              onChange={handleChange}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Any additional information about the property..."
-            />
-          </div>
-          */}
+            )}
+          />
 
           <div className="flex justify-end space-x-4">
-            <Link
-              to={`/${locale}/dashboard/properties`}
-              className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
-            >
+            <CustomButton to="/dashboard/properties" variant="secondary">
               Cancel
-            </Link>
-            <button
-              type="submit"
-              disabled={loading}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
-            >
-              {loading ? 'Creating...' : 'Create Property'}
-            </button>
+            </CustomButton>
+
+            <CustomButton type="submit" isLoading={false} variant="primary">
+              Create Property
+            </CustomButton>
           </div>
         </form>
       </div>
