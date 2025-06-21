@@ -8,6 +8,7 @@ import { CustomInput } from '~/components/shared/CustomInput';
 import { CustomSelect } from '~/components/shared/CustomSelect';
 import { CustomTextarea } from '~/components/shared/CustomTextarea';
 import { CustomButton } from '~/components/shared/CustomButton';
+import { useProductCategoryRdos } from '~/hooks';
 
 interface PropertyForm {
   title: string;
@@ -39,6 +40,7 @@ const categoryOptions = [
 ];
 
 export default function DashboardPropertiesAddPage() {
+  const { data: categories } = useProductCategoryRdos({});
   const navigate = useNavigate();
   const form = useForm<PropertyForm>({
     defaultValues: {},

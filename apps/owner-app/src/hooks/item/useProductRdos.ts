@@ -1,8 +1,8 @@
-import {useQuery, UseQueryResult} from '@tanstack/react-query';
-import {FindProductRdosOwnQuery, ItemOwnSeekApi, ProductRdo, QueryResponse} from '@beribturing/api-stub';
-import {useState} from 'react';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { FindProductRdosOwnQuery, ItemOwnSeekApi, ProductRdo, QueryResponse } from '@beribturing/api-stub';
+import { useState } from 'react';
 
-export const useProductRdos = ({limit}: { limit?: number }) => {
+export const useProductRdos = ({ limit }: { limit?: number }) => {
   //
   const initialQuery: FindProductRdosOwnQuery = {
     offset: {
@@ -13,13 +13,13 @@ export const useProductRdos = ({limit}: { limit?: number }) => {
   const [query, setQuery] = useState(initialQuery);
   const [searchQuery, setSearchQuery] = useState(initialQuery);
 
-  const {queryKey, queryFn} = ItemOwnSeekApi.query.findProductRdos({...query});
+  const { queryKey, queryFn } = ItemOwnSeekApi.query.findProductRdos({ ...query });
 
-  const {data, refetch, isLoading}: UseQueryResult<QueryResponse<ProductRdo[]>> = useQuery(
+  const { data, refetch, isLoading }: UseQueryResult<QueryResponse<ProductRdo[]>> = useQuery(
     {
       queryKey,
       queryFn,
-    }
+    },
   );
 
   const changeCurrentPage = (offset: number) => {
@@ -28,7 +28,7 @@ export const useProductRdos = ({limit}: { limit?: number }) => {
       if (prev.offset) {
         return {
           ...prev,
-          offset: {...prev.offset, offset},
+          offset: { ...prev.offset, offset },
         };
       }
       return prev;
@@ -41,7 +41,7 @@ export const useProductRdos = ({limit}: { limit?: number }) => {
       if (prev.offset) {
         return {
           ...prev,
-          offset: {offset: 0, limit},
+          offset: { offset: 0, limit },
         };
       }
       return prev;
@@ -61,14 +61,14 @@ export const useProductRdos = ({limit}: { limit?: number }) => {
 
   const fetchByNewQuery = (
     key?: keyof FindProductRdosOwnQuery,
-    value?: string | number | boolean | undefined
+    value?: string | number | boolean | undefined,
   ) => {
     setSearchQuery((prev) => {
       let newSearchQuery = {
         ...searchQuery,
         offset: initialQuery.offset,
       };
-      newSearchQuery = !!key ? {...newSearchQuery, [key]: value} : newSearchQuery;
+      newSearchQuery = !!key ? { ...newSearchQuery, [key]: value } : newSearchQuery;
       setQuery(newSearchQuery);
       return newSearchQuery;
     });
