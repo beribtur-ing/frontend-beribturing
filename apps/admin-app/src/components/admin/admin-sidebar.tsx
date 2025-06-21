@@ -1,4 +1,5 @@
 import { BarChart3, Calendar, Home, Settings, Users, Building2, Shield } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography, Box } from '@mui/material';
 import { Link, useLocation } from 'react-router-dom';
@@ -38,6 +39,7 @@ const menuItems = [
 
 export function AdminSidebar() {
   const location = useLocation();
+  const { t } = useTranslation();
 
   return (
     <Drawer
@@ -93,7 +95,7 @@ export function AdminSidebar() {
                   <ListItemIcon sx={{ minWidth: 40, color: isActive ? 'inherit' : 'text.secondary' }}>
                     <item.icon size={20} />
                   </ListItemIcon>
-                  <ListItemText primary={item.title} />
+                  <ListItemText primary={t(item.title)} />
                 </ListItemButton>
               </ListItem>
             );
