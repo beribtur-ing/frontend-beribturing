@@ -1,10 +1,12 @@
 import React from 'react';
+import type { FieldError } from 'react-hook-form';
 
 interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
   name: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  error?: FieldError;
 }
 
 export const CustomInput: React.FC<CustomInputProps> = ({
@@ -16,6 +18,7 @@ export const CustomInput: React.FC<CustomInputProps> = ({
   type = 'text',
   required = false,
   className = '',
+  error,
   ...rest
 }) => {
   return (
@@ -32,11 +35,13 @@ export const CustomInput: React.FC<CustomInputProps> = ({
         name={name}
         value={value}
         onChange={onChange}
-        required={required}
         placeholder={placeholder}
-        className={`w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${className}`}
+        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-1 ${
+          error ? 'border-red-500 focus:ring-red-500' : 'border-gray-300 focus:ring-blue-500'
+        } ${className}`}
         {...rest}
       />
+      {error && <p className="mt-1 text-sm text-red-600">{error.message}</p>}
     </div>
   );
 };
