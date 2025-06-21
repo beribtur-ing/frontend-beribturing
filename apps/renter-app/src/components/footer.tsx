@@ -1,6 +1,5 @@
-
-import { Link } from "react-router-dom"
-import { useTranslation } from "react-i18next"
+import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export function Footer() {
   const { t } = useTranslation();
@@ -16,33 +15,31 @@ export function Footer() {
               </div>
               <span className="text-xl font-bold text-gray-900">renthub</span>
             </Link>
-            <p className="mt-4 text-sm text-gray-600">
-              {t("yourTrustedPlatformForRentingItems")}
-            </p>
+            <p className="mt-4 text-sm text-gray-600">{t('Your trusted platform for renting items')}</p>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">{t("quickLinks")}</h3>
+            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">{t('Quick Links')}</h3>
             <ul className="mt-4 space-y-2">
               <li>
                 <Link to="/about" className="text-sm text-gray-600 hover:text-purple-600">
-                  {t("aboutUs")}
+                  {t('aboutUs')}
                 </Link>
               </li>
               <li>
                 <Link to="/how-it-works" className="text-sm text-gray-600 hover:text-purple-600">
-                  {t("howItWorks")}
+                  {t('howItWorks')}
                 </Link>
               </li>
               <li>
                 <Link to="/pricing" className="text-sm text-gray-600 hover:text-purple-600">
-                  {t("pricing")}
+                  {t('pricing')}
                 </Link>
               </li>
               <li>
                 <Link to="/contact" className="text-sm text-gray-600 hover:text-purple-600">
-                  {t("contact")}
+                  {t('contact')}
                 </Link>
               </li>
             </ul>
@@ -50,26 +47,26 @@ export function Footer() {
 
           {/* Support */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">{t("support")}</h3>
+            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">{t('support')}</h3>
             <ul className="mt-4 space-y-2">
               <li>
                 <Link to="/help" className="text-sm text-gray-600 hover:text-purple-600">
-                  {t("helpCenter")}
+                  {t('helpCenter')}
                 </Link>
               </li>
               <li>
                 <Link to="/faq" className="text-sm text-gray-600 hover:text-purple-600">
-                  {t("faq")}
+                  {t('faq')}
                 </Link>
               </li>
               <li>
                 <Link to="/safety" className="text-sm text-gray-600 hover:text-purple-600">
-                  {t("safety")}
+                  {t('safety')}
                 </Link>
               </li>
               <li>
                 <Link to="/terms" className="text-sm text-gray-600 hover:text-purple-600">
-                  {t("termsOfService")}
+                  {t('termsOfService')}
                 </Link>
               </li>
             </ul>
@@ -77,21 +74,21 @@ export function Footer() {
 
           {/* Legal */}
           <div>
-            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">{t("legal")}</h3>
+            <h3 className="text-sm font-semibold text-gray-900 uppercase tracking-wider">{t('legal')}</h3>
             <ul className="mt-4 space-y-2">
               <li>
                 <Link to="/privacy" className="text-sm text-gray-600 hover:text-purple-600">
-                  {t("privacyPolicy")}
+                  {t('privacyPolicy')}
                 </Link>
               </li>
               <li>
                 <Link to="/terms" className="text-sm text-gray-600 hover:text-purple-600">
-                  {t("termsOfService")}
+                  {t('termsOfService')}
                 </Link>
               </li>
               <li>
                 <Link to="/cookies" className="text-sm text-gray-600 hover:text-purple-600">
-                  {t("cookiePolicy")}
+                  {t('cookiePolicy')}
                 </Link>
               </li>
             </ul>
@@ -101,10 +98,10 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="mt-8 pt-8 border-t border-gray-200">
           <p className="text-sm text-gray-500 text-center">
-            © {new Date().getFullYear()} {t("allRightsReserved")}
+            © {new Date().getFullYear()} {t('allRightsReserved')}
           </p>
         </div>
       </div>
     </footer>
-  )
+  );
 }

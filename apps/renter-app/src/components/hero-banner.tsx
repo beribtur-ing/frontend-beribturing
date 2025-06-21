@@ -1,4 +1,4 @@
-import { useTranslation } from "react-i18next"
+import { useTranslation } from 'react-i18next';
 
 export function HeroBanner() {
   const { t } = useTranslation();
@@ -13,10 +13,12 @@ export function HeroBanner() {
       <div className="absolute inset-0 bg-gradient-to-r from-purple-900/80 to-blue-900/80"></div>
 
       <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-3xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">{t("rentEverythingYouNeed")}</h1>
+        <div className="max-w-5xl mx-auto text-center">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
+            {t('Rent Everything You Need')}
+          </h1>
           <p className="text-xl md:text-2xl mb-8 text-gray-100 leading-relaxed">
-            {t("fromToolsToElectronics")}
+            {t('From tools to electronics, find everything you need for your projects')}
           </p>
         </div>
       </div>
@@ -25,5 +27,5 @@ export function HeroBanner() {
       <div className="absolute top-20 left-10 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
       <div className="absolute bottom-20 right-10 w-32 h-32 bg-purple-500/20 rounded-full blur-xl"></div>
     </section>
-  )
+  );
 }

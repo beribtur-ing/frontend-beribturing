@@ -69,7 +69,7 @@ export function Header() {
                 }`}
               >
                 <Menu className="h-4 w-4" />
-                <span>{t('catalog')}</span>
+                <span>{t('Catalog')}</span>
                 <ChevronDown className={`h-4 w-4 transition-transform ${isCatalogOpen ? 'rotate-180' : ''}`} />
               </button>
 
@@ -86,7 +86,7 @@ export function Header() {
               <div className="relative w-full">
                 <input
                   type="text"
-                  placeholder={t('searchRentalItems')}
+                  placeholder={t('Search for items to rent...')}
                   className="w-full h-10 lg:h-12 pl-4 pr-12 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent text-sm lg:text-base"
                 />
                 <button className="absolute right-1 top-1 h-8 lg:h-10 px-3 lg:px-4 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors">
@@ -130,7 +130,7 @@ export function Header() {
                           onClick={() => setIsUserMenuOpen(false)}
                         >
                           <UserCircle className="h-4 w-4" />
-                          <span>{t('profile')}</span>
+                          <span>{t('Profile')}</span>
                         </Link>
                         <Link
                           to={'/settings'}
@@ -138,7 +138,7 @@ export function Header() {
                           onClick={() => setIsUserMenuOpen(false)}
                         >
                           <Settings className="h-4 w-4" />
-                          <span>{t('settings')}</span>
+                          <span>{t('Settings')}</span>
                         </Link>
                         <div className="border-t border-gray-100 my-1"></div>
                         <button
@@ -146,7 +146,7 @@ export function Header() {
                           className="flex items-center space-x-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 w-full text-left"
                         >
                           <LogOut className="h-4 w-4" />
-                          <span>{t('signOut')}</span>
+                          <span>{t('Sign Out')}</span>
                         </button>
                       </div>
                     </div>
@@ -159,7 +159,7 @@ export function Header() {
                   className="flex items-center space-x-1 px-3 py-2 text-gray-700 hover:text-purple-600 transition-colors"
                 >
                   <User className="h-4 w-4" />
-                  <span>{t('signIn')}</span>
+                  <span>{t('Sign In')}</span>
                 </Link>
               )}
 
@@ -168,7 +168,7 @@ export function Header() {
                 className="flex items-center space-x-1 px-3 py-2 text-gray-700 hover:text-purple-600 transition-colors"
               >
                 <Heart className="h-4 w-4" />
-                <span>{t('favorites')}</span>
+                <span>{t('Favorites')}</span>
               </Link>
             </div>
 
@@ -225,7 +225,7 @@ export function Header() {
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
                     <UserCircle className="h-4 w-4" />
-                    <span>{t('profile')}</span>
+                    <span>{t('Profile')}</span>
                   </Link>
                   <button
                     onClick={() => {
@@ -235,7 +235,7 @@ export function Header() {
                     className="flex items-center space-x-2 w-full text-left py-2 text-red-600"
                   >
                     <LogOut className="h-4 w-4" />
-                    <span>{t('signOut')}</span>
+                    <span>{t('Sign Out')}</span>
                   </button>
                 </div>
               ) : (
@@ -245,7 +245,7 @@ export function Header() {
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   <User className="h-4 w-4" />
-                  <span>{t('signIn')}</span>
+                  <span>{t('Sign In')}</span>
                 </Link>
               )}
             </div>
