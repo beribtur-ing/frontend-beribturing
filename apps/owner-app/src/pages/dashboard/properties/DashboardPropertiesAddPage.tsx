@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useParams } from 'react-router-dom';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { useProductCategoryRdos } from '~/hooks';
 
 interface PropertyForm {
   title: string;
@@ -18,7 +19,9 @@ interface PropertyForm {
 }
 
 export default function DashboardPropertiesAddPage() {
+  const { data: categories } = useProductCategoryRdos({});
   const navigate = useNavigate();
+  const { locale } = useParams();
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState<PropertyForm>({
     title: '',
@@ -49,7 +52,7 @@ export default function DashboardPropertiesAddPage() {
       });
 
       if (response.ok) {
-        navigate(`/dashboard/properties`);
+        navigate(`/${locale}/dashboard/properties`);
       } else {
         alert('Failed to create property');
       }
@@ -72,7 +75,7 @@ export default function DashboardPropertiesAddPage() {
     <div>
       <div className="mb-8">
         <Link
-          to={`/dashboard/properties`}
+          to={`/${locale}/dashboard/properties`}
           className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-4"
         >
           <ArrowLeftIcon className="w-4 h-4 mr-1" />
@@ -128,6 +131,7 @@ export default function DashboardPropertiesAddPage() {
             />
           </div>
 
+          {/*
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Brand</label>
@@ -248,10 +252,11 @@ export default function DashboardPropertiesAddPage() {
               placeholder="Any additional information about the property..."
             />
           </div>
+          */}
 
           <div className="flex justify-end space-x-4">
             <Link
-              to={`/dashboard/properties`}
+              to={`/${locale}/dashboard/properties`}
               className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
             >
               Cancel

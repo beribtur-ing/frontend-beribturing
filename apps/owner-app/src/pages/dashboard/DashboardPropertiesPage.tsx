@@ -7,6 +7,8 @@ import { PropertyCard } from '../../components/dashboard/PropertyCard';
 
 type ProductWithVariants = Product & { variants: ProductVariant[] };
 
+const productCategorys = [];
+
 export default function DashboardPropertiesPage() {
   const [properties, setProperties] = useState<ProductWithVariants[]>([]);
   const [loading, setLoading] = useState(true);

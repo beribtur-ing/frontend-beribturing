@@ -2,9 +2,9 @@ import {
   FindProductCategoryRdosRntQuery,
   FindProductCategoryRdoRntQuery,
   FindProductRdosRntQuery,
-  FindProductRdoRntQuery
+  FindProductRdoRntQuery,
 } from '~/apis';
-import {QueryResponse, ProductCategoryRdo, ProductRdo, FirstParameter, Offset} from '~/models';
+import { QueryResponse, ProductCategoryRdo, ProductRdo, FirstParameter, Offset } from '~/models';
 import axios from 'axios';
 
 const url = (path: string) => `/api/feature/rnt/item/${path}`;
@@ -14,14 +14,14 @@ const findProductCategoryRdos = (variables: {
   searchKeyword?: string;
   offset?: Offset;
 }) => {
-  const query = <FindProductCategoryRdosRntQuery>{...variables};
+  const query = <FindProductCategoryRdosRntQuery>{ ...variables };
   return axios.post<QueryResponse<ProductCategoryRdo[]>>(url('find-product-category-rdos/query'), query);
 };
 
 const findProductCategoryRdo = (variables: {
   categoryId: string;
 }) => {
-  const query = <FindProductCategoryRdoRntQuery>{...variables};
+  const query = <FindProductCategoryRdoRntQuery>{ ...variables };
   return axios.post<QueryResponse<ProductCategoryRdo>>(url('find-product-category-rdo/query'), query);
 };
 
@@ -35,14 +35,14 @@ const findProductRdos = (variables: {
   availability?: string;
   offset?: Offset;
 }) => {
-  const query = <FindProductRdosRntQuery>{...variables};
+  const query = <FindProductRdosRntQuery>{ ...variables };
   return axios.post<QueryResponse<ProductRdo[]>>(url('find-product-rdos/query'), query);
 };
 
 const findProductRdo = (variables: {
   productId: string;
 }) => {
-  const query = <FindProductRdoRntQuery>{...variables};
+  const query = <FindProductRdoRntQuery>{ ...variables };
   return axios.post<QueryResponse<ProductRdo>>(url('find-product-rdo/query'), query);
 };
 
@@ -81,5 +81,5 @@ export default {
       queryFn: async ({ queryKey }: { queryKey: readonly any[] }) =>
         (await findProductRdo(queryKey.slice().pop()))?.data,
     }),
-  }
+  },
 };
