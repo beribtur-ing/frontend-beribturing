@@ -1,22 +1,21 @@
-import { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
-import type { Reservation } from "../../lib/types";
+import { useState, useEffect } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import type { Reservation } from '../../lib/types';
 
 export default function DashboardRequestsPage() {
   const [requests, setRequests] = useState<Reservation[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"all" | "pending" | "confirmed" | "cancelled">("all");
-  const { locale } = useParams();
+  const [filter, setFilter] = useState<'all' | 'pending' | 'confirmed' | 'cancelled'>('all');
 
   useEffect(() => {
-    fetch("/api/reservations")
+    fetch('/api/reservations')
       .then((res) => res.json())
       .then((data) => {
         setRequests(Array.isArray(data) ? data : []);
         setLoading(false);
       })
       .catch((error) => {
-        console.error("Error fetching requests:", error);
+        console.error('Error fetching requests:', error);
         setRequests([]);
         setLoading(false);
       });
@@ -25,54 +24,54 @@ export default function DashboardRequestsPage() {
   const handleApprove = async (id: string) => {
     try {
       const response = await fetch(`/api/reservations/${id}/approve`, {
-        method: "POST",
+        method: 'POST',
       });
 
       if (response.ok) {
-        setRequests((prev) => prev.map((req) => (req.id === id ? { ...req, status: "CONFIRMED" as const } : req)));
+        setRequests((prev) => prev.map((req) => (req.id === id ? { ...req, status: 'CONFIRMED' as const } : req)));
       }
     } catch (error) {
-      alert("Failed to approve request");
+      alert('Failed to approve request');
     }
   };
 
   const handleReject = async (id: string) => {
     try {
       const response = await fetch(`/api/reservations/${id}/reject`, {
-        method: "POST",
+        method: 'POST',
       });
 
       if (response.ok) {
-        setRequests((prev) => prev.map((req) => (req.id === id ? { ...req, status: "CANCELLED" as const } : req)));
+        setRequests((prev) => prev.map((req) => (req.id === id ? { ...req, status: 'CANCELLED' as const } : req)));
       }
     } catch (error) {
-      alert("Failed to reject request");
+      alert('Failed to reject request');
     }
   };
 
   const filteredRequests = requests.filter((request) => {
-    if (filter === "all") return true;
+    if (filter === 'all') return true;
     return request.status.toLowerCase() === filter;
   });
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case "confirmed":
-        return "bg-green-100 text-green-800";
-      case "pending":
-        return "bg-yellow-100 text-yellow-800";
-      case "cancelled":
-        return "bg-red-100 text-red-800";
+      case 'confirmed':
+        return 'bg-green-100 text-green-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
       default:
-        return "bg-gray-100 text-gray-800";
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
+    return new Date(date).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
     });
   };
 
@@ -93,14 +92,14 @@ export default function DashboardRequestsPage() {
 
       <div className="mb-6 overflow-x-auto">
         <div className="flex flex-wrap gap-2">
-          {["all", "pending", "confirmed", "cancelled"].map((status) => (
+          {['all', 'pending', 'confirmed', 'cancelled'].map((status) => (
             <button
               key={status}
               onClick={() => setFilter(status as any)}
               className={`px-3 py-2 text-xs md:text-sm font-medium rounded-lg capitalize ${
                 filter === status
-                  ? "bg-blue-600 text-white"
-                  : "bg-white text-gray-700 border border-gray-300 hover:bg-gray-50"
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
               }`}
             >
               {status}
@@ -151,17 +150,19 @@ export default function DashboardRequestsPage() {
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap">
                     <span
-                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(request.status)}`}
+                      className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
+                        request.status,
+                      )}`}
                     >
                       {request.status}
                     </span>
                   </td>
                   <td className="px-4 py-4 whitespace-nowrap text-xs md:text-sm font-medium">
                     <div className="flex flex-col sm:flex-row gap-1 sm:gap-2">
-                      <Link to={`/${locale}/dashboard/requests/${request.id}`} className="text-blue-600 hover:text-blue-900">
+                      <Link to={`/dashboard/requests/${request.id}`} className="text-blue-600 hover:text-blue-900">
                         View
                       </Link>
-                      {request.status === "PENDING" && (
+                      {request.status === 'PENDING' && (
                         <>
                           <button
                             onClick={() => handleApprove(request.id)}
@@ -187,7 +188,7 @@ export default function DashboardRequestsPage() {
         <div className="text-center py-12 bg-white rounded-lg shadow">
           <h3 className="text-lg font-medium text-gray-900 mb-2">No requests found</h3>
           <p className="text-gray-600">
-            {filter === "all" ? "You don't have any requests yet." : `No ${filter} requests at the moment.`}
+            {filter === 'all' ? "You don't have any requests yet." : `No ${filter} requests at the moment.`}
           </p>
         </div>
       )}

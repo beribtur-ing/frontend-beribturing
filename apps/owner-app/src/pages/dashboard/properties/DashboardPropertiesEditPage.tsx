@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, Link, useParams } from "react-router-dom";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, useParams } from 'react-router-dom';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 interface PropertyForm {
   title: string;
@@ -19,22 +19,22 @@ interface PropertyForm {
 
 export default function DashboardPropertiesEditPage() {
   const navigate = useNavigate();
-  const { id, locale } = useParams();
+  const { id } = useParams();
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
   const [form, setForm] = useState<PropertyForm>({
-    title: "",
-    description: "",
-    categoryId: "electronics",
-    brand: "",
-    model: "",
-    color: "",
-    size: "",
-    material: "",
+    title: '',
+    description: '',
+    categoryId: 'electronics',
+    brand: '',
+    model: '',
+    color: '',
+    size: '',
+    material: '',
     dailyPrice: 0,
     weeklyPrice: 0,
     monthlyPrice: 0,
-    notes: "",
+    notes: '',
   });
 
   useEffect(() => {
@@ -56,16 +56,16 @@ export default function DashboardPropertiesEditPage() {
             dailyPrice: variant.price.daily,
             weeklyPrice: variant.price.weekly,
             monthlyPrice: variant.price.monthly,
-            notes: variant.notes || "",
+            notes: variant.notes || '',
           });
         }
         setInitialLoading(false);
       })
       .catch(() => {
-        alert("Failed to load property");
-        navigate(`/${locale}/dashboard/properties`);
+        alert('Failed to load property');
+        navigate(`/dashboard/properties`);
       });
-  }, [id, navigate, locale]);
+  }, [id, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,20 +73,20 @@ export default function DashboardPropertiesEditPage() {
 
     try {
       const response = await fetch(`/api/products/${id}`, {
-        method: "PUT",
+        method: 'PUT',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(form),
       });
 
       if (response.ok) {
-        navigate(`/${locale}/dashboard/properties`);
+        navigate(`/dashboard/properties`);
       } else {
-        alert("Failed to update property");
+        alert('Failed to update property');
       }
     } catch (error) {
-      alert("Error updating property");
+      alert('Error updating property');
     } finally {
       setLoading(false);
     }
@@ -96,7 +96,7 @@ export default function DashboardPropertiesEditPage() {
     const { name, value } = e.target;
     setForm((prev) => ({
       ...prev,
-      [name]: name.includes("Price") ? Number.parseFloat(value) || 0 : value,
+      [name]: name.includes('Price') ? Number.parseFloat(value) || 0 : value,
     }));
   };
 
@@ -112,7 +112,7 @@ export default function DashboardPropertiesEditPage() {
     <div>
       <div className="mb-8">
         <Link
-          to={`/${locale}/dashboard/properties`}
+          to={`/dashboard/properties`}
           className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-4"
         >
           <ArrowLeftIcon className="w-4 h-4 mr-1" />
@@ -280,7 +280,7 @@ export default function DashboardPropertiesEditPage() {
 
           <div className="flex justify-end space-x-4">
             <Link
-              to={`/${locale}/dashboard/properties`}
+              to={`/dashboard/properties`}
               className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
             >
               Cancel
@@ -290,7 +290,7 @@ export default function DashboardPropertiesEditPage() {
               disabled={loading}
               className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
             >
-              {loading ? "Updating..." : "Update Property"}
+              {loading ? 'Updating...' : 'Update Property'}
             </button>
           </div>
         </form>

@@ -1,26 +1,25 @@
-import React, { useState, useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useAuth } from "../hooks/auth";
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAuth } from '../hooks/auth';
 
 export default function LoginPage() {
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
   const { signIn, user, loading, isSigningIn } = useAuth();
   const navigate = useNavigate();
-  const { locale } = useParams();
 
   useEffect(() => {
     // Redirect if already logged in
     if (!loading && user) {
-      navigate(`/${locale}/dashboard/overview`);
+      navigate(`/dashboard/overview`);
     }
-  }, [user, loading, navigate, locale]);
+  }, [user, loading, navigate]);
 
   const formatPhoneNumber = (value: string) => {
     // Remove all non-digits
-    let phoneNumber = value.replace(/\D/g, "");
-    
+    let phoneNumber = value.replace(/\D/g, '');
+
     // Auto-add country code if not present
     if (phoneNumber.length > 0 && !phoneNumber.startsWith('998')) {
       phoneNumber = '998' + phoneNumber;
@@ -28,31 +27,36 @@ export default function LoginPage() {
 
     // Format as +998 XX XXX-XX-XX
     if (phoneNumber.length >= 12) {
-      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(8, 10)}-${phoneNumber.slice(10, 12)}`;
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(
+        8,
+        10,
+      )}-${phoneNumber.slice(10, 12)}`;
     } else if (phoneNumber.length >= 8) {
-      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(8)}`;
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(
+        8,
+      )}`;
     } else if (phoneNumber.length >= 5) {
       return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5)}`;
     } else if (phoneNumber.length >= 3) {
       return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3)}`;
     } else {
-      return phoneNumber ? `+${phoneNumber}` : "";
+      return phoneNumber ? `+${phoneNumber}` : '';
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setError('');
 
     // Clean phone number for API (remove +, spaces, and hyphens)
     const cleanPhone = phoneNumber.replace(/[\s\-+]/g, '');
-    
+
     const success = await signIn(cleanPhone, password);
 
     if (success) {
-      navigate(`/${locale}/dashboard/overview`);
+      navigate(`/dashboard/overview`);
     } else {
-      setError("Invalid phone number or password");
+      setError('Invalid phone number or password');
     }
   };
 
@@ -82,9 +86,7 @@ export default function LoginPage() {
           <h2 className="mt-6 text-center text-2xl md:text-3xl font-extrabold text-gray-900">
             Sign in to your account
           </h2>
-          <p className="mt-2 text-center text-xs md:text-sm text-gray-600">
-            Enter your phone number and password
-          </p>
+          <p className="mt-2 text-center text-xs md:text-sm text-gray-600">Enter your phone number and password</p>
         </div>
         <form className="mt-6 md:mt-8 space-y-4 md:space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
@@ -131,7 +133,7 @@ export default function LoginPage() {
               disabled={isSigningIn}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
             >
-              {isSigningIn ? "Signing in..." : "Sign in"}
+              {isSigningIn ? 'Signing in...' : 'Sign in'}
             </button>
           </div>
         </form>

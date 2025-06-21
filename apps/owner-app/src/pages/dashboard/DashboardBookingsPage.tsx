@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import type { Reservation, RentalRecord } from '../../lib/types';
 import { ColumnConfig, TableList } from '../../components/shared/TableList';
 import { CustomPagination } from '../../components/shared/CustomPagination';
@@ -22,7 +22,6 @@ export default function DashboardBookingsPage() {
   const [bookings, setBookings] = useState<BookingItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'pending' | 'confirmed' | 'active' | 'completed'>('all');
-  const { locale } = useParams();
 
   useEffect(() => {
     fetch('/api/bookings')
@@ -89,7 +88,7 @@ export default function DashboardBookingsPage() {
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3 gap-4 sm:gap-0">
         <Title title="Bookings" />
         <Link
-          to={`/${locale}/dashboard/bookings/calendar`}
+          to={`/dashboard/bookings/calendar`}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-center sm:text-left"
         >
           Calendar View

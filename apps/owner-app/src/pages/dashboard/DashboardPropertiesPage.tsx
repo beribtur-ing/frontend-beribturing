@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { Card, CardContent, CardMedia, Typography, Button, Box, Grid, Skeleton } from "@mui/material";
-import type { Product, ProductVariant } from "../../lib/types";
-import { PlusIcon, BuildingOfficeIcon } from "@heroicons/react/24/outline";
-import { PropertyCard } from "../../components/dashboard/PropertyCard";
+import { useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Card, CardContent, CardMedia, Typography, Button, Box, Grid, Skeleton } from '@mui/material';
+import type { Product, ProductVariant } from '../../lib/types';
+import { PlusIcon, BuildingOfficeIcon } from '@heroicons/react/24/outline';
+import { PropertyCard } from '../../components/dashboard/PropertyCard';
 
 type ProductWithVariants = Product & { variants: ProductVariant[] };
 
@@ -11,28 +11,27 @@ export default function DashboardPropertiesPage() {
   const [properties, setProperties] = useState<ProductWithVariants[]>([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { locale } = useParams();
 
   useEffect(() => {
-    fetch("/api/products")
+    fetch('/api/products')
       .then((res) => res.json())
       .then((data) => {
         setProperties(Array.isArray(data) ? data : []);
         setLoading(false);
       })
       .catch((error) => {
-        console.error("Error fetching properties:", error);
+        console.error('Error fetching properties:', error);
         setProperties([]);
         setLoading(false);
       });
   }, []);
 
   const handleEdit = (productId: string) => {
-    navigate(`/${locale}/dashboard/properties/edit/${productId}`);
+    navigate(`/dashboard/properties/edit/${productId}`);
   };
 
   const handleDelete = (productId: string) => {
-    console.log("Delete product:", productId);
+    console.log('Delete product:', productId);
     // Implement delete functionality
   };
 
@@ -56,7 +55,7 @@ export default function DashboardPropertiesPage() {
           <p className="text-sm md:text-base text-gray-600">Manage your rental listings</p>
         </div>
         <Link
-          to={`/${locale}/dashboard/properties/add`}
+          to={`/dashboard/properties/add`}
           className="flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 w-full sm:w-auto"
         >
           <PlusIcon className="w-5 h-5 mr-2" />
@@ -81,7 +80,7 @@ export default function DashboardPropertiesPage() {
           <h3 className="text-lg font-medium text-gray-900 mb-2">No properties yet</h3>
           <p className="text-gray-600 mb-4">Get started by adding your first rental property.</p>
           <Link
-            to={`/${locale}/dashboard/properties/add`}
+            to={`/dashboard/properties/add`}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 inline-block"
           >
             Add Your First Property

@@ -1,12 +1,12 @@
-import { useState, useEffect } from "react";
-import { useNavigate, Link, useParams } from "react-router-dom";
-import { ArrowLeftIcon } from "@heroicons/react/24/outline";
-import type { Reservation } from "../../../lib/types";
-import { PlaceholderImage } from "~/assets";
+import { useState, useEffect } from 'react';
+import { useNavigate, Link, useParams } from 'react-router-dom';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import type { Reservation } from '../../../lib/types';
+import { PlaceholderImage } from '~/assets';
 
 export default function DashboardRequestDetailsPage() {
   const navigate = useNavigate();
-  const { id, locale } = useParams();
+  const { id } = useParams();
   const [request, setRequest] = useState<Reservation | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -18,59 +18,59 @@ export default function DashboardRequestDetailsPage() {
         setLoading(false);
       })
       .catch(() => {
-        console.error("Failed to load request");
+        console.error('Failed to load request');
         setRequest(null);
         setLoading(false);
       });
-  }, [id, navigate, locale]);
+  }, [id, navigate]);
 
   const handleApprove = async () => {
     try {
       const response = await fetch(`/api/reservations/${id}/approve`, {
-        method: "POST",
+        method: 'POST',
       });
 
       if (response.ok && request) {
-        setRequest({ ...request, status: "CONFIRMED" });
+        setRequest({ ...request, status: 'CONFIRMED' });
       }
     } catch (error) {
-      alert("Failed to approve request");
+      alert('Failed to approve request');
     }
   };
 
   const handleReject = async () => {
     try {
       const response = await fetch(`/api/reservations/${id}/reject`, {
-        method: "POST",
+        method: 'POST',
       });
 
       if (response.ok && request) {
-        setRequest({ ...request, status: "CANCELLED" });
+        setRequest({ ...request, status: 'CANCELLED' });
       }
     } catch (error) {
-      alert("Failed to reject request");
+      alert('Failed to reject request');
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
-      case "confirmed":
-        return "bg-green-100 text-green-800";
-      case "pending":
-        return "bg-yellow-100 text-yellow-800";
-      case "cancelled":
-        return "bg-red-100 text-red-800";
+      case 'confirmed':
+        return 'bg-green-100 text-green-800';
+      case 'pending':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'cancelled':
+        return 'bg-red-100 text-red-800';
       default:
-        return "bg-gray-100 text-gray-800";
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const formatDate = (date: Date) => {
-    return new Date(date).toLocaleDateString("en-US", {
-      weekday: "long",
-      year: "numeric",
-      month: "long",
-      day: "numeric",
+    return new Date(date).toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
     });
   };
 
@@ -92,10 +92,7 @@ export default function DashboardRequestDetailsPage() {
       <div className="bg-white rounded-lg shadow p-6">
         <h1 className="text-xl font-bold text-gray-900 mb-4">Request not found</h1>
         <p className="text-gray-600">The reservation request could not be loaded or does not exist.</p>
-        <Link
-          to={`/${locale}/dashboard/requests`}
-          className="inline-flex items-center text-blue-600 hover:text-blue-800 mt-4"
-        >
+        <Link to={`/dashboard/requests`} className="inline-flex items-center text-blue-600 hover:text-blue-800 mt-4">
           <ArrowLeftIcon className="w-4 h-4 mr-1" />
           Back to Requests
         </Link>
@@ -103,16 +100,17 @@ export default function DashboardRequestDetailsPage() {
     );
   }
 
-  const days = request.period?.startDate && request.period?.endDate 
-    ? calculateDays(request.period.startDate, request.period.endDate)
-    : 0;
+  const days =
+    request.period?.startDate && request.period?.endDate
+      ? calculateDays(request.period.startDate, request.period.endDate)
+      : 0;
   const totalCost = days * (request.productVariant?.price?.daily || 0);
 
   return (
     <div>
       <div className="mb-8">
         <Link
-          to={`/${locale}/dashboard/requests`}
+          to={`/dashboard/requests`}
           className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-4"
         >
           <ArrowLeftIcon className="w-4 h-4 mr-1" />
@@ -185,13 +183,13 @@ export default function DashboardRequestDetailsPage() {
           <div>
             <label className="text-sm font-medium text-gray-500">Start Date</label>
             <p className="text-gray-900">
-              {request.period?.startDate ? formatDate(request.period.startDate) : "Not specified"}
+              {request.period?.startDate ? formatDate(request.period.startDate) : 'Not specified'}
             </p>
           </div>
           <div>
             <label className="text-sm font-medium text-gray-500">End Date</label>
             <p className="text-gray-900">
-              {request.period?.endDate ? formatDate(request.period.endDate) : "Not specified"}
+              {request.period?.endDate ? formatDate(request.period.endDate) : 'Not specified'}
             </p>
           </div>
           <div>
@@ -222,7 +220,7 @@ export default function DashboardRequestDetailsPage() {
           </div>
         </div>
 
-        {request.status === "PENDING" && (
+        {request.status === 'PENDING' && (
           <div className="mt-6 pt-6 border-t border-gray-200 flex space-x-4">
             <button onClick={handleApprove} className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
               Approve Request
