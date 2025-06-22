@@ -55,7 +55,12 @@
     "autoprefixer": "^10.4.20",
     "postcss": "^8.5",
     "tailwindcss": "^3.4.17",
-    "tailwindcss-animate": "^1.0.7"
+    "tailwindcss-animate": "^1.0.7",
+    "@mui/utils": "^7.1.1",
+    "tiny-case": "^1.0.3",
+    "toposort": "^2.0.2",
+    "lodash": "^4.17.21",
+    "victory-vendor": "^37.3.6"
   },
   "browserslist": {
     "production": [

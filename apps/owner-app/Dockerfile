@@ -1,5 +1,6 @@
 # Multi-stage build for owner-app
-FROM node:20-alpine AS builder
+FROM node:20-bullseye AS builder
+
 
 # Install pnpm
 RUN npm install -g pnpm
@@ -16,8 +17,10 @@ COPY packages/ ./packages/
 # Copy owner app
 COPY apps/owner-app/ ./apps/owner-app/
 
+RUN corepack enable && corepack prepare pnpm@latest --activate
+
 # Install dependencies
-RUN pnpm install --frozen-lockfile
+RUN pnpm install
 
 # Build using turbo (handles dependency order)
 RUN pnpm build:owner-app

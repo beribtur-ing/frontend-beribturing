@@ -14,6 +14,10 @@ export default defineConfig({
   ],
   build: {
     sourcemap: false,
+    rollupOptions: {
+      external: ['html-parse-stringify','property-expr'],
+      
+    },
     commonjsOptions: {
       include: [/node_modules/],
     },
@@ -42,7 +46,7 @@ export default defineConfig({
   },
   base: '/owner',
   esbuild: {
-    logOverride: { 
+    logOverride: {
       'this-is-undefined-in-esm': 'silent',
       'direct-eval': 'silent'
     },
