@@ -6,68 +6,100 @@ services:
     build:
       context: .
       dockerfile: apps/renter-app/Dockerfile
+      args:
+        - NODE_ENV=production
+    container_name: beribturing-renter-app
     ports:
       - "3000:80"
     environment:
       - NODE_ENV=production
+      - VITE_API_URL=${VITE_API_URL:-http://localhost:8080}
     networks:
       - beribturing-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      test: ["CMD", "curl", "-f", "http://localhost/"]
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.renter.rule=Host(`renter.localhost`)"
+      - "traefik.http.services.renter.loadbalancer.server.port=80"
 
   # Owner App - Property owner dashboard
   owner-app:
     build:
       context: .
       dockerfile: apps/owner-app/Dockerfile
+      args:
+        - NODE_ENV=production
+    container_name: beribturing-owner-app
     ports:
       - "3001:80"
     environment:
       - NODE_ENV=production
+      - VITE_API_URL=${VITE_API_URL:-http://localhost:8080}
     networks:
       - beribturing-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      test: ["CMD", "curl", "-f", "http://localhost/"]
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.owner.rule=Host(`owner.localhost`)"
+      - "traefik.http.services.owner.loadbalancer.server.port=80"
 
   # Admin App - Administrative dashboard
   admin-app:
     build:
       context: .
       dockerfile: apps/admin-app/Dockerfile
+      args:
+        - NODE_ENV=production
+    container_name: beribturing-admin-app
     ports:
       - "3002:80"
     environment:
       - NODE_ENV=production
+      - VITE_API_URL=${VITE_API_URL:-http://localhost:8080}
     networks:
       - beribturing-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      test: ["CMD", "curl", "-f", "http://localhost/"]
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 40s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.admin.rule=Host(`admin.localhost`)"
+      - "traefik.http.services.admin.loadbalancer.server.port=80"
 
-  # Nginx reverse proxy (optional - for routing between apps)
+  # Nginx reverse proxy for routing between apps
   reverse-proxy:
     image: nginx:alpine
+    container_name: beribturing-reverse-proxy
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - nginx-logs:/var/log/nginx
     depends_on:
-      - renter-app
-      - owner-app
-      - admin-app
+      renter-app:
+        condition: service_healthy
+      owner-app:
+        condition: service_healthy
+      admin-app:
+        condition: service_healthy
     networks:
       - beribturing-network
     restart: unless-stopped
@@ -80,10 +112,14 @@ services:
 networks:
   beribturing-network:
     driver: bridge
+    name: beribturing-network
     ipam:
+      driver: default
       config:
         - subnet: 172.20.0.0/16
+          gateway: 172.20.0.1
 
 volumes:
   nginx-logs:
     driver: local
+    name: beribturing-nginx-logs
