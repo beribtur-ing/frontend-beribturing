@@ -114,11 +114,6 @@ networks:
     driver: bridge
     name: beribturing-network
     external: true
-    ipam:
-      driver: default
-      config:
-        - subnet: 172.20.0.0/16
-          gateway: 172.20.0.1
 
 volumes:
   nginx-logs:
