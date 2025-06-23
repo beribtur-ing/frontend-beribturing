@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import type { Reservation, RentalRecord } from '../../lib/types';
-import { ColumnConfig, TableList } from '../../components/shared/TableList';
-import { CustomPagination } from '../../components/shared/CustomPagination';
-import { Title } from '../../components/shared/Title';
-import { Filter } from '../../components/shared/Filter';
-import { SearchBar } from '../../components/shared/SearchBar';
-import { DeleteModal } from '../../components/shared/DeleteModal';
+import type { Reservation, RentalRecord } from '../../../lib/types';
+import { ColumnConfig, TableList } from '../../../components/shared/TableList';
+import { CustomPagination } from '../../../components/shared/CustomPagination';
+import { Title } from '../../../components/shared/Title';
+import { Filter } from '../../../components/shared/Filter';
+import { SearchBar } from '../../../components/shared/SearchBar';
+import { DeleteModal } from '../../../components/shared/DeleteModal';
 
 // type BookingItem = (Reservation | RentalRecord) & { type: 'reservation' | 'rental' };
 
@@ -18,19 +18,19 @@ interface BookingItem {
   status: 'Pending' | 'Confirmed' | 'Active' | 'Completed';
 }
 
-export default function DashboardBookingsPage() {
+export default function DashboardRentalsPage() {
   const [bookings, setBookings] = useState<BookingItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [filter, setFilter] = useState<'all' | 'pending' | 'confirmed' | 'active' | 'completed'>('all');
 
-  useEffect(() => {
-    fetch('/api/bookings')
-      .then((res) => res.json())
-      .then((data) => {
-        setBookings(data);
-        setLoading(false);
-      });
-  }, []);
+  // useEffect(() => {
+  //   fetch('/api/bookings')
+  //     .then((res) => res.json())
+  //     .then((data) => {
+  //       setBookings(data);
+  //       setLoading(false);
+  //     });
+  // }, []);
 
   // const filteredBookings = bookings.filter((booking) => {
   //   if (filter === 'all') return true;
@@ -67,10 +67,10 @@ export default function DashboardBookingsPage() {
 
   const statusOptions = [
     { id: 1, name: 'All' },
-    { id: 2, name: 'Pending' },
-    { id: 3, name: 'Confirmed' },
-    { id: 4, name: 'Active' },
-    { id: 5, name: 'Completed' },
+    { id: 2, name: 'Active' },
+    { id: 3, name: 'Completed' },
+    { id: 4, name: 'Cancelled' },
+    { id: 5, name: 'Overdue' },
   ];
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -86,9 +86,9 @@ export default function DashboardBookingsPage() {
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3 gap-4 sm:gap-0">
-        <Title title="Bookings" />
+        <Title title="Rental" />
         <Link
-          to={`/dashboard/bookings/calendar`}
+          to={`/dashboard/rentals/calendar`}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-center sm:text-left"
         >
           Calendar View

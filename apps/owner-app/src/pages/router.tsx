@@ -9,8 +9,8 @@ import DashboardLayout from './dashboard/DashboardLayout';
 import DashboardPage from './dashboard/DashboardPage';
 import DashboardOverviewPage from './dashboard/DashboardOverviewPage';
 import DashboardAnalyticsPage from './dashboard/DashboardAnalyticsPage';
-import DashboardBookingsPage from './dashboard/DashboardBookingsPage';
-import DashboardBookingsCalendarPage from './dashboard/bookings/DashboardBookingsCalendarPage';
+import DashboardRentalsPage from '~/pages/dashboard/rentals/DashboardRentalsPage';
+import DashboardRentalsCalendarPage from '~/pages/dashboard/rentals/DashboardRentalsCalendarPage';
 import DashboardPropertiesPage from './dashboard/DashboardPropertiesPage';
 import DashboardPropertiesAddPage from './dashboard/properties/DashboardPropertiesAddPage';
 import DashboardPropertiesEditPage from './dashboard/properties/DashboardPropertiesEditPage';
@@ -49,8 +49,8 @@ export const browserRouter = createBrowserRouter(
             { index: true, element: <DashboardPage /> },
             { path: 'overview', element: <DashboardOverviewPage /> },
             { path: 'analytics', element: <DashboardAnalyticsPage /> },
-            { path: 'bookings', element: <DashboardBookingsPage /> },
-            { path: 'bookings/calendar', element: <DashboardBookingsCalendarPage /> },
+            { path: 'rentals', element: <DashboardRentalsPage /> },
+            { path: 'rentals/calendar', element: <DashboardRentalsCalendarPage /> },
             { path: 'properties', element: <DashboardPropertiesPage /> },
             { path: 'properties/add', element: <DashboardPropertiesAddPage /> },
             { path: 'properties/edit/:id', element: <DashboardPropertiesEditPage /> },
