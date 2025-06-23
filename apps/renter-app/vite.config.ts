@@ -9,11 +9,16 @@ export default defineConfig({
     postcss: './postcss.config.mjs',
   },
   plugins: [
+    // @ts-ignore
     tsconfigPaths(),
-    react(),
+    react({
+      include: [/\.tsx?$/, /\.jsx?$/, /\.css$/],
+    }),
   ],
   build: {
     sourcemap: false,
+    rollupOptions: {
+    },
     commonjsOptions: {
       include: [/node_modules/],
     },
@@ -40,9 +45,9 @@ export default defineConfig({
       },
     },
   },
-  base: '/renter',
+  base: '/',
   esbuild: {
-    logOverride: { 
+    logOverride: {
       'this-is-undefined-in-esm': 'silent',
       'direct-eval': 'silent'
     },
