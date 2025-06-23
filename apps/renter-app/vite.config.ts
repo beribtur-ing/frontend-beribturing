@@ -15,7 +15,6 @@ export default defineConfig({
   build: {
     sourcemap: false,
     rollupOptions: {
-      external: ['html-parse-stringify','property-expr'],
     },
     commonjsOptions: {
       include: [/node_modules/],

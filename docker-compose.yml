@@ -113,6 +113,7 @@ networks:
   beribturing-network:
     driver: bridge
     name: beribturing-network
+    external: true
     ipam:
       driver: default
       config:
