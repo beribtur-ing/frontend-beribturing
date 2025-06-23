@@ -46,7 +46,7 @@ export default defineConfig({
       },
     },
   },
-  base: '/owner',
+  base: '/',
   esbuild: {
     logOverride: {
       'this-is-undefined-in-esm': 'silent',
