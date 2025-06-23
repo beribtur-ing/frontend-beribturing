@@ -9,8 +9,11 @@ export default defineConfig({
     postcss: './postcss.config.mjs',
   },
   plugins: [
+    // @ts-ignore
     tsconfigPaths(),
-    react(),
+    react({
+      include: [/\.tsx?$/, /\.jsx?$/, /\.css$/],
+    }),
   ],
   build: {
     sourcemap: false,
