@@ -1,42 +1,24 @@
 
 import type React from "react"
 import { createContext, useContext, useEffect, useState } from "react"
-import { AccountSignInTokenRdo } from '@beribturing/api-stub'
+import { AccountSignInTokenRdo, UserMeRdo } from '@beribturing/api-stub'
 
-export interface User {
-  id: string
-  name: string
-  phoneNumber: string
-  role: "renter"
-  avatar?: string
-  createdAt?: string
-  profile: {
-    firstName: string
-    lastName: string
-    email: string
-    address: string
-    city: string
-    state: string
-    zipCode: string
-    profilePictureUrl?: string
-  }
-}
 
 interface AuthContextType {
-  user: User | null
+  user: UserMeRdo | null
   loading: boolean
   tokens: AccountSignInTokenRdo | null
   signIn: (phoneNumber: string, password: string) => Promise<boolean>
   signOut: () => void
-  setUser: (user: User | null) => void
+  setUser: (user: UserMeRdo | null) => void
   setTokens: (tokens: AccountSignInTokenRdo | null) => void
-  updateProfile: (updatedUser: User) => Promise<boolean>
+  updateProfile: (updatedUser: UserMeRdo) => Promise<boolean>
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<UserMeRdo | null>(null)
   const [tokens, setTokens] = useState<AccountSignInTokenRdo | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -85,7 +67,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const updateUser = (newUser: User | null) => {
+  const updateUser = (newUser: UserMeRdo | null) => {
     setUser(newUser)
     if (newUser && typeof window !== 'undefined') {
       localStorage.setItem("renter_user", JSON.stringify(newUser))
@@ -99,7 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const updateProfile = async (updatedUser: User): Promise<boolean> => {
+  const updateProfile = async (updatedUser: UserMeRdo): Promise<boolean> => {
     try {
       setLoading(true)
       // Here you would typically make an API call to update the user profile

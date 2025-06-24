@@ -1,93 +1,70 @@
-import type React from "react"
-import {useState} from "react"
-import { Link, useNavigate } from "react-router-dom"
-import {Calendar, Camera, Edit3, Heart, Mail, MapPin, Package, Phone, Save, Settings, Star, User, X} from "lucide-react" // Import Settings icon
-import {useAuth} from "../hooks"
+import type React from 'react';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Calendar, Camera, Edit3, Heart, Mail, Package, Phone, Save, Settings, Star, User, X } from 'lucide-react'; // Import Settings icon
+import { useAuth } from '~/hooks';
 
 export default function ProfilePage() {
-  const { user, updateProfile, loading } = useAuth()
-  const [isEditing, setIsEditing] = useState(false)
+  const { user, updateProfile, loading } = useAuth();
+  const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    phone: "",
-    address: "",
-    city: "",
-    state: "",
-    zipCode: "",
-  })
-  const navigate = useNavigate()
+    name: '',
+    email: '',
+    phone: '',
+  });
+  const navigate = useNavigate();
 
   // Redirect if not authenticated
   if (!user) {
-    navigate("/auth/signin")
-    return null
+    navigate('/auth/signin');
+    return null;
   }
 
   const handleEditStart = () => {
     setEditForm({
-      firstName: user.profile?.firstName,
-      lastName: user.profile?.lastName,
-      email: user.profile?.email,
-      phone: user.phoneNumber,
-      address: user.profile?.address,
-      city: user.profile?.city,
-      state: user.profile?.state,
-      zipCode: user.profile?.zipCode,
-    })
-    setIsEditing(true)
-  }
+      name: user.name || '',
+      email: user.email || '',
+      phone: user.phoneNumber || '',
+    });
+    setIsEditing(true);
+  };
 
   const handleEditCancel = () => {
-    setIsEditing(false)
+    setIsEditing(false);
     setEditForm({
-      firstName: "",
-      lastName: "",
-      email: "",
-      phone: "",
-      address: "",
-      city: "",
-      state: "",
-      zipCode: "",
-    })
-  }
+      name: '',
+      email: '',
+      phone: '',
+    });
+  };
 
   const handleEditSave = async () => {
     const success = await updateProfile({
       ...user,
+      name: editForm.name,
+      email: editForm.email,
       phoneNumber: editForm.phone,
-      profile: {
-        ...user.profile,
-        firstName: editForm.firstName,
-        lastName: editForm.lastName,
-        email: editForm.email,
-        address: editForm.address,
-        city: editForm.city,
-        state: editForm.state,
-        zipCode: editForm.zipCode,
-      },
-    })
+    });
 
     if (success) {
-      setIsEditing(false)
+      setIsEditing(false);
     }
-  }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setEditForm((prev) => ({
       ...prev,
       [name]: value,
-    }))
-  }
+    }));
+  };
 
   const stats = [
-    { label: "Rentals", value: "12", icon: Package },
-    { label: "Reviews", value: "4.9", icon: Star },
-    { label: "Member Since", value: "2023", icon: Calendar },
-    { label: "Favorites", value: "8", icon: Heart },
-  ]
+    { label: 'Rentals', value: '12', icon: Package },
+    { label: 'Reviews', value: '4.9', icon: Star },
+    { label: 'Member Since', value: '2023', icon: Calendar },
+    { label: 'Favorites', value: '8', icon: Heart },
+  ];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -113,7 +90,7 @@ export default function ProfilePage() {
             <div className="bg-white rounded-xl shadow-sm p-6 text-center">
               <div className="relative inline-block mb-4">
                 <img
-                  src={user.profile?.profilePictureUrl || "/placeholder.svg"}
+                  src={user.avatarUrl || '/placeholder.svg'}
                   alt={user.name}
                   className="w-24 h-24 rounded-full object-cover mx-auto"
                 />
@@ -123,9 +100,9 @@ export default function ProfilePage() {
               </div>
 
               <h1 className="text-xl font-bold text-gray-900 mb-1">
-                {user.profile?.firstName} {user.profile?.lastName}
+                {user.name}
               </h1>
-              <p className="text-gray-600 mb-4">Member Since {user.createdAt ? new Date(user.createdAt).getFullYear() : new Date().getFullYear()}</p>
+              <p className="text-gray-600 mb-4">Member Since {new Date().getFullYear()}</p>
 
               <div className="flex items-center justify-center space-x-1 mb-6">
                 <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
@@ -197,41 +174,22 @@ export default function ProfilePage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* First Name */}
-                <div>
+                {/* Name */}
+                <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     <User className="h-4 w-4 inline mr-1" />
-                    First Name
+                    Full Name
                   </label>
                   {isEditing ? (
                     <input
                       type="text"
-                      name="firstName"
-                      value={editForm.firstName}
+                      name="name"
+                      value={editForm.name}
                       onChange={handleInputChange}
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                   ) : (
-                    <p className="text-gray-900">{user.profile?.firstName}</p>
-                  )}
-                </div>
-
-                {/* Last Name */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <User className="h-4 w-4 inline mr-1" />
-                    Last Name
-                  </label>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      name="lastName"
-                      value={editForm.lastName}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    />
-                  ) : (
-                    <p className="text-gray-900">{user.profile?.lastName}</p>
+                    <p className="text-gray-900">{user.name}</p>
                   )}
                 </div>
 
@@ -250,7 +208,7 @@ export default function ProfilePage() {
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
                     />
                   ) : (
-                    <p className="text-gray-900">{user.profile?.email}</p>
+                    <p className="text-gray-900">{user.email}</p>
                   )}
                 </div>
 
@@ -273,72 +231,6 @@ export default function ProfilePage() {
                   )}
                 </div>
 
-                {/* Address */}
-                <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    <MapPin className="h-4 w-4 inline mr-1" />
-                    Address
-                  </label>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      name="address"
-                      value={editForm.address}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    />
-                  ) : (
-                    <p className="text-gray-900">{user.profile?.address}</p>
-                  )}
-                </div>
-
-                {/* City */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">City</label>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      name="city"
-                      value={editForm.city}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    />
-                  ) : (
-                    <p className="text-gray-900">{user.profile?.city}</p>
-                  )}
-                </div>
-
-                {/* State */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">State</label>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      name="state"
-                      value={editForm.state}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    />
-                  ) : (
-                    <p className="text-gray-900">{user.profile?.state}</p>
-                  )}
-                </div>
-
-                {/* Zip Code */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Zip Code</label>
-                  {isEditing ? (
-                    <input
-                      type="text"
-                      name="zipCode"
-                      value={editForm.zipCode}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
-                    />
-                  ) : (
-                    <p className="text-gray-900">{user.profile?.zipCode}</p>
-                  )}
-                </div>
               </div>
             </div>
 
@@ -395,5 +287,5 @@ export default function ProfilePage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

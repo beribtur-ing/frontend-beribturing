@@ -1,29 +1,22 @@
 import type { ReactNode } from "react"
 import { createContext, useContext, useEffect, useState } from "react"
-import { AccountSignInTokenRdo } from '@beribturing/api-stub'
+import { AccountSignInTokenRdo, UserMeRdo } from '@beribturing/api-stub'
 
-export interface User {
-  id: string
-  name: string
-  phoneNumber: string
-  role: "owner"
-  avatar?: string
-}
 
 interface AuthContextType {
-  user: User | null
+  user: UserMeRdo | null
   loading: boolean
   tokens: AccountSignInTokenRdo | null
   signIn: (phoneNumber: string, password: string) => Promise<boolean>
   signOut: () => void
-  setUser: (user: User | null) => void
+  setUser: (user: UserMeRdo | null) => void
   setTokens: (tokens: AccountSignInTokenRdo | null) => void
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<UserMeRdo | null>(null)
   const [tokens, setTokens] = useState<AccountSignInTokenRdo | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -68,7 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("owner_tokens")
   }
 
-  const updateUser = (newUser: User | null) => {
+  const updateUser = (newUser: UserMeRdo | null) => {
     setUser(newUser)
     if (newUser) {
       localStorage.setItem("owner_user", JSON.stringify(newUser))

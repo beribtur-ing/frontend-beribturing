@@ -5,7 +5,7 @@ import { useAuth } from '../hooks';
 import { Link } from 'react-router-dom';
 import { LanguageSwitcher } from './language-switcher';
 import { useTranslation } from 'react-i18next';
-import { PlaceholderUserImage } from '~/assets';
+import { PlaceholderImage } from '~/assets';
 
 export function Header() {
   const { t } = useTranslation();
@@ -112,7 +112,7 @@ export function Header() {
                     className="flex items-center space-x-2 px-3 py-2 text-gray-700 hover:text-purple-600 transition-colors"
                   >
                     <img
-                      src={user.avatar || PlaceholderUserImage}
+                      src={user.avatar || PlaceholderImage}
                       alt={user.name}
                       className="w-8 h-8 rounded-full object-cover"
                     />
