@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import * as yup from 'yup';
@@ -8,40 +8,24 @@ import { CustomInput } from '~/components/shared/CustomInput';
 import { CustomSelect } from '~/components/shared/CustomSelect';
 import { CustomTextarea } from '~/components/shared/CustomTextarea';
 import { CustomButton } from '~/components/shared/CustomButton';
-import { useProductCategoryRdos } from '~/hooks';
+import { useProductCategoryRdos, useProductMutation } from '~/hooks';
 import { ProductCategoryRdo, QueryResponse } from '@beribturing/api-stub';
 
 interface PropertyForm {
   title: string;
-  description: string;
   categoryId: string;
-  brand: string;
-  model: string;
-  color: string;
-  size: string;
-  material: string;
-  dailyPrice: number;
-  weeklyPrice: number;
-  monthlyPrice: number;
-  notes: string;
+  description: string;
 }
 
 const formSchema = yup.object({
-  title: yup.string().required('Title is required'),
-  description: yup.string().required('Description is required'),
+  title: yup.string().trim().required('Title is required'),
   categoryId: yup.string().required('Category is required'),
+  description: yup.string().trim().required('Description is required'),
 });
 
-const categoryOptions = [
-  { id: 'electronics', name: 'Electronics' },
-  { id: 'sports', name: 'Sports & Recreation' },
-  { id: 'tools', name: 'Tools & Equipment' },
-  { id: 'vehicles', name: 'Vehicles' },
-  { id: 'home', name: 'Home & Garden' },
-];
-
 export default function DashboardPropertiesAddPage() {
-  const { data: categories } : { data: QueryResponse<ProductCategoryRdo[]> } = useProductCategoryRdos({});
+  const { data: categories }: { data: QueryResponse<ProductCategoryRdo[]> } = useProductCategoryRdos({});
+  const { mutation } = useProductMutation();
   const navigate = useNavigate();
   const form = useForm<PropertyForm>({
     defaultValues: {},
@@ -50,27 +34,17 @@ export default function DashboardPropertiesAddPage() {
 
   const { handleSubmit, control, formState } = form;
   const { errors } = formState;
+  const { registerProduct } = mutation;
 
   const onSubmit = async (data: PropertyForm) => {
-    console.log(data);
-    try {
-      const response = await fetch('/api/products', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (response.ok) {
-        navigate('/dashboard/properties');
-      } else {
-        alert('Failed to create property');
-      }
-    } catch (error) {
-      alert('Error creating property');
-    } finally {
-    }
+    await registerProduct.mutateAsync({ productOwnRegCdo: { ...data } }, {
+      onSuccess: () => {
+        navigate('../properties');
+      },
+      onError: (err) => {
+        console.error(err);
+      },
+    });
   };
 
   return (
@@ -94,11 +68,12 @@ export default function DashboardPropertiesAddPage() {
                             control={control}
                             render={({ field }) => (
                                 <CustomInput
-                                    {...field}
                                     label="Property Title"
                                     placeholder="e.g., Professional DSLR Camera"
                                     required
                                     error={errors?.title}
+                                    {...field}
+                                    value={field.value || ''}
                                 />
                             )}
                         />
@@ -106,7 +81,7 @@ export default function DashboardPropertiesAddPage() {
                             name="categoryId"
                             control={control}
                             render={({ field }) => (
-                                <CustomSelect<ProductCategoryRdo[]>
+                                <CustomSelect<ProductCategoryRdo>
                                     {...field}
                                     options={categories?.result}
                                     dataItemKey={'id'}
@@ -125,11 +100,12 @@ export default function DashboardPropertiesAddPage() {
                         control={control}
                         render={({ field }) => (
                             <CustomTextarea
-                                {...field}
                                 label="Description"
                                 placeholder="Describe your property in detail..."
                                 required
                                 error={errors?.description}
+                                {...field}
+                                value={field.value || ''}
                             />
                         )}
                     />
