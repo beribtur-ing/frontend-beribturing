@@ -1,6 +1,54 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import {RentalOwnSeekApi, RentalRecord, QueryResponse, FindRentalRecordsOwnQuery} from '@beribturing/api-stub';
-import {useState} from "react";
+import { RentalOwnSeekApi, RentalRecord, QueryResponse, FindRentalRecordsOwnQuery } from '@beribturing/api-stub';
+import { useState } from 'react';
+
+const mockData = [
+  {
+    id: 'uuid-12345',
+    lendee: {
+      id: 'lendee-12345',
+      name: 'John Doe',
+      phoneNumber: '+1234567890',
+      email: '',
+    },
+    period: {
+      startDateTime: new Date('2023-01-01T10:00:00Z').toISOString(),
+      endDateTime: new Date('2023-01-10T10:00:00Z').toISOString(),
+    },
+    rentedAt: new Date('2023-01-01T10:00:00Z').toISOString(),
+    returnedAt: new Date('2023-01-10T10:00:00Z').toISOString(),
+    product: {
+      id: 'product-12345',
+      title: 'Mountain Bike',
+      description: 'A sturdy mountain bike for all terrains.',
+      category: {
+        id: 'category-12345',
+        name: 'Bikes',
+      },
+      productVariant: {
+        id: 'variant-12345',
+        name: 'Mountain Bike - Large',
+        price: {
+          currency: {
+            amount: 100,
+            currency: 'USD',
+          },
+          unit: 'DAILY',
+        },
+      },
+    },
+    fee: {
+      amount: 10,
+      currency: 'USD',
+    },
+    deposit: {
+      id: 'deposit-12345',
+      amount: 50,
+      currency: 'USD',
+    },
+    status: 'ACTIVE',
+  },
+];
 
 export const useRentalRecordsPaginated = () => {
   //
@@ -10,7 +58,7 @@ export const useRentalRecordsPaginated = () => {
       limit: 10,
       sortDirection: 'DESCENDING',
     },
-  }
+  };
   const [query, setQuery] = useState(initialQuery);
   const [searchQuery, setSearchQuery] = useState(initialQuery);
 
@@ -92,7 +140,7 @@ export const useRentalRecordsPaginated = () => {
 
   return {
     query,
-    rentalRecords: (data?.result || []) as RentalRecord[],
+    rentalRecords: (data?.result || mockData) as RentalRecord[],
     refetchRentalRecords: refetch,
     rentalRecordsIsLoading: isLoading,
     total: data?.offset.totalCount || 0,
