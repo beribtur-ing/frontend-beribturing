@@ -1,5 +1,5 @@
-import {useMutation} from '@tanstack/react-query';
-import {AxiosResponse} from 'axios';
+import { useMutation } from '@tanstack/react-query';
+import { AxiosResponse } from 'axios';
 import {
   AccountSignInRntQuery,
   AccountSignInTokenRdo,
@@ -8,7 +8,7 @@ import {
   QueryResponse,
   UserRntSeekApi,
 } from '@beribturing/api-stub';
-import {useAuthContext} from '~/lib/auth';
+import { useAuthContext } from '~/lib/auth';
 
 export const useAuth = () => {
   const {
@@ -22,20 +22,20 @@ export const useAuth = () => {
   } = useAuthContext();
 
   const signInMutation = useMutation<
-    AxiosResponse<QueryResponse<AccountSignInTokenRdo>>,
-    unknown,
-    FirstParameter<typeof AuthRntSeekApi.accountSignIn>
+  AxiosResponse<QueryResponse<AccountSignInTokenRdo>>,
+  unknown,
+  FirstParameter<typeof AuthRntSeekApi.accountSignIn>
   >({
     mutationFn: AuthRntSeekApi.accountSignIn,
     onSuccess: async (response, variables) => {
-      const tokenData = response.data.result;
+      const tokenData = response.data?.result;
       if (tokenData) {
         setTokens(tokenData);
 
         // Fetch user data using the userMe endpoint
         try {
           const userResponse = await UserRntSeekApi.userMe({});
-          const userMeData = userResponse.data.result;
+          const userMeData = userResponse.data?.result;
           if (userMeData) {
             setUser(userMeData);
           }

@@ -13,7 +13,7 @@ const App = () => {
 
     axios.interceptors.request.use(
         (config) => {
-            const token = JSON.parse(localStorage.getItem('admin_tokens') || '')?.accessToken; // or use your auth state/store
+            const token = JSON.parse(localStorage.getItem('admin_tokens') || '{}')?.accessToken; // or use your auth state/store
             if (token) {
                 config.headers.Authorization = `Bearer ${token}`;
             }
