@@ -5,7 +5,7 @@ import {
   FindProductRdosOwnQuery,
 } from '~/apis';
 import { QueryResponse, ProductCategoryRdo, ProductRdo, FirstParameter, Offset } from '~/models';
-import axios from '../../../axios';
+import axios from 'axios';
 
 const url = (path: string) => `/api/feature/owner/item/${path}`;
 
