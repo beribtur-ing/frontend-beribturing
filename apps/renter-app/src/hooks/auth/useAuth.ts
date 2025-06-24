@@ -1,23 +1,24 @@
-import { useMutation } from '@tanstack/react-query';
-import { AxiosResponse } from 'axios';
-import { 
-  AccountSignInRntQuery, 
-  AuthRntSeekApi, 
-  AccountSignInTokenRdo, 
+import {useMutation} from '@tanstack/react-query';
+import {AxiosResponse} from 'axios';
+import {
+  AccountSignInRntQuery,
+  AccountSignInTokenRdo,
+  AuthRntSeekApi,
+  FirstParameter,
   QueryResponse,
-  FirstParameter 
+  UserRntSeekApi,
 } from '@beribturing/api-stub';
-import { useAuthContext, User } from '../../lib/auth';
+import {useAuthContext} from '~/lib/auth';
 
 export const useAuth = () => {
-  const { 
-    user, 
-    loading, 
-    tokens, 
-    signOut, 
-    setUser, 
+  const {
+    user,
+    loading,
+    tokens,
+    signOut,
+    setUser,
     setTokens,
-    updateProfile 
+    updateProfile,
   } = useAuthContext();
 
   const signInMutation = useMutation<
@@ -26,31 +27,22 @@ export const useAuth = () => {
     FirstParameter<typeof AuthRntSeekApi.accountSignIn>
   >({
     mutationFn: AuthRntSeekApi.accountSignIn,
-    onSuccess: (response, variables) => {
+    onSuccess: async (response, variables) => {
       const tokenData = response.data.result;
       if (tokenData) {
         setTokens(tokenData);
-        
-        // Create user object from sign in data
-        const userData: User = {
-          id: 'renter-user', // You might want to get this from a separate API call
-          name: 'Renter User', // You might want to get this from a separate API call
-          phoneNumber: variables.phoneNumber,
-          role: 'renter',
-          createdAt: new Date().toISOString(),
-          profile: {
-            firstName: 'John',
-            lastName: 'Doe',
-            email: 'john.doe@example.com',
-            address: '123 Main Street',
-            city: 'New York',
-            state: 'NY',
-            zipCode: '10001',
-            profilePictureUrl: undefined,
-          },
-        };
-        
-        setUser(userData);
+
+        // Fetch user data using the userMe endpoint
+        try {
+          const userResponse = await UserRntSeekApi.userMe({});
+          const userMeData = userResponse.data.result;
+          if (userMeData) {
+            setUser(userMeData);
+          }
+        } catch (error) {
+          console.error('Failed to fetch user data:', error);
+          setUser(null);
+        }
       }
     },
     onError: (error) => {
