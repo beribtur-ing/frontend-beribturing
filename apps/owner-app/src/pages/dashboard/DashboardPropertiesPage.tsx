@@ -2,20 +2,41 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { PlusIcon, BuildingOfficeIcon } from '@heroicons/react/24/outline';
 import { PropertyCard } from '~/components/dashboard/PropertyCard';
-import { useProductRdos } from '~/hooks';
+import { useProductRdos, useProductMutation } from '~/hooks';
 import { ProductRdo } from '@beribturing/api-stub';
+import { DeleteModal } from '~/components/shared/DeleteModal';
 
 export default function DashboardPropertiesPage() {
-  const { productRdos }: { productRdos: ProductRdo[] } = useProductRdos({});
+  const { productRdos, refetch }: { productRdos: ProductRdo[]; refetch } = useProductRdos({});
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [productIdToDelete, setProductIdToDelete] = useState('');
+  const {
+    mutation: { removeProduct },
+  } = useProductMutation();
+
   const handleEdit = (productId: string) => {
     navigate(`/dashboard/properties/edit/${productId}`);
   };
 
   const handleDelete = (productId: string) => {
-    console.log('Delete product:', productId);
-    // Implement delete functionality
+    removeProduct.mutateAsync(
+      { productId },
+      {
+        onSuccess: () => {
+          setShowDeleteModal(false);
+          refetch();
+        },
+        onError: (err) => {
+          console.error(err);
+        },
+      },
+    );
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteModal(false);
   };
 
   if (loading) {
@@ -52,7 +73,10 @@ export default function DashboardPropertiesPage() {
             key={property.product.id}
             product={property}
             onEdit={() => handleEdit(property.product.id)}
-            onDelete={() => handleDelete(property.product.id)}
+            onDelete={() => {
+              setProductIdToDelete(property.product.id);
+              setShowDeleteModal(true);
+            }}
           />
         ))}
       </div>
@@ -70,6 +94,13 @@ export default function DashboardPropertiesPage() {
           </Link>
         </div>
       )}
+      {
+        <DeleteModal
+          onDelete={() => handleDelete(productIdToDelete)}
+          showModal={showDeleteModal}
+          onClose={handleCancelDelete}
+        />
+      }
     </div>
   );
 }
