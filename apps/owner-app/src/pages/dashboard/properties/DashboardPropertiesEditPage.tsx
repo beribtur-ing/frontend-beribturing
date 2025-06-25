@@ -3,10 +3,20 @@ import { useNavigate, Link, useParams } from 'react-router-dom';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { useProductRdo, useProductCategoryRdos } from '~/hooks';
 import { ProductCategoryRdo, ProductRdo } from '@beribturing/api-stub';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { CustomInput } from '~/components/shared/CustomInput';
+import { CustomSelect } from '~/components/shared/CustomSelect';
+import { CustomTextarea } from '~/components/shared/CustomTextarea';
 
-interface PropertyForm {
+const productFormSchema = yup.object({
+  title: yup.string().trim().required('Title is required'),
+  categoryId: yup.string().required('Category is required'),
+  description: yup.string().trim().required('Description is required'),
+});
+
+interface ProductForm {
   title: string;
   description: string;
   categoryId: string;
@@ -19,15 +29,17 @@ export default function DashboardPropertiesEditPage() {
   const { productCategories }: { productCategories: ProductCategoryRdo[] } = useProductCategoryRdos({});
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(false);
-  const [form, setForm] = useState<PropertyForm>({
-    title: product?.product.title || '',
-    description: product?.product.description || '',
-    categoryId: product?.category.id || '',
+  const {
+    formState: { errors },
+    reset,
+    control,
+  } = useForm({
+    resolver: yupResolver(productFormSchema),
   });
 
   useEffect(() => {
     if (product) {
-      setForm({
+      reset({
         title: product.product.title,
         description: product.product.description,
         categoryId: product.category.id,
@@ -36,14 +48,6 @@ export default function DashboardPropertiesEditPage() {
   }, [product]);
 
   const handleSubmit = async (e: React.FormEvent) => {};
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: name.includes('Price') ? Number.parseFloat(value) || 0 : value,
-    }));
-  };
 
   if (initialLoading) {
     return (
@@ -70,48 +74,58 @@ export default function DashboardPropertiesEditPage() {
       <div className="bg-white rounded-lg shadow p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Property Title</label>
-              <input
-                type="text"
-                name="title"
-                value={form.title}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+            <Controller
+              name="title"
+              control={control}
+              render={({ field }) => {
+                return (
+                  <CustomInput
+                    label="Property Title"
+                    placeholder="e.g., Professional DSLR Camera"
+                    {...field}
+                    value={field.value || ''}
+                    required
+                    error={errors?.title}
+                  />
+                );
+              }}
+            />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-              <select
-                name="categoryId"
-                value={form.categoryId}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                {productCategories.map((c) => {
-                  return (
-                    <option key={c.category.id} value={c.category.id}>
-                      {c.category.name}
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-            <textarea
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              required
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            <Controller
+              name="categoryId"
+              control={control}
+              render={({ field }) => {
+                return (
+                  <CustomSelect
+                    label="Category"
+                    options={productCategories}
+                    dataItemKey="id"
+                    textField="category"
+                    {...field}
+                    required
+                    error={errors?.categoryId}
+                  />
+                );
+              }}
             />
           </div>
+
+          <Controller
+            name="description"
+            control={control}
+            render={({ field }) => {
+              return (
+                <CustomTextarea
+                  label="Description"
+                  {...field}
+                  value={field.value || ''}
+                  required
+                  placeholder="Describe your property in detail..."
+                  error={errors?.description}
+                />
+              );
+            }}
+          />
 
           {/*
 
