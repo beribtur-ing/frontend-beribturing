@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import type { Reservation, RentalRecord } from '../../../lib/types';
 import { ColumnConfig, TableList } from '../../../components/shared/TableList';
 import { CustomPagination } from '../../../components/shared/CustomPagination';
 import { Title } from '../../../components/shared/Title';
@@ -8,16 +7,6 @@ import { Filter } from '../../../components/shared/Filter';
 import { SearchBar } from '../../../components/shared/SearchBar';
 import { DeleteModal } from '../../../components/shared/DeleteModal';
 import { useRentalRecordsPaginated } from "~/hooks/rental/useRentalRecordsPaginated";
-
-// type BookingItem = (Reservation | RentalRecord) & { type: 'reservation' | 'rental' };
-
-interface BookingItem {
-  id: number;
-  name: string;
-  email: string;
-  role: string;
-  status: 'Pending' | 'Confirmed' | 'Active' | 'Completed';
-}
 
 export default function DashboardRentalsPage() {
   const [filter, setFilter] = useState<'all' | 'pending' | 'confirmed' | 'active' | 'completed'>('all');
@@ -47,16 +36,8 @@ export default function DashboardRentalsPage() {
   //   return booking.status.toLowerCase() === filter;
   // });
 
-  const initialData: BookingItem[] = [
-    { id: 1, name: 'Alice Johnson', email: 'alice@example.com', role: 'Admin', status: 'Active' },
-    { id: 2, name: 'Bob Smith', email: 'bob@example.com', role: 'Editor', status: 'Pending' },
-    { id: 3, name: 'Carol Lee', email: 'carol@example.com', role: 'Viewer', status: 'Confirmed' },
-    { id: 4, name: 'David Kim', email: 'david@example.com', role: 'Editor', status: 'Completed' },
-    { id: 5, name: 'Eve Adams', email: 'eve@example.com', role: 'Viewer', status: 'Active' },
-  ];
-
   // 2. Column config
-  const columns: ColumnConfig<BookingItem>[] = [
+  const columns: ColumnConfig<any>[] = [
     {
       field: 'name', title: 'Customer',
       cell: (item) => (
@@ -96,6 +77,22 @@ export default function DashboardRentalsPage() {
           Completed: 'bg-gray-100 text-gray-800',
         };
         return <span className={`px-2 py-1 rounded-[4px] ${statusColors[item.status]}`}>{item.status}</span>;
+      },
+    },
+    {
+      'title': 'Actions',
+      cell: (item) => {
+        //eye button
+        return (
+          <div className="flex gap-2">
+            <Link
+              to={`/dashboard/rentals/${item.id}`}
+              className="px-2 py-1 bg-blue-100 text-blue-800 rounded-md hover:bg-blue-200 transition-colors"
+            >
+              View
+            </Link>
+          </div>
+        );
       },
     },
   ];
@@ -141,8 +138,8 @@ export default function DashboardRentalsPage() {
       <TableList
         data={rentalRecords}
         columns={columns}
-        onEdit={(item) => alert(`Edit: ${item.name}`)}
-        onDelete={(item) => setShowDeleteModal(true)}
+        // onEdit={(item) => alert(`Edit: ${item.name}`)}
+        // onDelete={(item) => setShowDeleteModal(true)}
       />
       <CustomPagination
         offset={offset}

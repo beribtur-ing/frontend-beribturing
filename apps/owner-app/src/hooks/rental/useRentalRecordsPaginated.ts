@@ -64,7 +64,7 @@ export const useRentalRecordsPaginated = () => {
 
   const { queryKey, queryFn } = RentalOwnSeekApi.query.findRentalRecords({ ...query });
 
-  const { isLoading, data, refetch }: UseQueryResult<QueryResponse<RentalRecord[]>> = useQuery({
+  const { isLoading, data, refetch }: UseQueryResult<QueryResponse<any[]>> = useQuery({
     queryKey,
     queryFn,
   });
@@ -140,7 +140,7 @@ export const useRentalRecordsPaginated = () => {
 
   return {
     query,
-    rentalRecords: (data?.result || mockData) as RentalRecord[],
+    rentalRecords: (data?.result || mockData) as any[],
     refetchRentalRecords: refetch,
     rentalRecordsIsLoading: isLoading,
     total: data?.offset.totalCount || 0,
