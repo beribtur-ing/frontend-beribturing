@@ -1,96 +1,41 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, Link, useParams } from 'react-router-dom';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { useProductRdo, useProductCategoryRdos } from '~/hooks';
+import { ProductCategoryRdo, ProductRdo } from '@beribturing/api-stub';
+import { useForm } from 'react-hook-form';
+import * as yup from 'yup';
 
 interface PropertyForm {
   title: string;
   description: string;
   categoryId: string;
-  brand: string;
-  model: string;
-  color: string;
-  size: string;
-  material: string;
-  dailyPrice: number;
-  weeklyPrice: number;
-  monthlyPrice: number;
-  notes: string;
 }
 
 export default function DashboardPropertiesEditPage() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { product }: { product: ProductRdo | undefined } = useProductRdo(id || '');
+  const { productCategories }: { productCategories: ProductCategoryRdo[] } = useProductCategoryRdos({});
   const [loading, setLoading] = useState(false);
-  const [initialLoading, setInitialLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(false);
   const [form, setForm] = useState<PropertyForm>({
-    title: '',
-    description: '',
-    categoryId: 'electronics',
-    brand: '',
-    model: '',
-    color: '',
-    size: '',
-    material: '',
-    dailyPrice: 0,
-    weeklyPrice: 0,
-    monthlyPrice: 0,
-    notes: '',
+    title: product?.product.title || '',
+    description: product?.product.description || '',
+    categoryId: product?.category.id || '',
   });
 
   useEffect(() => {
-    // Load existing property data
-    fetch(`/api/products/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.variants && data.variants[0]) {
-          const variant = data.variants[0];
-          setForm({
-            title: data.title,
-            description: data.description,
-            categoryId: data.categoryId,
-            brand: variant.brand,
-            model: variant.model,
-            color: variant.color,
-            size: variant.size,
-            material: variant.material,
-            dailyPrice: variant.price.daily,
-            weeklyPrice: variant.price.weekly,
-            monthlyPrice: variant.price.monthly,
-            notes: variant.notes || '',
-          });
-        }
-        setInitialLoading(false);
-      })
-      .catch(() => {
-        alert('Failed to load property');
-        navigate(`/dashboard/properties`);
+    if (product) {
+      setForm({
+        title: product.product.title,
+        description: product.product.description,
+        categoryId: product.category.id,
       });
-  }, [id, navigate]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const response = await fetch(`/api/products/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(form),
-      });
-
-      if (response.ok) {
-        navigate(`/dashboard/properties`);
-      } else {
-        alert('Failed to update property');
-      }
-    } catch (error) {
-      alert('Error updating property');
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [product]);
+
+  const handleSubmit = async (e: React.FormEvent) => {};
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -112,7 +57,7 @@ export default function DashboardPropertiesEditPage() {
     <div>
       <div className="mb-8">
         <Link
-          to={`/dashboard/properties`}
+          to={'/dashboard/properties'}
           className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-4"
         >
           <ArrowLeftIcon className="w-4 h-4 mr-1" />
@@ -145,11 +90,13 @@ export default function DashboardPropertiesEditPage() {
                 onChange={handleChange}
                 className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
-                <option value="electronics">Electronics</option>
-                <option value="sports">Sports & Recreation</option>
-                <option value="tools">Tools & Equipment</option>
-                <option value="vehicles">Vehicles</option>
-                <option value="home">Home & Garden</option>
+                {productCategories.map((c) => {
+                  return (
+                    <option key={c.category.id} value={c.category.id}>
+                      {c.category.name}
+                    </option>
+                  );
+                })}
               </select>
             </div>
           </div>
@@ -165,6 +112,8 @@ export default function DashboardPropertiesEditPage() {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
+
+          {/*
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div>
@@ -276,11 +225,11 @@ export default function DashboardPropertiesEditPage() {
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-          </div>
+          </div> */}
 
           <div className="flex justify-end space-x-4">
             <Link
-              to={`/dashboard/properties`}
+              to={'/dashboard/properties'}
               className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
             >
               Cancel
