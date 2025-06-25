@@ -1,44 +1,47 @@
 import { useMutation } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
-import { 
-  AccountSignInAdmQuery, 
-  AuthAdmSeekApi, 
-  AccountSignInTokenRdo, 
+import {
+  AccountSignInAdmQuery,
+  AuthAdmSeekApi,
+  UserAdmSeekApi,
+  AccountSignInTokenRdo,
   QueryResponse,
-  FirstParameter 
+  FirstParameter,
 } from '@beribturing/api-stub';
-import { useAuthContext, User } from '../../lib/auth';
+import { useAuthContext } from '~/lib/auth';
 
 export const useAuth = () => {
-  const { 
-    user, 
-    loading, 
-    tokens, 
-    signOut, 
-    setUser, 
-    setTokens 
+  const {
+    user,
+    loading,
+    tokens,
+    signOut,
+    setUser,
+    setTokens,
   } = useAuthContext();
 
   const signInMutation = useMutation<
-    AxiosResponse<QueryResponse<AccountSignInTokenRdo>>,
-    unknown,
-    FirstParameter<typeof AuthAdmSeekApi.accountSignIn>
+  AxiosResponse<QueryResponse<AccountSignInTokenRdo>>,
+  unknown,
+  FirstParameter<typeof AuthAdmSeekApi.accountSignIn>
   >({
     mutationFn: AuthAdmSeekApi.accountSignIn,
-    onSuccess: (response, variables) => {
+    onSuccess: async (response, variables) => {
       const tokenData = response.data.result;
       if (tokenData) {
         setTokens(tokenData);
-        
-        // Create user object from sign in data
-        const userData: User = {
-          id: 'admin-user', // You might want to get this from a separate API call
-          name: 'Admin User', // You might want to get this from a separate API call
-          phoneNumber: variables.phoneNumber,
-          role: 'admin',
-        };
-        
-        setUser(userData);
+
+        // Fetch user data using the userMe endpoint
+        try {
+          const userResponse = await UserAdmSeekApi.userMe({});
+          const userMeData = userResponse.data.result;
+          if (userMeData) {
+            setUser(userMeData);
+          }
+        } catch (error) {
+          console.error('Failed to fetch user data:', error);
+          setUser(null);
+        }
       }
     },
     onError: (error) => {
