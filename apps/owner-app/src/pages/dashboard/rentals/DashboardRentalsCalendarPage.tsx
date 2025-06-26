@@ -2,7 +2,7 @@ import { Link, useParams } from 'react-router-dom';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { BookingCalendar } from '../../../components/dashboard/booking-calendar';
 
-export default function DashboardBookingsCalendarPage() {
+export default function DashboardRentalsCalendarPage() {
   return (
     <div>
       <div className="mb-6 md:mb-8">
