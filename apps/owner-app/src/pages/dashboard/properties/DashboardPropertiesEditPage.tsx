@@ -1,104 +1,53 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, Link, useParams } from 'react-router-dom';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
+import { useProductRdo, useProductCategoryRdos } from '~/hooks';
+import { ProductCategoryRdo, ProductRdo } from '@beribturing/api-stub';
+import { useForm, Controller } from 'react-hook-form';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { CustomInput } from '~/components/shared/CustomInput';
+import { CustomSelect } from '~/components/shared/CustomSelect';
+import { CustomTextarea } from '~/components/shared/CustomTextarea';
 
-interface PropertyForm {
+const productFormSchema = yup.object({
+  title: yup.string().trim().required('Title is required'),
+  categoryId: yup.string().required('Category is required'),
+  description: yup.string().trim().required('Description is required'),
+});
+
+interface ProductForm {
   title: string;
   description: string;
   categoryId: string;
-  brand: string;
-  model: string;
-  color: string;
-  size: string;
-  material: string;
-  dailyPrice: number;
-  weeklyPrice: number;
-  monthlyPrice: number;
-  notes: string;
 }
 
 export default function DashboardPropertiesEditPage() {
   const navigate = useNavigate();
   const { id } = useParams();
+  const { product }: { product: ProductRdo | undefined } = useProductRdo(id || '');
+  const { productCategories }: { productCategories: ProductCategoryRdo[] } = useProductCategoryRdos({});
   const [loading, setLoading] = useState(false);
-  const [initialLoading, setInitialLoading] = useState(true);
-  const [form, setForm] = useState<PropertyForm>({
-    title: '',
-    description: '',
-    categoryId: 'electronics',
-    brand: '',
-    model: '',
-    color: '',
-    size: '',
-    material: '',
-    dailyPrice: 0,
-    weeklyPrice: 0,
-    monthlyPrice: 0,
-    notes: '',
+  const [initialLoading, setInitialLoading] = useState(false);
+  const {
+    formState: { errors },
+    reset,
+    control,
+  } = useForm({
+    resolver: yupResolver(productFormSchema),
   });
 
   useEffect(() => {
-    // Load existing property data
-    fetch(`/api/products/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.variants && data.variants[0]) {
-          const variant = data.variants[0];
-          setForm({
-            title: data.title,
-            description: data.description,
-            categoryId: data.categoryId,
-            brand: variant.brand,
-            model: variant.model,
-            color: variant.color,
-            size: variant.size,
-            material: variant.material,
-            dailyPrice: variant.price.daily,
-            weeklyPrice: variant.price.weekly,
-            monthlyPrice: variant.price.monthly,
-            notes: variant.notes || '',
-          });
-        }
-        setInitialLoading(false);
-      })
-      .catch(() => {
-        alert('Failed to load property');
-        navigate(`/dashboard/properties`);
+    if (product) {
+      reset({
+        title: product.product.title,
+        description: product.product.description,
+        categoryId: product.category.id,
       });
-  }, [id, navigate]);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-
-    try {
-      const response = await fetch(`/api/products/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(form),
-      });
-
-      if (response.ok) {
-        navigate(`/dashboard/properties`);
-      } else {
-        alert('Failed to update property');
-      }
-    } catch (error) {
-      alert('Error updating property');
-    } finally {
-      setLoading(false);
     }
-  };
+  }, [product]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: name.includes('Price') ? Number.parseFloat(value) || 0 : value,
-    }));
-  };
+  const handleSubmit = async (e: React.FormEvent) => {};
 
   if (initialLoading) {
     return (
@@ -112,7 +61,7 @@ export default function DashboardPropertiesEditPage() {
     <div>
       <div className="mb-8">
         <Link
-          to={`/dashboard/properties`}
+          to={'/dashboard/properties'}
           className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-4"
         >
           <ArrowLeftIcon className="w-4 h-4 mr-1" />
@@ -125,46 +74,60 @@ export default function DashboardPropertiesEditPage() {
       <div className="bg-white rounded-lg shadow p-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Property Title</label>
-              <input
-                type="text"
-                name="title"
-                value={form.title}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+            <Controller
+              name="title"
+              control={control}
+              render={({ field }) => {
+                return (
+                  <CustomInput
+                    label="Property Title"
+                    placeholder="e.g., Professional DSLR Camera"
+                    {...field}
+                    value={field.value || ''}
+                    required
+                    error={errors?.title}
+                  />
+                );
+              }}
+            />
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-              <select
-                name="categoryId"
-                value={form.categoryId}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                <option value="electronics">Electronics</option>
-                <option value="sports">Sports & Recreation</option>
-                <option value="tools">Tools & Equipment</option>
-                <option value="vehicles">Vehicles</option>
-                <option value="home">Home & Garden</option>
-              </select>
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
-            <textarea
-              name="description"
-              value={form.description}
-              onChange={handleChange}
-              required
-              rows={4}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            <Controller
+              name="categoryId"
+              control={control}
+              render={({ field }) => {
+                return (
+                  <CustomSelect
+                    label="Category"
+                    options={productCategories}
+                    dataItemKey="id"
+                    textField="category"
+                    {...field}
+                    required
+                    error={errors?.categoryId}
+                  />
+                );
+              }}
             />
           </div>
+
+          <Controller
+            name="description"
+            control={control}
+            render={({ field }) => {
+              return (
+                <CustomTextarea
+                  label="Description"
+                  {...field}
+                  value={field.value || ''}
+                  required
+                  placeholder="Describe your property in detail..."
+                  error={errors?.description}
+                />
+              );
+            }}
+          />
+
+          {/*
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div>
@@ -276,11 +239,11 @@ export default function DashboardPropertiesEditPage() {
               rows={3}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-          </div>
+          </div> */}
 
           <div className="flex justify-end space-x-4">
             <Link
-              to={`/dashboard/properties`}
+              to={'/dashboard/properties'}
               className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"
             >
               Cancel
