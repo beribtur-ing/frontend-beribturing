@@ -1,5 +1,5 @@
-import { ProductVariant } from '../../../aggregate/item/ProductVariant';
-import { ProductImage } from '../../../aggregate/item/ProductImage';
+import { ProductVariant, ProductImage } from '~/models';
+
 
 export interface ProductVariantRdo {
   variant: ProductVariant;
