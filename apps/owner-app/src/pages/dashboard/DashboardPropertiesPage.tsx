@@ -1,40 +1,42 @@
-import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
-import { Card, CardContent, CardMedia, Typography, Button, Box, Grid, Skeleton } from '@mui/material';
-import type { Product, ProductVariant } from '../../lib/types';
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import { PlusIcon, BuildingOfficeIcon } from '@heroicons/react/24/outline';
-import { PropertyCard } from '../../components/dashboard/PropertyCard';
-
-type ProductWithVariants = Product & { variants: ProductVariant[] };
-
-const productCategorys = [];
+import { PropertyCard } from '~/components/dashboard/PropertyCard';
+import { useProductRdos, useProductMutation } from '~/hooks';
+import { ProductRdo } from '@beribturing/api-stub';
+import { DeleteModal } from '~/components/shared/DeleteModal';
 
 export default function DashboardPropertiesPage() {
-  const [properties, setProperties] = useState<ProductWithVariants[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { productRdos, refetch }: { productRdos: ProductRdo[]; refetch } = useProductRdos({});
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    fetch('/api/products')
-      .then((res) => res.json())
-      .then((data) => {
-        setProperties(Array.isArray(data) ? data : []);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Error fetching properties:', error);
-        setProperties([]);
-        setLoading(false);
-      });
-  }, []);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [productIdToDelete, setProductIdToDelete] = useState('');
+  const {
+    mutation: { removeProduct },
+  } = useProductMutation();
 
   const handleEdit = (productId: string) => {
     navigate(`/dashboard/properties/edit/${productId}`);
   };
 
   const handleDelete = (productId: string) => {
-    console.log('Delete product:', productId);
-    // Implement delete functionality
+    removeProduct.mutateAsync(
+      { productId },
+      {
+        onSuccess: () => {
+          setShowDeleteModal(false);
+          refetch();
+        },
+        onError: (err) => {
+          console.error(err);
+        },
+      },
+    );
+  };
+
+  const handleCancelDelete = () => {
+    setShowDeleteModal(false);
   };
 
   if (loading) {
@@ -57,7 +59,7 @@ export default function DashboardPropertiesPage() {
           <p className="text-sm md:text-base text-gray-600">Manage your rental listings</p>
         </div>
         <Link
-          to={`/dashboard/properties/add`}
+          to={'/dashboard/properties/add'}
           className="flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 w-full sm:w-auto"
         >
           <PlusIcon className="w-5 h-5 mr-2" />
@@ -66,29 +68,39 @@ export default function DashboardPropertiesPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-        {properties.map((property) => (
+        {productRdos.map((property) => (
           <PropertyCard
-            key={property.id}
+            key={property.product.id}
             product={property}
-            onEdit={() => handleEdit(property.id)}
-            onDelete={() => handleDelete(property.id)}
+            onEdit={() => handleEdit(property.product.id)}
+            onDelete={() => {
+              setProductIdToDelete(property.product.id);
+              setShowDeleteModal(true);
+            }}
           />
         ))}
       </div>
 
-      {properties.length === 0 && (
+      {productRdos.length === 0 && (
         <div className="text-center py-12">
           <BuildingOfficeIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">No properties yet</h3>
           <p className="text-gray-600 mb-4">Get started by adding your first rental property.</p>
           <Link
-            to={`/dashboard/properties/add`}
+            to={'/dashboard/properties/add'}
             className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 inline-block"
           >
             Add Your First Property
           </Link>
         </div>
       )}
+      {
+        <DeleteModal
+          onDelete={() => handleDelete(productIdToDelete)}
+          showModal={showDeleteModal}
+          onClose={handleCancelDelete}
+        />
+      }
     </div>
   );
 }

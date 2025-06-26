@@ -1,5 +1,5 @@
-import {Product, ProductCategory} from '~/models';
-import {ProductVariantRdo} from './ProductVariantRdo';
+import { Product, ProductCategory, ProductVariantRdo } from '~/models';
+
 
 export interface ProductRdo {
   product: Product;

@@ -11,13 +11,14 @@ const App = () => {
   const queryClient = useMemo(() => new QueryClient(), []);
 
   axios.interceptors.request.use(
-      (config) => {
-          const token = JSON.parse(localStorage.getItem('owner_tokens') || '{}')?.accessToken; // or use your auth state/store
-          if (token) {
-              config.headers.Authorization = `Bearer ${token}`;
-          }
-          return config;},
-      (error) => Promise.reject(error),
+    (config) => {
+      const token = JSON.parse(localStorage.getItem('owner_tokens') || '{}')?.accessToken; // or use your auth state/store
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    },
+    (error) => Promise.reject(error),
   );
 
   return (

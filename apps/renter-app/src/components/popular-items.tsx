@@ -1,6 +1,6 @@
-import {ChevronRight} from "lucide-react"
-import {ProductCard} from "./product-card"
-import type {ProductVariant} from "../types/domain"
+import { ChevronRight } from 'lucide-react';
+import { ProductCard } from './product-card';
+import type { ProductVariant } from "~/types/domain";
 
 interface PopularItemsProps {
   variants: ProductVariant[]
@@ -34,5 +34,5 @@ export function PopularItems({ variants, onFavoriteToggle, favoriteIds = [] }: P
         </div>
       </div>
     </section>
-  )
+  );
 }

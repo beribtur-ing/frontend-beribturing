@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 const navigation = [
   { name: 'Overview', href: '/dashboard/overview', icon: HomeIcon },
   { name: 'Properties', href: '/dashboard/properties', icon: BuildingOfficeIcon },
-  { name: 'Bookings', href: '/dashboard/bookings', icon: CalendarDaysIcon },
+  { name: 'Bookings', href: '/dashboard/rentals', icon: CalendarDaysIcon },
   { name: 'Requests', href: '/dashboard/requests', icon: InboxIcon },
   { name: 'Analytics', href: '/dashboard/analytics', icon: ChartBarIcon },
   { name: 'Settings', href: '/dashboard/settings', icon: CogIcon },
