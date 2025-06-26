@@ -1,4 +1,4 @@
-import { BarChart3, Calendar, Home, Settings, Users, Building2, Shield } from 'lucide-react';
+import { BarChart3, Calendar, Home, Settings, Users, Building2, Shield, FolderTree } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 import { Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Typography, Box } from '@mui/material';
@@ -19,6 +19,11 @@ const menuItems = [
     title: 'Properties',
     url: '/properties',
     icon: Building2,
+  },
+  {
+    title: 'Categories',
+    url: '/categories',
+    icon: FolderTree,
   },
   {
     title: 'Bookings',
