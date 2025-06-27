@@ -335,9 +335,6 @@ export default function DashboardPropertiesEditPage() {
                         }}
                     />
                 ))}
-
-
-
             </div>
         </div>
   );

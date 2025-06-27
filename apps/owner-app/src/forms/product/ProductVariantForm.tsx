@@ -63,38 +63,38 @@ export const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
                     control={control}
                     name="variant.color"
                     render={({ field }) => (
-                <CustomInput
-                    label="Color"
-                    disabled={isDisabled}
-                    error={errors.variant?.color}
-                    {...field}
-                    value={field.value || ''}
-                />)} />
+                        <CustomInput
+                            label="Color"
+                            disabled={isDisabled}
+                            error={errors.variant?.color}
+                            {...field}
+                            value={field.value || ''}
+                        />)} />
 
                 <Controller
-                control={control}
-                name="variant.brand"
-                render={({ field }) => (
-                <CustomInput
-                    label="Brand"
-                    disabled={isDisabled}
-                    error={errors.variant?.brand}
-                    {...field}
-                    value={field.value || ''}
-                />)} />
+                    control={control}
+                    name="variant.brand"
+                    render={({ field }) => (
+                        <CustomInput
+                            label="Brand"
+                            disabled={isDisabled}
+                            error={errors.variant?.brand}
+                            {...field}
+                            value={field.value || ''}
+                        />)} />
 
                 <Controller
                     control={control}
                     name="variant.producedYear"
                     render={({ field }) => (
-                <CustomInput
-                    label="Produced Year"
-                    placeholder="e.g. 2023"
-                    disabled={isDisabled}
-                    error={errors.variant?.producedYear}
-                    {...field}
-                    value={field.value || ''}
-                />)} />
+                        <CustomInput
+                            label="Produced Year"
+                            placeholder="e.g. 2023"
+                            disabled={isDisabled}
+                            error={errors.variant?.producedYear}
+                            {...field}
+                            value={field.value || ''}
+                        />)} />
 
                 <Controller
                     control={control}
@@ -127,8 +127,8 @@ export const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
                                 <option value="DAILY">Daily</option>
                                 <option value="WEEKLY">Weekly</option>
                             </select>
-                            {errors.variant?.price?.unit && (
-                                <p className="text-sm text-red-500 mt-1">{errors.variant.price.unit.message}</p>
+                            {typeof errors.variant?.price?.unit?.message === 'string' && (
+                                <p className="text-sm text-red-500 mt-1">{errors.variant?.price?.unit.message}</p>
                             )}
                         </div>
                     )}
@@ -139,23 +139,24 @@ export const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
                         control={control}
                         name="description"
                         render={({ field }) => (
-                    <CustomTextarea
-                        label="Description"
-                        disabled={isDisabled}
-                        rows={4}
-                        error={errors.description}
-                        {...field}
-                    />)} />
+                            <CustomTextarea
+                                label="Description"
+                                disabled={isDisabled}
+                                rows={4}
+                                error={errors.description}
+                                {...field}
+                            />)} />
                 </div>
 
                 <div className="col-span-full">
-                    <Controller name='variant.active' control={control} render={({ field }) => (
+                    <Controller name="variant.active" control={control} render={({ field }) => (
 
-                    <label className="inline-flex items-center mt-4">
-                        <input type="checkbox" disabled={isDisabled} {...field} checked={field.value || false} value={undefined}
-                               className="mr-2" />
-                        <span className="text-sm font-medium">Active</span>
-                    </label>
+                        <label className="inline-flex items-center mt-4">
+                            <input type="checkbox" disabled={isDisabled} {...field} checked={field.value || false}
+                                   value={undefined}
+                                   className="mr-2" />
+                            <span className="text-sm font-medium">Active</span>
+                        </label>
                     )} />
                     {errors.variant?.active && (
                         <p className="text-sm text-red-500 mt-1">{errors.variant.active.message}</p>
@@ -166,19 +167,30 @@ export const ProductVariantForm: React.FC<ProductVariantFormProps> = ({
                     <label className="block text-sm font-medium mb-2">Images</label>
                     {fields.map((image, index) => (
                         <div key={image.id} className="border p-4 rounded-md mb-4 space-y-2 bg-gray-50">
-                            <Controller />
-                            <CustomInput
-                                label="Image URL"
-                                {...rhfRegister(`images.${index}.url`)}
-                                disabled={isDisabled}
-                                error={errors.images?.[index]?.url}
+                            <Controller name={`images.${index}.url`}
+                                        control={control}
+                                        render={({ field }) => (
+
+                                            <CustomInput
+                                                label="Image URL"
+                                                disabled={isDisabled}
+                                                error={errors.images?.[index]?.url}
+                                                {...field}
+                                            />
+                                        )}
                             />
-                            <CustomInput
-                                type="number"
-                                label="Order"
-                                {...rhfRegister(`images.${index}.order`)}
-                                disabled={isDisabled}
-                                error={errors.images?.[index]?.order}
+                            <Controller name={`images.${index}.order`}
+                                        control={control}
+                                        render={({ field }) => (
+                                            <CustomInput
+                                                type="number"
+                                                label="Order"
+                                                disabled={isDisabled}
+                                                error={errors.images?.[index]?.order}
+                                                {...field}
+                                                value={String(field.value ?? '')}
+                                            />
+                                        )}
                             />
                             <label className="inline-flex items-center">
                                 <input type="checkbox" {...rhfRegister(`images.${index}.active`)} disabled={isDisabled}
