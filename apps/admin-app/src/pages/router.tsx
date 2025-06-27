@@ -27,6 +27,7 @@ import UsersPage from './UsersPage';
 import UserDetailsPage from './UserDetailsPage';
 import UserEditPage from './UserEditPage';
 import UserCreatePage from './UserCreatePage';
+import CategoriesPage from './CategoriesPage';
 
 export const browserRouter = createBrowserRouter(
   [
@@ -112,6 +113,14 @@ export const browserRouter = createBrowserRouter(
           element: (
             <ProtectedLayout>
               <PropertyEditPage />
+            </ProtectedLayout>
+          ),
+        },
+        {
+          path: 'categories',
+          element: (
+            <ProtectedLayout>
+              <CategoriesPage />
             </ProtectedLayout>
           ),
         },

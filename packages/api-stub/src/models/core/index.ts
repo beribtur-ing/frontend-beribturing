@@ -16,3 +16,4 @@ export * from './QueryResponse';
 export * from './FailureMessage';
 export * from './FailureResponse';
 export * from './FirstParameter';
+export { default as Entities } from './Entities';

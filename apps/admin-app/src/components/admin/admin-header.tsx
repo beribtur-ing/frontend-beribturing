@@ -44,7 +44,7 @@ export function AdminHeader() {
             <>
               <IconButton onClick={handleMenuClick} sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 1 }}>
                 <Avatar src={user.avatar || PlaceholderImage} alt={user.name} sx={{ width: 32, height: 32 }}>
-                  {user.name.charAt(0)}
+                  {user.name?.charAt(0) || 'U'}
                 </Avatar>
                 <Typography variant="body2" sx={{ display: { xs: 'none', md: 'block' }, ml: 1 }}>
                   {user.name}
