@@ -1,8 +1,8 @@
 import {
-    FindItemConditionCheckOwnQuery,
-    FindItemConditionPhotoOwnQuery,
-    FindRentalRecordOwnQuery,
-    FindRentalRecordsOwnQuery
+  FindItemConditionCheckOwnQuery,
+  FindItemConditionPhotoOwnQuery,
+  FindRentalRecordOwnQuery,
+  FindRentalRecordsOwnQuery, FindReservationsOwnQuery,
 } from '~/apis';
 import {QueryResponse, RentalRecord, ItemConditionCheck, ItemConditionPhoto, FirstParameter, Offset} from '~/models';
 import axios from "axios";
@@ -23,6 +23,14 @@ const findRentalRecords = (variables: {
 }) => {
     const query = <FindRentalRecordsOwnQuery>{...variables};
     return axios.post<QueryResponse<RentalRecord[]>>(url('find-rental-records/query'), query);
+};
+
+const findReservations = (variables: {
+    status?: string;
+    offset?: Offset;
+}) => {
+    const query = <FindReservationsOwnQuery>{...variables};
+    return axios.post<QueryResponse<RentalRecord[]>>(url('find-reservations/query'), query);
 };
 
 const findItemConditionCheck = (variables: {
@@ -57,6 +65,12 @@ export default {
             queryFn: async ({queryKey}: {
                 queryKey: readonly any[]
             }) => (await findRentalRecords(queryKey.slice().pop()))?.data,
+        }),
+      findReservations: (params: FirstParameter<typeof findReservations>) => ({
+            queryKey: ['feature/owner/rental', 'findReservations', params],
+            queryFn: async ({queryKey}: {
+                queryKey: readonly any[]
+            }) => (await findReservations(queryKey.slice().pop()))?.data,
         }),
         findItemConditionCheck: (params: FirstParameter<typeof findItemConditionCheck>) => ({
             queryKey: ['feature/owner/rental', 'findItemConditionCheck', params],
