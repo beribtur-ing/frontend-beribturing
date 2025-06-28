@@ -3,9 +3,9 @@ import { ProductCard } from '../../../components/product-card';
 import type { ProductVariant } from "~/types/domain";
 
 interface PopularItemsProps {
-  variants: ProductVariant[]
-  onFavoriteToggle?: (variantId: string) => void
-  favoriteIds?: string[]
+  variants: ProductVariant[];
+  onFavoriteToggle?: (variantId: string) => void;
+  favoriteIds?: string[];
 }
 
 export function PopularItems({ variants, onFavoriteToggle, favoriteIds = [] }: PopularItemsProps) {
@@ -22,16 +22,22 @@ export function PopularItems({ variants, onFavoriteToggle, favoriteIds = [] }: P
           </button>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {variants.map((variant) => (
-            <ProductCard
-              key={variant.id}
-              variant={variant}
-              onFavoriteToggle={onFavoriteToggle}
-              isFavorite={favoriteIds.includes(variant.id)}
-            />
-          ))}
-        </div>
+        {variants.length > 0 ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+            {variants.map((variant) => (
+              <ProductCard
+                key={variant.id}
+                variant={variant}
+                onFavoriteToggle={onFavoriteToggle}
+                isFavorite={favoriteIds.includes(variant.id)}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-12 text-gray-500 dark:text-gray-400">
+            No popular items found.
+          </div>
+        )}
       </div>
     </section>
   );

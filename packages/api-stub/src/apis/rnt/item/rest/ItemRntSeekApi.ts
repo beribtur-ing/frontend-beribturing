@@ -7,7 +7,7 @@ import {
 import { QueryResponse, ProductCategoryRdo, ProductRdo, FirstParameter, Offset } from '~/models';
 import axios from 'axios';
 
-const url = (path: string) => `/api/feature/rnt/item/${path}`;
+const url = (path: string) => `/api/feature/renter/item/${path}`;
 
 // Product Category Queries
 const findProductCategoryRdos = (variables: {
