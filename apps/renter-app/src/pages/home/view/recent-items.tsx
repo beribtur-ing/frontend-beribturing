@@ -1,6 +1,6 @@
 import { ChevronRight, Loader2 } from 'lucide-react';
 import { useState } from 'react';
-import { ProductCard } from './product-card';
+import { ProductCard } from '../../../components/product-card';
 import type { ProductVariant } from '~/types/domain';
 
 interface RecentItemsProps {

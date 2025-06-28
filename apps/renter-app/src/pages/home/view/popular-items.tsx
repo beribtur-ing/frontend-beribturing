@@ -1,5 +1,5 @@
 import { ChevronRight } from 'lucide-react';
-import { ProductCard } from './product-card';
+import { ProductCard } from '../../../components/product-card';
 import type { ProductVariant } from "~/types/domain";
 
 interface PopularItemsProps {

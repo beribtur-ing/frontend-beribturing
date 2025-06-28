@@ -1,9 +1,9 @@
-import { HeroBanner } from '../components/hero-banner';
-import { CategoryTiles } from '../components/category-tiles';
-import { PopularItems } from '../components/popular-items';
-import { TrustSection } from '../components/trust-section';
-import { mockProductVariants } from '../data/mock-data';
-import { RecentItems } from '~/components/recent-items';
+import { HeroBanner } from '../../components/hero-banner';
+import { CategoryTiles } from '../../components/category-tiles';
+import { PopularItems } from './view/popular-items';
+import { TrustSection } from '../../components/trust-section';
+import { mockProductVariants } from '../../data/mock-data';
+import { RecentItems } from '~/pages/home/view/recent-items';
 
 const categoryTiles = [
   {
