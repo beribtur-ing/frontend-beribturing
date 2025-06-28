@@ -3,12 +3,6 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useProductCategoryRdos } from '~/hooks';
 import { ProductCategoryRdo } from '@beribturing/api-stub';
 
-export interface ProductCategory {
-  id: string;
-  name: string;
-  iconUrl?: string;
-}
-
 interface CatalogMenuProps {
   onClose: () => void;
   isMobile?: boolean;
