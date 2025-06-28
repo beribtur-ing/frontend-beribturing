@@ -1,4 +1,3 @@
-
 import type React from 'react';
 
 import { Heart, MapPin, Star } from 'lucide-react';
@@ -58,8 +57,8 @@ export function ProductCard({ variant, onFavoriteToggle, isFavorite = false }: P
   };
 
   return (
-    <Link to={`/product/${variant.id}`} className="block">
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-lg transition-shadow cursor-pointer overflow-hidden border dark:border-gray-700">
+    <Link to={`/product/${variant.id}`} className="block h-full">
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-lg transition-shadow cursor-pointer overflow-hidden border dark:border-gray-700 h-full flex flex-col">
         <div className="relative">
           <img
             src={Camera}
@@ -79,7 +78,7 @@ export function ProductCard({ variant, onFavoriteToggle, isFavorite = false }: P
           </span>
         </div>
 
-        <div className="p-3">
+        <div className="p-3 flex-1 flex flex-col">
           <h3 className="font-medium text-gray-900 dark:text-gray-100 text-sm mb-2 line-clamp-2">
             {variant.product?.title || 'Unnamed Product'}
             {variant.brand && variant.model ? ` - ${variant.brand} ${variant.model}` : ''}
@@ -97,7 +96,7 @@ export function ProductCard({ variant, onFavoriteToggle, isFavorite = false }: P
             <span className="text-xs text-gray-500 dark:text-gray-400">{location}</span>
           </div>
 
-          <div className="space-y-1">
+          <div className="space-y-1 mt-auto">
             <div className="flex items-center space-x-2">
               <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
                 UZS {currentPrice.toLocaleString()}

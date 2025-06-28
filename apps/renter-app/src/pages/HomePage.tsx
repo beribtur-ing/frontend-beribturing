@@ -3,6 +3,7 @@ import { CategoryTiles } from '../components/category-tiles';
 import { PopularItems } from '../components/popular-items';
 import { TrustSection } from '../components/trust-section';
 import { mockProductVariants } from '../data/mock-data';
+import { RecentItems } from '~/components/recent-items';
 
 const categoryTiles = [
   {
@@ -32,6 +33,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <HeroBanner />
       <CategoryTiles tiles={categoryTiles} />
+      <RecentItems variants={mockProductVariants} />
       <PopularItems variants={mockProductVariants} />
       <TrustSection />
     </div>
