@@ -2,30 +2,40 @@ import { useTranslation } from 'react-i18next';
 
 export function HeroBanner() {
   const { t } = useTranslation();
+
   return (
-    <section
-      className="relative bg-cover bg-center bg-no-repeat py-20 lg:py-32 text-white overflow-hidden"
-      style={{
-        backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url('/placeholder.svg?height=600&width=1200')`,
-      }}
-    >
-      {/* Background overlay with gradient */}
-      <div className="absolute inset-0 bg-gradient-to-r from-purple-900/80 to-blue-900/80"></div>
+    <div className="container mx-auto px-4 mt-2">
+      <div className="relative overflow-hidden rounded-2xl">
+        <section
+          className="relative flex items-center justify-center py-24 md:py-48 bg-[center_-90px] bg-cover"
+          style={{
+            backgroundImage: `url('/src/assets/stock-photo.jpg')`,
+          }}
+        >
+          {/* Dark gradient overlay */}
+          <div className="absolute inset-0 bg-black/40 backdrop-brightness-75"></div>
 
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-5xl mx-auto text-center">
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight">
-            {t('Rent Everything You Need')}
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 text-gray-100 leading-relaxed">
-            {t('From tools to electronics, find everything you need for your projects')}
-          </p>
-        </div>
+          {/* Animated blobs */}
+          <div className="absolute top-0 left-0 w-[30rem] h-[30rem] bg-purple-500 rounded-full opacity-20 mix-blend-multiply blur-3xl animate-blob"></div>
+          <div className="absolute bottom-0 right-0 w-[30rem] h-[30rem] bg-blue-500 rounded-full opacity-20 mix-blend-multiply blur-3xl animate-blob animation-delay-2000"></div>
+
+          {/* Content */}
+          <div className="relative z-10 text-center px-6">
+            <h1 className="text-4xl md:text-5xl font-extrabold mb-4 leading-tight text-white drop-shadow-xl">
+              {t('Rent Everything You Need')}
+            </h1>
+            <p className="text-lg md:text-xl text-gray-200 mb-6 max-w-2xl mx-auto">
+              {t('From tools to electronics, find everything you need for your projects')}
+            </p>
+            <a
+              href="/catalog"
+              className="inline-block px-8 py-3 rounded-full bg-white text-purple-700 font-semibold hover:bg-purple-100 transition duration-300 shadow-lg hover:shadow-2xl"
+            >
+              {t('Explore')}
+            </a>
+          </div>
+        </section>
       </div>
-
-      {/* Floating elements for visual interest */}
-      <div className="absolute top-20 left-10 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
-      <div className="absolute bottom-20 right-10 w-32 h-32 bg-purple-500/20 rounded-full blur-xl"></div>
-    </section>
+    </div>
   );
 }

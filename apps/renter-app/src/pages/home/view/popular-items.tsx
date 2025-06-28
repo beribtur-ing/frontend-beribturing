@@ -1,6 +1,7 @@
 import { ChevronRight } from 'lucide-react';
 import type { ProductVariant } from '~/types/domain';
 import { ProductCard } from '~/components/product-card';
+import { usePopularProductRdos } from '~/pages/home/hooks/usePopularProductRdos';
 
 interface PopularItemsProps {
   variants: ProductVariant[];
@@ -9,6 +10,8 @@ interface PopularItemsProps {
 }
 
 export function PopularItems({ variants, onFavoriteToggle, favoriteIds = [] }: PopularItemsProps) {
+  const { popularProductRdos } = usePopularProductRdos({ maxCount: 10 });
+
   return (
     <section id="popular-items" className="py-8 bg-gray-50 dark:bg-gray-900">
       <div className="container mx-auto px-4">
