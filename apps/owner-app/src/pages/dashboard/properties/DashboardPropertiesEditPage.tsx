@@ -325,9 +325,9 @@ export default function DashboardPropertiesEditPage() {
                         key={`new-${index}`}
                         defaultValues={variant}
                         register={true}
-                        onCancel={() => {
-                          setNewVariants((prev) => prev.filter((_, i) => i !== index));
-                        }}
+                        // onCancel={() => {
+                        //   setNewVariants((prev) => prev.filter((_, i) => i !== index));
+                        // }}
                         onSubmit={(values) => {
                           console.log('Submitting new variant', index, values);
                           // optionally remove form after saving if desired
