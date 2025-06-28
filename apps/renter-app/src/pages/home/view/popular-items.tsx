@@ -1,6 +1,6 @@
 import { ChevronRight } from 'lucide-react';
-import { ProductCard } from '../../../components/product-card';
-import type { ProductVariant } from "~/types/domain";
+import type { ProductVariant } from '~/types/domain';
+import { ProductCard } from '~/components/product-card';
 
 interface PopularItemsProps {
   variants: ProductVariant[];
@@ -34,9 +34,7 @@ export function PopularItems({ variants, onFavoriteToggle, favoriteIds = [] }: P
             ))}
           </div>
         ) : (
-          <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-            No popular items found.
-          </div>
+          <div className="text-center py-12 text-gray-500 dark:text-gray-400">No popular items found.</div>
         )}
       </div>
     </section>

@@ -21,7 +21,6 @@ export const useRecentProducts = () => {
       const total = lastPage.offset.totalCount ?? 0;
 
       const nextOffset = currentOffset + limit;
-      console.log('➡️ Calculating next offset:', nextOffset < total ? nextOffset : undefined);
 
       return nextOffset < total ? nextOffset : undefined;
     },

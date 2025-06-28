@@ -33,7 +33,7 @@ export default function HomePage() {
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
       <HeroBanner />
       <CategoryTiles tiles={categoryTiles} />
-      <RecentItems variants={mockProductVariants} />
+      <RecentItems />
       <PopularItems variants={mockProductVariants} />
       <TrustSection />
     </div>

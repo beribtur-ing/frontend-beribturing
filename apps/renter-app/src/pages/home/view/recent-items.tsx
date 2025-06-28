@@ -1,16 +1,14 @@
 import { ChevronRight, Loader2 } from 'lucide-react';
-import { ProductCard } from '../../../components/product-card';
 import { useRecentProducts } from '../hooks/useRecentProducts';
 import { Empty } from '~/components/Empty';
+import { useState } from 'react';
+import { ProductCard } from '~/components/product-card';
 
-export function RecentItems({
-  onFavoriteToggle,
-  favoriteIds = [],
-}: {
-  onFavoriteToggle?: (variantId: string) => void;
-  favoriteIds?: string[];
-}) {
+export function RecentItems() {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useRecentProducts();
+  const [favoriteIds, setFavoriteIds] = useState<number[]>([]);
+
+  const handleFavorite = (variantId: string) => {};
 
   const variants = data?.pages.flatMap((page) => page.result) ?? [];
 
@@ -33,7 +31,7 @@ export function RecentItems({
               <ProductCard
                 key={variant?.id}
                 variant={variant}
-                onFavoriteToggle={onFavoriteToggle}
+                onFavoriteToggle={handleFavorite}
                 isFavorite={favoriteIds.includes(variant?.id)}
               />
             ))}
