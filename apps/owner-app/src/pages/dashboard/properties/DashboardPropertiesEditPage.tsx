@@ -10,6 +10,7 @@ import { CustomInput } from '~/components/shared/CustomInput';
 import { CustomSelect } from '~/components/shared/CustomSelect';
 import { CustomTextarea } from '~/components/shared/CustomTextarea';
 import { ProductVariantForm, ProductVariantFormValues } from '~/forms';
+import { CustomButton } from '~/components/shared/CustomButton';
 
 const productFormSchema = yup.object({
   title: yup.string().trim().required('Title is required'),
@@ -83,259 +84,112 @@ export default function DashboardPropertiesEditPage() {
   }
 
   return (
-        <div>
-            <div className="mb-8">
-                <Link
-                    to={'/dashboard/properties'}
-                    className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-4"
-                >
-                    <ArrowLeftIcon className="w-4 h-4 mr-1" />
-                    Back to Properties
-                </Link>
-                <h1 className="text-2xl font-bold text-gray-900">Edit Property</h1>
-                <p className="text-gray-600">Update your rental listing</p>
-            </div>
-
-            <div className="bg-white rounded-lg shadow p-6">
-                <form onSubmit={onSubmit} className="space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <Controller
-                            name="title"
-                            control={control}
-                            render={({ field }) => {
-                              return (
-                                    <CustomInput
-                                        label="Property Title"
-                                        placeholder="e.g., Professional DSLR Camera"
-                                        {...field}
-                                        value={field.value || ''}
-                                        required
-                                        error={errors?.title}
-                                    />
-                              );
-                            }}
-                        />
-
-                        <Controller
-                            name="categoryId"
-                            control={control}
-                            render={({ field }) => {
-                              return (
-                                    <CustomSelect
-                                        label="Category"
-                                        options={productCategories}
-                                        dataItemKey="id"
-                                        textField="category"
-                                        {...field}
-                                        required
-                                        error={errors?.categoryId}
-                                    />
-                              );
-                            }}
-                        />
-                    </div>
-
-                    <Controller
-                        name="description"
-                        control={control}
-                        render={({ field }) => {
-                          return (
-                                <CustomTextarea
-                                    label="Description"
-                                    {...field}
-                                    value={field.value || ''}
-                                    required
-                                    placeholder="Describe your property in detail..."
-                                    error={errors?.description}
-                                />
-                          );
+        <div className="flex flex-col gap-8 py-8 px-4 bg-background rounded-lg">
+            <form className="flex flex-col gap-4">
+                <div className="flex gap-4 justify-evenly">
+                    <CustomInput
+                        required
+                        id="title"
+                        label="Title"
+                        defaultValue={product?.product.title} name={''} value={''}
+                        onChange={() => {
                         }}
                     />
-
-                    {/*
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Brand</label>
-              <input
-                type="text"
-                name="brand"
-                value={form.brand}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Model</label>
-              <input
-                type="text"
-                name="model"
-                value={form.model}
-                onChange={handleChange}
-                required
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Color</label>
-              <input
-                type="text"
-                name="color"
-                value={form.color}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Size</label>
-              <input
-                type="text"
-                name="size"
-                value={form.size}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Material</label>
-            <input
-              type="text"
-              name="material"
-              value={form.material}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Daily Price ($)</label>
-              <input
-                type="number"
-                name="dailyPrice"
-                value={form.dailyPrice}
-                onChange={handleChange}
-                required
-                min="0"
-                step="0.01"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Weekly Price ($)</label>
-              <input
-                type="number"
-                name="weeklyPrice"
-                value={form.weeklyPrice}
-                onChange={handleChange}
-                min="0"
-                step="0.01"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Monthly Price ($)</label>
-              <input
-                type="number"
-                name="monthlyPrice"
-                value={form.monthlyPrice}
-                onChange={handleChange}
-                min="0"
-                step="0.01"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Additional Notes</label>
-            <textarea
-              name="notes"
-              value={form.notes}
-              onChange={handleChange}
-              rows={3}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div> */}
-
-                    <div className="flex justify-end space-x-4">
-                        {/*<Link*/}
-                        {/*  to={'/dashboard/properties'}*/}
-                        {/*  className="px-4 py-2 text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300"*/}
-                        {/*>*/}
-                        {/*  Cancel*/}
-                        {/*</Link>*/}
-                        <button
-                            type="submit"
-                            disabled={isSubmitting}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50"
-                        >
-                            {isSubmitting ? 'Updating...' : 'Update Property'}
-                        </button>
-                    </div>
-                </form>
-                <h2 className="text-xl font-bold text-gray-900 mt-8">Property Variants:</h2>
-
-                <div className="flex justify-end my-4">
-                    <button
-                        type="button"
-                        onClick={() =>
-                          setNewVariants((prev) => [
-                            ...prev,
-                            {
-                              name: '',
-                              description: '',
-                              variant: { active: true } as any,
-                              images: [],
-                            },
-                          ])
-                        }
-                        className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
-                    >
-                        + Add Variant
-                    </button>
+                    <CustomSelect
+                        label="Category" required name={''}
+                        onChange={function (e: React.ChangeEvent<HTMLSelectElement>): void {
+                          throw new Error('Function not implemented.');
+                        }} options={productCategories} value={''} dataItemKey={0} textField={0}>
+                    </CustomSelect>
                 </div>
+                <CustomTextarea label="Description" required name="description" value={''} onChange={() => {
+                }} />
+                <div className="flex justify-center">
 
-                {product?.variantRdos.map((variantRdo, index) => (
-                    <ProductVariantForm
-                        key={variantRdo.variant.productId + '-' + index}
-                        defaultValues={{
-                          name: '',
-                          description: '',
-                          variant: variantRdo.variant,
-                          images: variantRdo.images,
-                        }}
-                        register={false} // <-- read mode first
-                        onSubmit={(values) => {
-                          console.log('Submitting existing variant', index, values);
-                        }}
-                    />
-                ))}
-
-                {newVariants.map((variant, index) => (
-                    <ProductVariantForm
-                        key={`new-${index}`}
-                        defaultValues={variant}
-                        register={true}
-                        // onCancel={() => {
-                        //   setNewVariants((prev) => prev.filter((_, i) => i !== index));
-                        // }}
-                        onSubmit={(values) => {
-                          console.log('Submitting new variant', index, values);
-                          // optionally remove form after saving if desired
-                          setNewVariants((prev) => prev.filter((_, i) => i !== index));
-                        }}
-                    />
-                ))}
+                    <CustomButton className="w-40" type="submit">Save</CustomButton>
+                </div>
+            </form>
+            <div className="flex flex-col gap-4">
+                <h2 className="text-xl font-bold">Variants:</h2>
+                <div className="flex gap-4 justify-evenly">
+                    <div className="flex flex-col gap-4 w-full grow">
+                        <div className="flex flex-col gap-1 w-full">
+                            <label htmlFor="name"
+                                   className="text-sm after:content-['*'] after:text-red-500 after:ml-1">Name</label>
+                            <input id="name" type="text" className="border rounded-[6px] p-2" />
+                        </div>
+                        <div className="flex flex-col gap-1 w-full grow">
+                            <label htmlFor="description"
+                                   className="text-sm after:content-['*'] after:text-red-500 after:ml-1">Description</label>
+                            <textarea id="description" className="h-full border rounded-[6px] p-2" />
+                        </div>
+                    </div>
+                    <div className="w-full">
+                        <div className="flex flex-col gap-4">
+                            <div className="flex gap-4 justify-evenly">
+                                <div className="flex flex-col gap-1 w-full">
+                                    <label htmlFor="price" className="text-sm">Price</label>
+                                    <input id="price" type="number" className="border rounded-[6px] p-2" />
+                                </div>
+                                <div className="flex flex-col gap-1 w-full">
+                                    <label htmlFor="currency" className="text-sm">Currency</label>
+                                    <select id="currency" className="h-full border rounded-[6px] p-2">
+                                        <option value=""></option>
+                                        {['UZS'].map(c => (<option key={c}>{c}</option>))}
+                                    </select>
+                                </div>
+                                <div className="flex flex-col gap-1 w-full">
+                                    <label htmlFor="unit" className="text-sm">Unit</label>
+                                    <select id="unit" className="h-full border rounded-[6px] p-2">
+                                        <option value=""></option>
+                                        {Object.entries(PriceUnit).map(([key, value]) => (
+                                            <option key={key} value={key}>{value?.toString()}</option>
+                                        ))}
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="flex flex-col gap-2 justify-evenly">
+                                <h3 className="text-lg text-center">Size:</h3>
+                                <div className="grid grid-cols-2 gap-2">
+                                    <div className="flex flex-col gap-1 w-full">
+                                        <label htmlFor="label" className="text-sm">Label</label>
+                                        <input placeholder="S or M or L or XL, etc" id="label" type="text"
+                                               className="border rounded-[6px] p-2" />
+                                    </div>
+                                    <div className="flex flex-col gap-1 w-full">
+                                        <label htmlFor="width" className="text-sm">Width</label>
+                                        <input placeholder="in cm or inches" id="width" type="number"
+                                               className="border rounded-[6px] p-2" />
+                                    </div>
+                                    <div className="flex flex-col gap-1 w-full">
+                                        <label htmlFor="height" className="text-sm">Height</label>
+                                        <input placeholder="in cm or inches" id="height" type="number"
+                                               className="border rounded-[6px] p-2" />
+                                    </div>
+                                    <div className="flex flex-col gap-1 w-full">
+                                        <label htmlFor="depth" className="text-sm">Depth</label>
+                                        <input id="depth" type="number" className="border rounded-[6px] p-2" />
+                                    </div>
+                                    <div className="flex flex-col gap-1 w-full">
+                                        <label htmlFor="weight" className="text-sm">Weight</label>
+                                        <input placeholder="in kg" id="weight" type="number"
+                                               className="border rounded-[6px] p-2" />
+                                    </div>
+                                    <div className="flex flex-col gap-1 w-full">
+                                        <label htmlFor="measure-unit" className="text-sm">Measure Unit</label>
+                                        <select id="measure-unit" className="border rounded-[6px] p-2">
+                                            <option value=""></option>
+                                            <option value="metric">Metric</option>
+                                            <option value="imperial">Imperial</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-  );
+  )
+  ;
 }
