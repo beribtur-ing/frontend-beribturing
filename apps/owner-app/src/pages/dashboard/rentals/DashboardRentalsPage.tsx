@@ -98,11 +98,11 @@ export default function DashboardRentalsPage() {
   ];
 
   const statusOptions = [
-    { id: 1, name: 'All' },
-    { id: 2, name: 'Active' },
-    { id: 3, name: 'Completed' },
-    { id: 4, name: 'Cancelled' },
-    { id: 5, name: 'Overdue' },
+    { id: 'All', name: 'All' },
+    { id: 'Active', name: 'Active' },
+    { id: 'Completed', name: 'Completed' },
+    { id: 'Cancelled', name: 'Cancelled' },
+    { id: 'Overdue', name: 'Overdue' },
   ];
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -129,9 +129,13 @@ export default function DashboardRentalsPage() {
 
       <div className="mb-4">
         <div className="flex flex-wrap gap-2">
-          <Filter label="Status" values={statusOptions} onChange={(value) => {
+          <Filter label="Status" value={searchQuery.status} values={statusOptions} onChange={(value) => {
+            const statusValue = value === 'All' ? undefined : value;
+            changeSearchProperties('status', statusValue);
           }}/>
-          <SearchBar placeholder="Search..." onSearch={(value) => console.log('Searching for:', value)}/>
+          <SearchBar placeholder="Search..." onSearch={(value) => {
+            fetchByNewQuery('searchKeyword', value);
+          }}/>
         </div>
       </div>
 
