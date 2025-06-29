@@ -51,8 +51,8 @@ export default function DashboardRentalsPage() {
       title: 'Product',
       cell: item => (
         <div>
-          <span className="font-semibold">{item.product.title}</span>
-          <span className="text-gray-500 text-sm">(Category: {item.product.category.name})</span>
+          <span className="font-semibold">{item.productRentalRecordRdo.title}</span>
+          <span className="text-gray-500 text-sm">(Category: {item.productRentalRecordRdo.name})</span>
         </div>
       ),
     },
@@ -60,9 +60,9 @@ export default function DashboardRentalsPage() {
       title: 'Product Variant',
       cell: item => (
         <div>
-          <span className="font-semibold">{item.product.productVariant.name}</span>
+          <span className="font-semibold">{item.productRentalRecordRdo.model}</span>
           <span
-            className="text-gray-500 text-sm">({item.product.productVariant.price.currency.amount} {item.product.productVariant.price.currency.currency})</span>
+            className="text-gray-500 text-sm">({item.productRentalRecordRdo.amount} {item.productRentalRecordRdo.currency})</span>
         </div>
       ),
     },
@@ -98,11 +98,11 @@ export default function DashboardRentalsPage() {
   ];
 
   const statusOptions = [
-    { id: 1, name: 'All' },
-    { id: 2, name: 'Active' },
-    { id: 3, name: 'Completed' },
-    { id: 4, name: 'Cancelled' },
-    { id: 5, name: 'Overdue' },
+    { id: 'All', name: 'All' },
+    { id: 'Active', name: 'Active' },
+    { id: 'Completed', name: 'Completed' },
+    { id: 'Cancelled', name: 'Cancelled' },
+    { id: 'Overdue', name: 'Overdue' },
   ];
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -129,9 +129,13 @@ export default function DashboardRentalsPage() {
 
       <div className="mb-4">
         <div className="flex flex-wrap gap-2">
-          <Filter label="Status" values={statusOptions} onChange={(value) => {
+          <Filter label="Status" value={searchQuery.status} values={statusOptions} onChange={(value) => {
+            const statusValue = value === 'All' ? undefined : value;
+            changeSearchProperties('status', statusValue);
           }}/>
-          <SearchBar placeholder="Search..." onSearch={(value) => console.log('Searching for:', value)}/>
+          <SearchBar placeholder="Search..." onSearch={(value) => {
+            fetchByNewQuery('searchKeyword', value);
+          }}/>
         </div>
       </div>
 

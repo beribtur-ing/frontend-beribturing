@@ -4,7 +4,7 @@ import {
   FindRentalRecordOwnQuery,
   FindRentalRecordsOwnQuery, FindReservationsOwnQuery,
 } from '~/apis';
-import {QueryResponse, RentalRecord, ItemConditionCheck, ItemConditionPhoto, FirstParameter, Offset} from '~/models';
+import {QueryResponse, RentalRecord, ItemConditionCheck, ItemConditionPhoto, FirstParameter, Offset, RentalRecordRdo} from '~/models';
 import axios from "axios";
 
 const url = (path: string) => `/api/feature/owner/rental/${path}`;
@@ -13,7 +13,7 @@ const findRentalRecord = (variables: {
     rentalRecordId: string;
 }) => {
     const query = <FindRentalRecordOwnQuery>{...variables};
-    return axios.post<QueryResponse<RentalRecord>>(url('find-rental-record/query'), query);
+    return axios.post<QueryResponse<RentalRecordRdo>>(url('find-rental-record/query'), query);
 };
 
 const findRentalRecords = (variables: {
@@ -22,7 +22,7 @@ const findRentalRecords = (variables: {
     offset?: Offset;
 }) => {
     const query = <FindRentalRecordsOwnQuery>{...variables};
-    return axios.post<QueryResponse<RentalRecord[]>>(url('find-rental-records/query'), query);
+    return axios.post<QueryResponse<RentalRecordRdo[]>>(url('find-rental-record-rdos/query'), query);
 };
 
 const findReservations = (variables: {

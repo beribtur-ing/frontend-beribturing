@@ -1,6 +1,6 @@
-import {OffsetQueryRequest, RentalRecord} from "~/models";
+import { OffsetQueryRequest, RentalRecordRdo } from "~/models";
 
-export interface FindRentalRecordsOwnQuery extends OffsetQueryRequest<RentalRecord[]> {
+export interface FindRentalRecordsOwnQuery extends OffsetQueryRequest<RentalRecordRdo[]> {
     status?: string;
     searchKeyword?: string;
 }
