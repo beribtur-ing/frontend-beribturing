@@ -51,8 +51,8 @@ export default function DashboardRentalsPage() {
       title: 'Product',
       cell: item => (
         <div>
-          <span className="font-semibold">{item.product.title}</span>
-          <span className="text-gray-500 text-sm">(Category: {item.product.category.name})</span>
+          <span className="font-semibold">{item.productRentalRecordRdo.title}</span>
+          <span className="text-gray-500 text-sm">(Category: {item.productRentalRecordRdo.name})</span>
         </div>
       ),
     },
@@ -60,9 +60,9 @@ export default function DashboardRentalsPage() {
       title: 'Product Variant',
       cell: item => (
         <div>
-          <span className="font-semibold">{item.product.productVariant.name}</span>
+          <span className="font-semibold">{item.productRentalRecordRdo.model}</span>
           <span
-            className="text-gray-500 text-sm">({item.product.productVariant.price.currency.amount} {item.product.productVariant.price.currency.currency})</span>
+            className="text-gray-500 text-sm">({item.productRentalRecordRdo.amount} {item.productRentalRecordRdo.currency})</span>
         </div>
       ),
     },
