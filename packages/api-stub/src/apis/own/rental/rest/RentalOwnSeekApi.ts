@@ -13,7 +13,7 @@ const findRentalRecord = (variables: {
     rentalRecordId: string;
 }) => {
     const query = <FindRentalRecordOwnQuery>{...variables};
-    return axios.post<QueryResponse<RentalRecord>>(url('find-rental-record/query'), query);
+    return axios.post<QueryResponse<RentalRecordRdo>>(url('find-rental-record/query'), query);
 };
 
 const findRentalRecords = (variables: {

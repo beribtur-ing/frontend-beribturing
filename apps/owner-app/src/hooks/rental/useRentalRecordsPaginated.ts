@@ -132,7 +132,10 @@ export const useRentalRecordsPaginated = () => {
 
   return {
     query,
-    rentalRecords: (data?.result || []) as RentalRecordRdo[],
+    rentalRecords: (
+      data?.result ||
+      mockData
+    ) as RentalRecordRdo[],
     refetchRentalRecords: refetch,
     rentalRecordsIsLoading: isLoading,
     total: data?.offset.totalCount || 0,

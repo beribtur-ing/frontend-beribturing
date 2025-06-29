@@ -59,10 +59,10 @@ export default function DashboardRentalDetailPage() {
     );
   }
 
-  const days = rentalRecord.rentalPeriod?.startDate && rentalRecord.rentalPeriod?.endDate
-    ? calculateDays(rentalRecord.rentalPeriod.startDate, rentalRecord.rentalPeriod.endDate)
+  const days = rentalRecord.period?.startDateTime && rentalRecord.period?.endDateTime
+    ? calculateDays(rentalRecord.period.startDateTime, rentalRecord.period.endDateTime)
     : 0;
-  const totalCost = rentalRecord.totalPrice || 0;
+  const totalCost = rentalRecord.fee?.amount || 0;
 
   return (
     <div>
@@ -102,13 +102,13 @@ export default function DashboardRentalDetailPage() {
             <div>
               <label className="text-sm font-medium text-gray-500">Start Date</label>
               <p className="text-gray-900">
-                {rentalRecord.rentalPeriod?.startDate ? formatDate(rentalRecord.rentalPeriod.startDate) : 'Not specified'}
+                {rentalRecord.period?.startDateTime ? formatDate(rentalRecord.period.startDateTime) : 'Not specified'}
               </p>
             </div>
             <div>
               <label className="text-sm font-medium text-gray-500">End Date</label>
               <p className="text-gray-900">
-                {rentalRecord.rentalPeriod?.endDate ? formatDate(rentalRecord.rentalPeriod.endDate) : 'Not specified'}
+                {rentalRecord.period?.endDateTime ? formatDate(rentalRecord.period.endDateTime) : 'Not specified'}
               </p>
             </div>
           </div>
@@ -118,24 +118,24 @@ export default function DashboardRentalDetailPage() {
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Product Details</h2>
           <div className="flex space-x-4 mb-4">
             <img
-              src={rentalRecord.product?.productVariant?.images?.[0]?.url || PlaceholderImage}
-              alt={rentalRecord.product?.title || 'Product'}
+              src={PlaceholderImage}
+              alt={rentalRecord.productRentalRecordRdo?.title || 'Product'}
               width={100}
               height={100}
               className="rounded-lg object-cover"
             />
             <div className="flex-1">
               <h3 className="font-semibold text-gray-900">
-                {rentalRecord.product?.title}
+                {rentalRecord.productRentalRecordRdo?.title}
               </h3>
               <p className="text-gray-600">
-                Category: {rentalRecord.product?.category?.name}
+                Category: {rentalRecord.productRentalRecordRdo?.name}
               </p>
               <p className="text-gray-600">
-                Variant: {rentalRecord.product?.productVariant?.name}
+                Variant: {rentalRecord.productRentalRecordRdo?.model}
               </p>
               <p className="text-gray-600">
-                Price: {rentalRecord.product?.productVariant?.price?.currency?.amount} {rentalRecord.product?.productVariant?.price?.currency?.currency}
+                Price: {rentalRecord.productRentalRecordRdo?.amount} {rentalRecord.productRentalRecordRdo?.currency}
               </p>
             </div>
           </div>
@@ -151,16 +151,16 @@ export default function DashboardRentalDetailPage() {
           </div>
           <div>
             <label className="text-sm font-medium text-gray-500">Total Cost</label>
-            <p className="text-gray-900 font-semibold">${totalCost.toFixed(2)}</p>
+            <p className="text-gray-900 font-semibold">{totalCost.toFixed(2)} {rentalRecord.fee?.currency}</p>
           </div>
           <div>
             <label className="text-sm font-medium text-gray-500">Status</label>
             <p className="text-gray-900">{rentalRecord.status}</p>
           </div>
           <div>
-            <label className="text-sm font-medium text-gray-500">Created</label>
+            <label className="text-sm font-medium text-gray-500">Rented At</label>
             <p className="text-gray-900">
-              {rentalRecord.createdAt ? formatDate(rentalRecord.createdAt) : 'Not available'}
+              {rentalRecord.rentedAt ? formatDate(rentalRecord.rentedAt) : 'Not available'}
             </p>
           </div>
         </div>
@@ -170,7 +170,7 @@ export default function DashboardRentalDetailPage() {
           <div className="space-y-1 text-sm">
             <div className="flex justify-between">
               <span>Daily rate:</span>
-              <span>${rentalRecord.product?.productVariant?.price?.currency?.amount || 0}/day</span>
+              <span>{rentalRecord.productRentalRecordRdo?.amount || 0} {rentalRecord.productRentalRecordRdo?.currency}/day</span>
             </div>
             <div className="flex justify-between">
               <span>Duration:</span>
@@ -178,7 +178,7 @@ export default function DashboardRentalDetailPage() {
             </div>
             <div className="flex justify-between font-semibold">
               <span>Total:</span>
-              <span>${totalCost.toFixed(2)}</span>
+              <span>{totalCost.toFixed(2)} {rentalRecord.fee?.currency}</span>
             </div>
           </div>
         </div>
