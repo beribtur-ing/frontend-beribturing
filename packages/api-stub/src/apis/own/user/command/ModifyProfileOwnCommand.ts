@@ -1,7 +1,9 @@
+import { Gender, GeoLocation } from '~/models';
+
 export interface ModifyProfileOwnCommand {
   name: string;
-  gender?: string;
+  gender?: Gender;
   email?: string;
   address?: string;
-  location?: string;
+  location?: GeoLocation;
 }

@@ -5,10 +5,6 @@ import { CommandResponse, FirstParameter, UserOwnFlowApi, ModifyProfileOwnComman
 export const useUserMutation = () => {
   const defaultModifyProfileOwnCommand: ModifyProfileOwnCommand = {
     name: '',
-    gender: '',
-    email: '',
-    address: '',
-    location: '',
   };
 
   return {

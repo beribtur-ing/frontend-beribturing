@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useUserMe, useUserMutation } from "../../hooks/user";
+import { Gender } from "@beribturing/api-stub";
+import { LocationPicker } from "../../components/map/LocationPicker";
 
 export default function DashboardSettingsPage() {
   const [profile, setProfile] = useState({
@@ -7,9 +9,9 @@ export default function DashboardSettingsPage() {
     email: "",
     phone: "",
     address: "",
-    location: "",
     gender: "",
   });
+  const [locationData, setLocationData] = useState<{ latitude: number; longitude: number } | undefined>();
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
 
@@ -36,10 +38,10 @@ export default function DashboardSettingsPage() {
         name: userProfile.name || '',
         email: userProfile.email || '',
         phone: userProfile.phoneNumber || '',
-        address: '',
-        location: '',
-        gender: '',
+        address: userProfile.address || '',
+        gender: userProfile.gender || '',
       });
+      setLocationData(userProfile.location || undefined);
       setPreviewUrl(userProfile.avatarUrl || '');
     }
   }, [userProfile]);
@@ -53,7 +55,11 @@ export default function DashboardSettingsPage() {
     }
 
     const updateData = {
-      ...profile,
+      name: profile.name,
+      email: profile.email || undefined,
+      address: profile.address || undefined,
+      gender: profile.gender || undefined,
+      ...(locationData && { location: locationData }),
       ...(profileImage && { profileImage }),
     };
 
@@ -158,9 +164,10 @@ export default function DashboardSettingsPage() {
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   <option value="">Select Gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
+                  <option value={Gender.Male}>Male</option>
+                  <option value={Gender.Female}>Female</option>
+                  <option value={Gender.NonBinary}>Non-Binary</option>
+                  <option value={Gender.PreferNotToSay}>Prefer Not To Say</option>
                 </select>
               </div>
 
@@ -177,12 +184,9 @@ export default function DashboardSettingsPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                <input
-                  type="text"
-                  value={profile.location}
-                  onChange={(e) => setProfile((prev) => ({ ...prev, location: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Your location"
+                <LocationPicker
+                  initialLocation={locationData}
+                  onLocationChange={setLocationData}
                 />
               </div>
 

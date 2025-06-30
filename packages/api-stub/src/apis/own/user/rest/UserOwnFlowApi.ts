@@ -10,17 +10,24 @@ const modifyProfile = (variables: {
   gender?: string;
   email?: string;
   address?: string;
-  location?: string;
+  location?: { latitude: number; longitude: number };
   profileImage?: File;
 }) => {
   const formData = new FormData();
   
-  // Add command fields
-  formData.append('name', variables.name);
-  if (variables.gender) formData.append('gender', variables.gender);
-  if (variables.email) formData.append('email', variables.email);
-  if (variables.address) formData.append('address', variables.address);
-  if (variables.location) formData.append('location', variables.location);
+  // Create command object
+  const command: any = {
+    name: variables.name,
+  };
+  
+  if (variables.gender) command.gender = variables.gender;
+  if (variables.email) command.email = variables.email;
+  if (variables.address) command.address = variables.address;
+  if (variables.location) command.location = variables.location;
+  
+  // Add command as JSON blob with proper content type
+  const commandBlob = new Blob([JSON.stringify(command)], { type: 'application/json' });
+  formData.append('command', commandBlob);
   
   // Add profile image if provided
   if (variables.profileImage) {
@@ -36,4 +43,4 @@ const modifyProfile = (variables: {
 
 export default {
   modifyProfile,
-}
+};
