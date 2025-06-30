@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useUserMe, useUserMutation } from "../../hooks/user";
 import { Gender } from "@beribturing/api-stub";
-import { LocationPicker } from "../../components/map/LocationPicker";
+import { Map } from "../../components/map/Map";
 
 export default function DashboardSettingsPage() {
   const [profile, setProfile] = useState({
@@ -184,10 +184,16 @@ export default function DashboardSettingsPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
-                <LocationPicker
-                  initialLocation={locationData}
-                  onLocationChange={setLocationData}
-                />
+                <div className="border border-gray-300 rounded-md overflow-hidden">
+                  <Map
+                    coords={locationData ? `${locationData.latitude},${locationData.longitude}` : '41.2995,69.2401'}
+                    height="300"
+                    onLocationClick={(coords) => {
+                      const [lat, lng] = coords.split(',').map(Number);
+                      setLocationData({ latitude: lat, longitude: lng });
+                    }}
+                  />
+                </div>
               </div>
 
               <button
