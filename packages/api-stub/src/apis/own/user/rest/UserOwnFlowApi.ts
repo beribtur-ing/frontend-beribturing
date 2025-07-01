@@ -31,7 +31,7 @@ const modifyProfile = (variables: {
   
   // Add profile image if provided
   if (variables.profileImage) {
-    formData.append('profileImage', variables.profileImage);
+    formData.append('image', variables.profileImage);
   }
   
   return axios.post<CommandResponse<boolean>>(url('modify-profile/command'), formData, {
