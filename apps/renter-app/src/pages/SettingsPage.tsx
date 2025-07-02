@@ -1,6 +1,8 @@
-import {useState} from "react"
+import {useState, useEffect} from "react"
 
 import {useAuth} from "../hooks"
+import {useNotificationPreferences, NotificationPreferences} from "../hooks/user"
+import {useUserMe} from "../hooks/user"
 import {
   Bell,
   ChevronRight,
@@ -20,16 +22,12 @@ export default function SettingsPage() {
   const { user, loading } = useAuth()
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState("notifications")
+  
+  const { defaultNotificationPreferences, mutation } = useNotificationPreferences()
+  const { userMe, isLoading: userMeLoading } = useUserMe()
+  const [notificationPreferences, setNotificationPreferences] = useState<NotificationPreferences>(defaultNotificationPreferences)
+  
   const [settings, setSettings] = useState({
-    notifications: {
-      email: true,
-      push: true,
-      sms: false,
-      marketing: true,
-      rentalReminders: true,
-      newMessages: true,
-      promotions: false,
-    },
     privacy: {
       showProfile: true,
       showRentals: true,
@@ -50,20 +48,102 @@ export default function SettingsPage() {
   })
   const [isSaving, setIsSaving] = useState(false)
 
+  // Update notification preferences when userMe data is loaded
+  useEffect(() => {
+    if (userMe?.notificationPreferences) {
+      setNotificationPreferences(userMe?.notificationPreferences)
+    }
+  }, [userMe?.notificationPreferences])
+
   // Redirect if not authenticated
   if (!user) {
     navigate("/auth/signin")
     return null
   }
 
+  // Show loading state while fetching user data
+  if (userMeLoading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600"></div>
+      </div>
+    )
+  }
+
   const handleToggle = (category: string, setting: string) => {
-    setSettings((prev) => ({
-      ...prev,
-      [category]: {
-        ...prev[category as keyof typeof prev],
-        [setting]: !prev[category as keyof typeof prev][setting as any],
-      },
-    }))
+    if (category === "notifications") {
+      setNotificationPreferences((prev) => {
+        // Map UI settings to backend notification structure
+        const newPrefs = { ...prev }
+
+        switch (setting) {
+          case "emailRentalReminders":
+            newPrefs.emailNotifications = {
+              ...prev.emailNotifications,
+              rentalReminders: !prev.emailNotifications.rentalReminders
+            }
+            break
+          case "emailNewMessages":
+            newPrefs.emailNotifications = {
+              ...prev.emailNotifications,
+              newMessages: !prev.emailNotifications.newMessages
+            }
+            break
+          case "pushRentalReminders":
+            newPrefs.pushNotifications = {
+              ...prev.pushNotifications,
+              rentalReminders: !prev.pushNotifications.rentalReminders
+            }
+            break
+          case "pushNewMessages":
+            newPrefs.pushNotifications = {
+              ...prev.pushNotifications,
+              newMessages: !prev.pushNotifications.newMessages
+            }
+            break
+          case "pushPromotionsAndDeals":
+            newPrefs.pushNotifications = {
+              ...prev.pushNotifications,
+              promotionsAndDeals: !prev.pushNotifications.promotionsAndDeals
+            }
+            break
+          case "smsRentalReminders":
+            newPrefs.smsNotifications = {
+              ...prev.smsNotifications,
+              rentalReminders: !prev.smsNotifications.rentalReminders
+            }
+            break
+          case "smsNewMessages":
+            newPrefs.smsNotifications = {
+              ...prev.smsNotifications,
+              newMessages: !prev.smsNotifications.newMessages
+            }
+            break
+          case "marketingPromotionsAndDeals":
+            newPrefs.marketingNotifications = {
+              ...prev.marketingNotifications,
+              promotionsAndDeals: !prev.marketingNotifications.promotionsAndDeals
+            }
+            break
+          case "marketingEmails":
+            newPrefs.marketingNotifications = {
+              ...prev.marketingNotifications,
+              marketingEmails: !prev.marketingNotifications.marketingEmails
+            }
+            break
+          }
+
+          return newPrefs
+      })
+    } else {
+      setSettings((prev) => ({
+        ...prev,
+        [category]: {
+          ...prev[category as keyof typeof prev],
+          [setting]: !prev[category as keyof typeof prev][setting as any],
+        },
+      }))
+    }
   }
 
   const handleSelectChange = (category: string, setting: string, value: string) => {
@@ -78,10 +158,15 @@ export default function SettingsPage() {
 
   const handleSaveSettings = async () => {
     setIsSaving(true)
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-    setIsSaving(false)
-    // Show success message or toast here
+    try {
+      await mutation.updateNotificationPreferences.mutateAsync(notificationPreferences)
+      // Show success message or toast here
+    } catch (error) {
+      console.error('Failed to update notification preferences:', error)
+      // Show error message or toast here
+    } finally {
+      setIsSaving(false)
+    }
   }
 
   const tabs = [
@@ -146,15 +231,15 @@ export default function SettingsPage() {
                   <h2 className="text-xl font-semibold mb-6">Notification Preferences</h2>
                   <div className="space-y-6">
                     <div className="space-y-4">
-                      <h3 className="font-medium text-gray-900">Notification Channels</h3>
+                      <h3 className="font-medium text-gray-900">Email Notifications</h3>
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-3">
                             <Mail className="h-5 w-5 text-gray-500" />
-                            <span>Email Notifications</span>
+                            <span>Rental Reminders</span>
                           </div>
-                          <button onClick={() => handleToggle("notifications", "email")}>
-                            {settings.notifications.email ? (
+                          <button onClick={() => handleToggle("notifications", "emailRentalReminders")}>
+                            {notificationPreferences.emailNotifications.rentalReminders ? (
                               <ToggleRight className="h-6 w-6 text-purple-600" />
                             ) : (
                               <ToggleLeft className="h-6 w-6 text-gray-400" />
@@ -164,25 +249,11 @@ export default function SettingsPage() {
 
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-3">
-                            <Bell className="h-5 w-5 text-gray-500" />
-                            <span>Push Notifications</span>
+                            <Mail className="h-5 w-5 text-gray-500" />
+                            <span>New Messages</span>
                           </div>
-                          <button onClick={() => handleToggle("notifications", "push")}>
-                            {settings.notifications.push ? (
-                              <ToggleRight className="h-6 w-6 text-purple-600" />
-                            ) : (
-                              <ToggleLeft className="h-6 w-6 text-gray-400" />
-                            )}
-                          </button>
-                        </div>
-
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center space-x-3">
-                            <Smartphone className="h-5 w-5 text-gray-500" />
-                            <span>SMS Notifications</span>
-                          </div>
-                          <button onClick={() => handleToggle("notifications", "sms")}>
-                            {settings.notifications.sms ? (
+                          <button onClick={() => handleToggle("notifications", "emailNewMessages")}>
+                            {notificationPreferences.emailNotifications.newMessages ? (
                               <ToggleRight className="h-6 w-6 text-purple-600" />
                             ) : (
                               <ToggleLeft className="h-6 w-6 text-gray-400" />
@@ -193,12 +264,15 @@ export default function SettingsPage() {
                     </div>
 
                     <div className="space-y-4">
-                      <h3 className="font-medium text-gray-900">Notification Types</h3>
+                      <h3 className="font-medium text-gray-900">Push Notifications</h3>
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <span>Rental Reminders</span>
-                          <button onClick={() => handleToggle("notifications", "rentalReminders")}>
-                            {settings.notifications.rentalReminders ? (
+                          <div className="flex items-center space-x-3">
+                            <Bell className="h-5 w-5 text-gray-500" />
+                            <span>Rental Reminders</span>
+                          </div>
+                          <button onClick={() => handleToggle("notifications", "pushRentalReminders")}>
+                            {notificationPreferences.pushNotifications.rentalReminders ? (
                               <ToggleRight className="h-6 w-6 text-purple-600" />
                             ) : (
                               <ToggleLeft className="h-6 w-6 text-gray-400" />
@@ -207,9 +281,12 @@ export default function SettingsPage() {
                         </div>
 
                         <div className="flex items-center justify-between">
-                          <span>New Messages</span>
-                          <button onClick={() => handleToggle("notifications", "newMessages")}>
-                            {settings.notifications.newMessages ? (
+                          <div className="flex items-center space-x-3">
+                            <Bell className="h-5 w-5 text-gray-500" />
+                            <span>New Messages</span>
+                          </div>
+                          <button onClick={() => handleToggle("notifications", "pushNewMessages")}>
+                            {notificationPreferences.pushNotifications.newMessages ? (
                               <ToggleRight className="h-6 w-6 text-purple-600" />
                             ) : (
                               <ToggleLeft className="h-6 w-6 text-gray-400" />
@@ -218,9 +295,31 @@ export default function SettingsPage() {
                         </div>
 
                         <div className="flex items-center justify-between">
-                          <span>Promotions and Deals</span>
-                          <button onClick={() => handleToggle("notifications", "promotions")}>
-                            {settings.notifications.promotions ? (
+                          <div className="flex items-center space-x-3">
+                            <Bell className="h-5 w-5 text-gray-500" />
+                            <span>Promotions and Deals</span>
+                          </div>
+                          <button onClick={() => handleToggle("notifications", "pushPromotionsAndDeals")}>
+                            {notificationPreferences.pushNotifications.promotionsAndDeals ? (
+                              <ToggleRight className="h-6 w-6 text-purple-600" />
+                            ) : (
+                              <ToggleLeft className="h-6 w-6 text-gray-400" />
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <h3 className="font-medium text-gray-900">SMS Notifications</h3>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <Smartphone className="h-5 w-5 text-gray-500" />
+                            <span>Rental Reminders</span>
+                          </div>
+                          <button onClick={() => handleToggle("notifications", "smsRentalReminders")}>
+                            {notificationPreferences.smsNotifications.rentalReminders ? (
                               <ToggleRight className="h-6 w-6 text-purple-600" />
                             ) : (
                               <ToggleLeft className="h-6 w-6 text-gray-400" />
@@ -229,9 +328,45 @@ export default function SettingsPage() {
                         </div>
 
                         <div className="flex items-center justify-between">
-                          <span>Marketing Emails</span>
-                          <button onClick={() => handleToggle("notifications", "marketing")}>
-                            {settings.notifications.marketing ? (
+                          <div className="flex items-center space-x-3">
+                            <Smartphone className="h-5 w-5 text-gray-500" />
+                            <span>New Messages</span>
+                          </div>
+                          <button onClick={() => handleToggle("notifications", "smsNewMessages")}>
+                            {notificationPreferences.smsNotifications.newMessages ? (
+                              <ToggleRight className="h-6 w-6 text-purple-600" />
+                            ) : (
+                              <ToggleLeft className="h-6 w-6 text-gray-400" />
+                            )}
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4">
+                      <h3 className="font-medium text-gray-900">Marketing Notifications</h3>
+                      <div className="space-y-3">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <Bell className="h-5 w-5 text-gray-500" />
+                            <span>Promotions and Deals</span>
+                          </div>
+                          <button onClick={() => handleToggle("notifications", "marketingPromotionsAndDeals")}>
+                            {notificationPreferences.marketingNotifications.promotionsAndDeals ? (
+                              <ToggleRight className="h-6 w-6 text-purple-600" />
+                            ) : (
+                              <ToggleLeft className="h-6 w-6 text-gray-400" />
+                            )}
+                          </button>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-3">
+                            <Mail className="h-5 w-5 text-gray-500" />
+                            <span>Marketing Emails</span>
+                          </div>
+                          <button onClick={() => handleToggle("notifications", "marketingEmails")}>
+                            {notificationPreferences.marketingNotifications.marketingEmails ? (
                               <ToggleRight className="h-6 w-6 text-purple-600" />
                             ) : (
                               <ToggleLeft className="h-6 w-6 text-gray-400" />

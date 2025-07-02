@@ -1,5 +1,5 @@
 import {ModifyProfileRntCommand} from "~/apis";
-import {CommandResponse} from "~/models";
+import {CommandResponse, UpdateNotificationPreferencesRntCommand} from "~/models";
 import axios from "axios";
 
 const url = (path: string) => `/api/feature/renter/user/${path}`;
@@ -34,6 +34,15 @@ const modifyProfile = (variables: {
   });
 };
 
+const updateNotificationPreferences = (command: UpdateNotificationPreferencesRntCommand) => {
+  return axios.post<CommandResponse<string>>(url('update-notification-preferences/command'), command, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+};
+
 export default {
   modifyProfile,
+  updateNotificationPreferences,
 }
