@@ -111,7 +111,8 @@
     "hoist-non-react-statics": "^3.3.2",
     "@emotion/sheet": "^1.4.0",
     "stylis": "^4.3.6",
-    "void-elements": "^3.1.0"
+    "void-elements": "^3.1.0",
+    "axios": "^1.10.0"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^12.1.3",
