@@ -1,4 +1,4 @@
-import {ModifyProfileOwnCommand} from "~/apis";
+import {ModifyProfileOwnCommand, UpdateNotificationPreferencesOwnCommand} from "~/apis";
 import {CommandResponse} from "~/models";
 import axios from "axios";
 
@@ -11,7 +11,7 @@ const modifyProfile = (variables: {
   email?: string;
   address?: string;
   location?: { latitude: number; longitude: number };
-  profileImage?: File;
+  image?: File;
 }) => {
   const formData = new FormData();
   
@@ -30,8 +30,8 @@ const modifyProfile = (variables: {
   formData.append('command', commandBlob);
   
   // Add profile image if provided
-  if (variables.profileImage) {
-    formData.append('image', variables.profileImage);
+  if (variables.image) {
+    formData.append('image', variables.image);
   }
   
   return axios.post<CommandResponse<boolean>>(url('modify-profile/command'), formData, {
@@ -41,6 +41,23 @@ const modifyProfile = (variables: {
   });
 };
 
+const updateNotificationPreferences = (variables: {
+  emailNotifications: {
+    newBookingsAndReservations: boolean;
+    messagesFromCustomers: boolean;
+    paymentConfirmations: boolean;
+  };
+  smsNotifications: {
+    newBookingsAndReservations: boolean;
+    messagesFromCustomers: boolean;
+    paymentConfirmations: boolean;
+  };
+}) => {
+  const command = <UpdateNotificationPreferencesOwnCommand>{ ...variables };
+  return axios.post<CommandResponse<string>>(url('update-notification-preferences/command'), command);
+};
+
 export default {
   modifyProfile,
+  updateNotificationPreferences,
 };

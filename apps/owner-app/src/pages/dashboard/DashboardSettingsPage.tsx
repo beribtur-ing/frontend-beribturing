@@ -30,6 +30,7 @@ export default function DashboardSettingsPage() {
   // Update profile mutation using custom hook
   const { mutation } = useUserMutation();
   const updateProfileMutation = mutation.modifyProfile;
+  const updateNotificationMutation = mutation.updateNotificationPreferences;
 
   // Initialize profile data when user data is loaded
   useEffect(() => {
@@ -43,6 +44,19 @@ export default function DashboardSettingsPage() {
       });
       setLocationData(userProfile.location || undefined);
       setPreviewUrl(userProfile.avatarUrl || '');
+      
+      // Initialize notification preferences from backend data
+      if (userProfile.notificationPreferences) {
+        const prefs = userProfile.notificationPreferences;
+        setNotifications({
+          emailBookings: prefs.emailNotifications?.newBookingsAndReservations || false,
+          emailMessages: prefs.emailNotifications?.messagesFromCustomers || false,
+          emailPayments: prefs.emailNotifications?.paymentConfirmations || false,
+          smsBookings: prefs.smsNotifications?.newBookingsAndReservations || false,
+          smsMessages: prefs.smsNotifications?.messagesFromCustomers || false,
+          smsPayments: prefs.smsNotifications?.paymentConfirmations || false,
+        });
+      }
     }
   }, [userProfile]);
 
@@ -60,7 +74,7 @@ export default function DashboardSettingsPage() {
       address: profile.address || undefined,
       gender: profile.gender || undefined,
       ...(locationData && { location: locationData }),
-      ...(profileImage && { profileImage }),
+      ...(profileImage && { image: profileImage }),
     };
 
     updateProfileMutation.mutate(updateData, {
@@ -92,6 +106,33 @@ export default function DashboardSettingsPage() {
       ...prev,
       [key]: !prev[key],
     }));
+  };
+
+  const handleNotificationSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const notificationData = {
+      emailNotifications: {
+        newBookingsAndReservations: notifications.emailBookings,
+        messagesFromCustomers: notifications.emailMessages,
+        paymentConfirmations: notifications.emailPayments,
+      },
+      smsNotifications: {
+        newBookingsAndReservations: notifications.smsBookings,
+        messagesFromCustomers: notifications.smsMessages,
+        paymentConfirmations: notifications.smsPayments,
+      },
+    };
+
+    updateNotificationMutation.mutate(notificationData, {
+      onSuccess: () => {
+        alert('Notification preferences updated successfully!');
+      },
+      onError: (error: unknown) => {
+        alert('Failed to update notification preferences. Please try again.');
+        console.error('Notification update error:', error);
+      },
+    });
   };
 
   return (
@@ -259,6 +300,23 @@ export default function DashboardSettingsPage() {
               </div>
             </div>
           </div>
+          
+          <form onSubmit={handleNotificationSubmit} className="mt-6">
+            <button
+              type="submit"
+              disabled={updateNotificationMutation.isPending}
+              className="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {updateNotificationMutation.isPending ? (
+                <span className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Saving...
+                </span>
+              ) : (
+                'Save Notification Preferences'
+              )}
+            </button>
+          </form>
         </div>
       </div>
 
