@@ -1,10 +1,13 @@
-import { DomainEntity } from '~/models';
-import { NotificationType } from './vo';
+import {ChannelType, NotificationMessage, NotificationType, Status} from '~/models';
 
-export interface Notification extends DomainEntity {
-  recipientId: string;
-  message: string;
+export interface Notification {
+  //
+  receiverId: string;
+  senderId: string;
+  message: NotificationMessage;
   type: NotificationType;
-  read: boolean;
-  timestamp: Date;
+  channelType: ChannelType;
+  status: Status;
+  sentAt: string;
+  receivedAt: string;
 }
