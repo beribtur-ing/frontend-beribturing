@@ -2,7 +2,7 @@
 export * from './useRentalRecord';
 export * from './useItemConditionCheck';
 export * from './useItemConditionPhoto';
-export * from './useReservationsPaginated';
+export * from './useReservationRdosPaginated';
 export * from './useRentalRecordsPaginated';
 
 // Mutation Hooks

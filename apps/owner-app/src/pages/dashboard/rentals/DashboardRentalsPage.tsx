@@ -1,17 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ColumnConfig, TableList } from '../../../components/shared/TableList';
-import { CustomPagination } from '../../../components/shared/CustomPagination';
-import { Title } from '../../../components/shared/Title';
-import { Filter } from '../../../components/shared/Filter';
-import { SearchBar } from '../../../components/shared/SearchBar';
-import { DeleteModal } from '../../../components/shared/DeleteModal';
-import { useRentalRecordsPaginated } from "~/hooks/rental/useRentalRecordsPaginated";
+import { ColumnConfig, TableList } from '~/components/shared/TableList';
+import { CustomPagination } from '~/components/shared/CustomPagination';
+import { Title } from '~/components/shared/Title';
+import { Filter } from '~/components/shared/Filter';
+import { SearchBar } from '~/components/shared/SearchBar';
+import { DeleteModal } from '~/components/shared/DeleteModal';
+import { useRentalRecordsPaginated } from '~/hooks/rental/useRentalRecordsPaginated';
 
 export default function DashboardRentalsPage() {
-  const [filter, setFilter] = useState<'all' | 'pending' | 'confirmed' | 'active' | 'completed'>('all');
+  //
   const {
     rentalRecords,
+    rentalRecordsAreLoading,
     offset,
     total,
     limit,
@@ -22,21 +23,7 @@ export default function DashboardRentalsPage() {
     fetchByNewQuery,
   } = useRentalRecordsPaginated();
 
-  // useEffect(() => {
-  //   fetch('/api/bookings')
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       setBookings(data);
-  //       setLoading(false);
-  //     });
-  // }, []);
 
-  // const filteredBookings = bookings.filter((booking) => {
-  //   if (filter === 'all') return true;
-  //   return booking.status.toLowerCase() === filter;
-  // });
-
-  // 2. Column config
   const columns: ColumnConfig<any>[] = [
     {
       field: 'name', title: 'Customer',
@@ -107,13 +94,13 @@ export default function DashboardRentalsPage() {
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  // if (loading) {
-  //     return (
-  //         <div className="animate-pulse">
-  //             <div className="bg-white rounded-lg shadow h-96"></div>
-  //         </div>
-  //     );
-  // }
+  if (rentalRecordsAreLoading) {
+      return (
+          <div className="animate-pulse">
+              <div className="bg-white rounded-lg shadow h-96"></div>
+          </div>
+      );
+  }
 
   return (
     <div>

@@ -6,3 +6,4 @@ export * from './ProductCategoryRdo';
 export * from './ProductVariantRegCdo';
 export * from './UserMeRdo';
 export * from './PopularProductRdo';
+export * from './ReservationRdo';

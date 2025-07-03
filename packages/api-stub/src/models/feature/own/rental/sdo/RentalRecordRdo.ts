@@ -1,6 +1,6 @@
-import { Currency, Lendee, Period, RentalDeposit, RentalStatus, ProductRentalRecordRdo } from '~/models';
+import { Currency, Lendee, Period, RentalDeposit, ProductRentalRecordRdo } from '~/models';
 
-export interface RentalRecordRdo{
+export interface RentalRecordRdo {
   //from RentalRecord
   id: string;
   //from Lendee
