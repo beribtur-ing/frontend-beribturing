@@ -1,5 +1,5 @@
-import {useQuery, UseQueryResult} from '@tanstack/react-query';
-import {FindRentalRecordOwnQuery, RentalOwnSeekApi, RentalRecordRdo, QueryResponse} from '@beribturing/api-stub';
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { FindRentalRecordOwnQuery, RentalOwnSeekApi, RentalRecordRdo, QueryResponse } from '@beribturing/api-stub';
 
 const mockRentalRecord: RentalRecordRdo = {
   id: 'mock-rental-1',
@@ -42,17 +42,17 @@ const mockRentalRecord: RentalRecordRdo = {
 export const useRentalRecord = (rentalRecordId: string) => {
   //
   const query: FindRentalRecordOwnQuery = {
-    rentalRecordId
+    rentalRecordId,
   };
 
-  const {queryKey, queryFn} = RentalOwnSeekApi.query.findRentalRecord(query);
+  const { queryKey, queryFn } = RentalOwnSeekApi.query.findRentalRecord(query);
 
-  const {data, refetch, isLoading}: UseQueryResult<QueryResponse<RentalRecordRdo>> = useQuery(
+  const { data, refetch, isLoading }: UseQueryResult<QueryResponse<RentalRecordRdo>> = useQuery(
     {
       queryKey,
       queryFn,
       enabled: !!rentalRecordId,
-    }
+    },
   );
 
   return {

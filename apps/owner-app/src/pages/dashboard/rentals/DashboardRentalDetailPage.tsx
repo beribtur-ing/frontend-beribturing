@@ -38,13 +38,13 @@ export default function DashboardRentalDetailPage() {
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   };
 
-  if (isLoading) {
-    return (
-      <div className="animate-pulse">
-        <div className="bg-white rounded-lg shadow p-6 h-96"></div>
-      </div>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <div className="animate-pulse">
+  //       <div className="bg-white rounded-lg shadow p-6 h-96"></div>
+  //     </div>
+  //   );
+  // }
 
   if (!rentalRecord) {
     return (

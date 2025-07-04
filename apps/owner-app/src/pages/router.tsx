@@ -10,7 +10,6 @@ import DashboardPage from './dashboard/DashboardPage';
 import DashboardOverviewPage from './dashboard/DashboardOverviewPage';
 import DashboardAnalyticsPage from './dashboard/DashboardAnalyticsPage';
 import DashboardRentalsPage from '~/pages/dashboard/rentals/DashboardRentalsPage';
-import DashboardRentalsCalendarPage from '~/pages/dashboard/rentals/DashboardRentalsCalendarPage';
 import DashboardRentalDetailPage from '~/pages/dashboard/rentals/DashboardRentalDetailPage';
 import DashboardPropertiesPage from './dashboard/DashboardPropertiesPage';
 import DashboardPropertiesAddPage from './dashboard/properties/DashboardPropertiesAddPage';
@@ -51,7 +50,6 @@ export const browserRouter = createBrowserRouter(
             { path: 'overview', element: <DashboardOverviewPage /> },
             { path: 'analytics', element: <DashboardAnalyticsPage /> },
             { path: 'rentals', element: <DashboardRentalsPage /> },
-            { path: 'rentals/calendar', element: <DashboardRentalsCalendarPage /> },
             { path: 'rentals/:id', element: <DashboardRentalDetailPage /> },
             { path: 'properties', element: <DashboardPropertiesPage /> },
             { path: 'properties/add', element: <DashboardPropertiesAddPage /> },
