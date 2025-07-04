@@ -4,8 +4,9 @@ import {
   AccountSignInRntQuery,
   AccountSignInTokenRdo,
   AuthRntSeekApi,
+  AuthRntFlowApi,
   FirstParameter,
-  QueryResponse,
+  CommandResponse,
   UserRntSeekApi,
 } from '@beribturing/api-stub';
 import { useAuthContext } from '~/lib/auth';
@@ -22,7 +23,7 @@ export const useAuth = () => {
   } = useAuthContext();
 
   const signInMutation = useMutation<
-  AxiosResponse<QueryResponse<AccountSignInTokenRdo>>,
+  AxiosResponse<CommandResponse<AccountSignInTokenRdo>>,
   unknown,
   FirstParameter<typeof AuthRntSeekApi.accountSignIn>
   >({
@@ -50,6 +51,40 @@ export const useAuth = () => {
     },
   });
 
+  const refreshTokenMutation = useMutation<
+  AxiosResponse<CommandResponse<AccountSignInTokenRdo>>,
+  unknown,
+  FirstParameter<typeof AuthRntFlowApi.refreshToken>
+  >({
+    mutationFn: AuthRntFlowApi.refreshToken,
+    onSuccess: async (response) => {
+      const tokenData = response.data.result;
+      if (tokenData) {
+        setTokens(tokenData);
+      }
+    },
+    onError: (error) => {
+      console.error('Refresh token failed:', error);
+      signOut();
+    },
+  });
+
+  const refreshToken = async (): Promise<boolean> => {
+    try {
+      if (!tokens?.refreshToken) {
+        return false;
+      }
+
+      await refreshTokenMutation.mutateAsync({
+        refreshToken: tokens.refreshToken,
+      });
+      return true;
+    } catch (error) {
+      console.error('Token refresh error:', error);
+      return false;
+    }
+  };
+
   const signIn = async (phoneNumber: string, password: string): Promise<boolean> => {
     try {
       const query: AccountSignInRntQuery = {
@@ -75,7 +110,9 @@ export const useAuth = () => {
     signIn,
     signOut,
     updateProfile,
+    refreshToken,
     error: signInMutation.error,
     isSigningIn: signInMutation.isPending,
+    isRefreshing: refreshTokenMutation.isPending,
   };
 };
