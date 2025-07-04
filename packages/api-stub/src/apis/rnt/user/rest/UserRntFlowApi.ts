@@ -5,6 +5,7 @@ import {
   UpdateNotificationPreferencesRntCommand,
   UpdatePrivacySettingsRntCommand,
   UpdateSecuritySettingsRntCommand,
+  ChangePasswordRntCommand,
 } from '~/apis';
 
 const url = (path: string) => `/api/feature/renter/user/${path}`;
@@ -70,10 +71,19 @@ const updateAppearanceSettings = (command: UpdateAppearanceSettingsRntCommand) =
   });
 };
 
+const changePassword = (command: ChangePasswordRntCommand) => {
+  return axios.post<CommandResponse<string>>(url('change-password/command'), command, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+};
+
 export default {
   modifyProfile,
   updateNotificationPreferences,
   updatePrivacySettings,
   updateSecuritySettings,
   updateAppearanceSettings,
+  changePassword,
 }

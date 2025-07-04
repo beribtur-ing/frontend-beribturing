@@ -20,11 +20,13 @@ import {
   ToggleRight,
 } from "lucide-react"
 import { useNavigate } from "react-router-dom"
+import { ChangePasswordModal } from "../components/modals"
 
 export default function SettingsPage() {
   const { user, loading } = useAuth()
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState("notifications")
+  const [showPasswordModal, setShowPasswordModal] = useState(false)
 
   const {
     defaultNotificationPreferences,
@@ -587,6 +589,7 @@ export default function SettingsPage() {
                       <h3 className="font-medium text-gray-900">Password</h3>
                       <div className="space-y-3">
                         <button
+                          onClick={() => setShowPasswordModal(true)}
                           className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-sm">
                           Change Password
                         </button>
@@ -673,6 +676,14 @@ export default function SettingsPage() {
           </div>
         </div>
       </div>
+
+      <ChangePasswordModal
+        isOpen={showPasswordModal}
+        onClose={() => setShowPasswordModal(false)}
+        onSuccess={() => {
+          // Optionally refresh settings data or show success message
+        }}
+      />
     </div>
   )
 }
