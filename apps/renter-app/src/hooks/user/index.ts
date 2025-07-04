@@ -1,3 +1,4 @@
 export * from './useUserMe';
 export * from './useUserMutation';
-export * from './useNotificationPreferences';
+export * from './useSettings';
+export * from './useSettingsRntMutation';

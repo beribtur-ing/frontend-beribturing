@@ -1,8 +1,11 @@
-import {useState, useEffect} from "react"
+import { useState, useEffect } from "react"
 
-import {useAuth} from "../hooks"
-import {useNotificationPreferences, NotificationPreferences} from "../hooks/user"
-import {useUserMe} from "../hooks/user"
+import { useAuth } from "../hooks"
+import {
+  NotificationPreferences,
+  useSettings,
+  useSettingsRntMutation,
+} from "../hooks/user"
 import {
   Bell,
   ChevronRight,
@@ -16,44 +19,80 @@ import {
   ToggleLeft,
   ToggleRight,
 } from "lucide-react"
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 export default function SettingsPage() {
   const { user, loading } = useAuth()
   const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState("notifications")
-  
-  const { defaultNotificationPreferences, mutation } = useNotificationPreferences()
-  const { userMe, isLoading: userMeLoading } = useUserMe()
+
+  const {
+    defaultNotificationPreferences,
+    mutation: {
+      updateNotificationPreferences,
+      updatePrivacySettings,
+      updateSecuritySettings,
+      updateAppearanceSettings,
+    },
+  } = useSettingsRntMutation()
   const [notificationPreferences, setNotificationPreferences] = useState<NotificationPreferences>(defaultNotificationPreferences)
-  
+
+  const { settings: apiSettings, isLoading: settingsLoading, refetchSettings } = useSettings()
+
   const [settings, setSettings] = useState({
     privacy: {
-      showProfile: true,
-      showRentals: true,
-      showReviews: true,
-      locationSharing: false,
-      dataCollection: true,
+      profileVisibility: {
+        showProfileToOtherUsers: false,
+        showRentalHistory: false,
+        showReviews: false,
+      },
+      dataAndLocation: {
+        shareLocationWithLenders: false,
+        allowDataCollectionForRecommendations: false,
+      },
     },
     security: {
-      twoFactorAuth: false,
-      loginAlerts: true,
-      sessionTimeout: "30",
+      twoFactorAuthentication: false,
+      loginAlertsForNewDevices: false,
+      sessionTimeoutMinutes: 30,
     },
     appearance: {
-      darkMode: false,
-      compactView: false,
-      language: "english",
+      theme: {
+        darkMode: false,
+        compactView: false,
+      },
+      defaultLanguage: "english",
     },
   })
   const [isSaving, setIsSaving] = useState(false)
 
-  // Update notification preferences when userMe data is loaded
+  // Update notification preferences and settings when API data is loaded
   useEffect(() => {
-    if (userMe?.notificationPreferences) {
-      setNotificationPreferences(userMe?.notificationPreferences)
+    if (apiSettings?.notificationPreferences) {
+      setNotificationPreferences(apiSettings.notificationPreferences)
     }
-  }, [userMe?.notificationPreferences])
+
+    if (apiSettings?.privacySettings) {
+      setSettings(prev => ({
+        ...prev,
+        privacy: apiSettings.privacySettings,
+      }))
+    }
+
+    if (apiSettings?.securitySettings) {
+      setSettings(prev => ({
+        ...prev,
+        security: apiSettings.securitySettings,
+      }))
+    }
+
+    if (apiSettings?.appearanceSettings) {
+      setSettings(prev => ({
+        ...prev,
+        appearance: apiSettings.appearanceSettings,
+      }))
+    }
+  }, [apiSettings?.notificationPreferences, apiSettings?.privacySettings, apiSettings?.securitySettings, apiSettings?.appearanceSettings])
 
   // Redirect if not authenticated
   if (!user) {
@@ -61,13 +100,30 @@ export default function SettingsPage() {
     return null
   }
 
-  // Show loading state while fetching user data
-  if (userMeLoading) {
+  // Show loading state while fetching settings data
+  if (settingsLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-purple-600"></div>
       </div>
     )
+  }
+
+  // Helper function to get nested property value
+  const getNestedValue = (obj: any, path: string): any => {
+    return path.split('.').reduce((current, key) => current?.[key], obj)
+  }
+
+  // Helper function to set nested property value
+  const setNestedValue = (obj: any, path: string, value: any): any => {
+    const keys = path.split('.')
+    const lastKey = keys.pop()!
+    const target = keys.reduce((current, key) => {
+      if (!current[key]) current[key] = {}
+      return current[key]
+    }, obj)
+    target[lastKey] = value
+    return obj
   }
 
   const handleToggle = (category: string, setting: string) => {
@@ -80,89 +136,117 @@ export default function SettingsPage() {
           case "emailRentalReminders":
             newPrefs.emailNotifications = {
               ...prev.emailNotifications,
-              rentalReminders: !prev.emailNotifications.rentalReminders
+              rentalReminders: !prev.emailNotifications.rentalReminders,
             }
             break
           case "emailNewMessages":
             newPrefs.emailNotifications = {
               ...prev.emailNotifications,
-              newMessages: !prev.emailNotifications.newMessages
+              newMessages: !prev.emailNotifications.newMessages,
             }
             break
           case "pushRentalReminders":
             newPrefs.pushNotifications = {
               ...prev.pushNotifications,
-              rentalReminders: !prev.pushNotifications.rentalReminders
+              rentalReminders: !prev.pushNotifications.rentalReminders,
             }
             break
           case "pushNewMessages":
             newPrefs.pushNotifications = {
               ...prev.pushNotifications,
-              newMessages: !prev.pushNotifications.newMessages
+              newMessages: !prev.pushNotifications.newMessages,
             }
             break
           case "pushPromotionsAndDeals":
             newPrefs.pushNotifications = {
               ...prev.pushNotifications,
-              promotionsAndDeals: !prev.pushNotifications.promotionsAndDeals
+              promotionsAndDeals: !prev.pushNotifications.promotionsAndDeals,
             }
             break
           case "smsRentalReminders":
             newPrefs.smsNotifications = {
               ...prev.smsNotifications,
-              rentalReminders: !prev.smsNotifications.rentalReminders
+              rentalReminders: !prev.smsNotifications.rentalReminders,
             }
             break
           case "smsNewMessages":
             newPrefs.smsNotifications = {
               ...prev.smsNotifications,
-              newMessages: !prev.smsNotifications.newMessages
+              newMessages: !prev.smsNotifications.newMessages,
             }
             break
           case "marketingPromotionsAndDeals":
             newPrefs.marketingNotifications = {
               ...prev.marketingNotifications,
-              promotionsAndDeals: !prev.marketingNotifications.promotionsAndDeals
+              promotionsAndDeals: !prev.marketingNotifications.promotionsAndDeals,
             }
             break
           case "marketingEmails":
             newPrefs.marketingNotifications = {
               ...prev.marketingNotifications,
-              marketingEmails: !prev.marketingNotifications.marketingEmails
+              marketingEmails: !prev.marketingNotifications.marketingEmails,
             }
             break
-          }
+        }
 
-          return newPrefs
+        return newPrefs
       })
     } else {
-      setSettings((prev) => ({
-        ...prev,
-        [category]: {
-          ...prev[category as keyof typeof prev],
-          [setting]: !prev[category as keyof typeof prev][setting as any],
-        },
-      }))
+      setSettings((prev) => {
+        const newSettings = JSON.parse(JSON.stringify(prev)) // Deep clone
+        const currentValue = getNestedValue(newSettings[category as keyof typeof prev], setting)
+        setNestedValue(newSettings[category as keyof typeof prev], setting, !currentValue)
+        return newSettings
+      })
     }
   }
 
   const handleSelectChange = (category: string, setting: string, value: string) => {
-    setSettings((prev) => ({
-      ...prev,
-      [category]: {
-        ...prev[category as keyof typeof prev],
-        [setting]: value,
-      },
-    }))
+    setSettings((prev) => {
+      const newSettings = JSON.parse(JSON.stringify(prev)) // Deep clone
+      setNestedValue(newSettings[category as keyof typeof prev], setting, value)
+      return newSettings
+    })
   }
 
   const handleSaveSettings = async () => {
     setIsSaving(true)
     try {
-      await mutation.updateNotificationPreferences.mutateAsync(notificationPreferences)
+      // Save based on active tab
+      if (activeTab === "notifications") {
+        await updateNotificationPreferences.mutateAsync(notificationPreferences)
+      } else if (activeTab === "privacy") {
+        const privacySettings = {
+          profileVisibility: {
+            showProfileToOtherUsers: settings.privacy.profileVisibility.showProfileToOtherUsers,
+            showRentalHistory: settings.privacy.profileVisibility.showRentalHistory,
+            showReviews: settings.privacy.profileVisibility.showReviews,
+          },
+          dataAndLocation: {
+            shareLocationWithLenders: true,
+            allowDataCollectionForRecommendations: true,
+          },
+        }
+        await updatePrivacySettings.mutateAsync(privacySettings)
+      } else if (activeTab === "security") {
+        const securitySettings = {
+          twoFactorAuthentication: settings.security.twoFactorAuthentication,
+          loginAlertsForNewDevices: settings.security.loginAlertsForNewDevices,
+          sessionTimeoutMinutes: settings.security.sessionTimeoutMinutes,
+        }
+        await updateSecuritySettings.mutateAsync(securitySettings)
+      } else if (activeTab === "appearance") {
+        const appearanceSettings = {
+          darkMode: settings.appearance.theme.darkMode,
+          compactView: settings.appearance.theme.compactView,
+          language: settings.appearance.defaultLanguage,
+        }
+        await updateAppearanceSettings.mutateAsync(appearanceSettings)
+      }
+      refetchSettings();
       // Show success message or toast here
     } catch (error) {
-      console.error('Failed to update notification preferences:', error)
+      console.error(`Failed to update ${activeTab} settings:`, error)
       // Show error message or toast here
     } finally {
       setIsSaving(false)
@@ -212,10 +296,10 @@ export default function SettingsPage() {
                     }`}
                   >
                     <div className="flex items-center space-x-3">
-                      <tab.icon className="h-5 w-5" />
+                      <tab.icon className="h-5 w-5"/>
                       <span className="font-medium">{tab.label}</span>
                     </div>
-                    <ChevronRight className="h-4 w-4" />
+                    <ChevronRight className="h-4 w-4"/>
                   </button>
                 ))}
               </div>
@@ -235,28 +319,28 @@ export default function SettingsPage() {
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-3">
-                            <Mail className="h-5 w-5 text-gray-500" />
+                            <Mail className="h-5 w-5 text-gray-500"/>
                             <span>Rental Reminders</span>
                           </div>
                           <button onClick={() => handleToggle("notifications", "emailRentalReminders")}>
                             {notificationPreferences.emailNotifications.rentalReminders ? (
-                              <ToggleRight className="h-6 w-6 text-purple-600" />
+                              <ToggleRight className="h-6 w-6 text-purple-600"/>
                             ) : (
-                              <ToggleLeft className="h-6 w-6 text-gray-400" />
+                              <ToggleLeft className="h-6 w-6 text-gray-400"/>
                             )}
                           </button>
                         </div>
 
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-3">
-                            <Mail className="h-5 w-5 text-gray-500" />
+                            <Mail className="h-5 w-5 text-gray-500"/>
                             <span>New Messages</span>
                           </div>
                           <button onClick={() => handleToggle("notifications", "emailNewMessages")}>
                             {notificationPreferences.emailNotifications.newMessages ? (
-                              <ToggleRight className="h-6 w-6 text-purple-600" />
+                              <ToggleRight className="h-6 w-6 text-purple-600"/>
                             ) : (
-                              <ToggleLeft className="h-6 w-6 text-gray-400" />
+                              <ToggleLeft className="h-6 w-6 text-gray-400"/>
                             )}
                           </button>
                         </div>
@@ -268,42 +352,42 @@ export default function SettingsPage() {
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-3">
-                            <Bell className="h-5 w-5 text-gray-500" />
+                            <Bell className="h-5 w-5 text-gray-500"/>
                             <span>Rental Reminders</span>
                           </div>
                           <button onClick={() => handleToggle("notifications", "pushRentalReminders")}>
                             {notificationPreferences.pushNotifications.rentalReminders ? (
-                              <ToggleRight className="h-6 w-6 text-purple-600" />
+                              <ToggleRight className="h-6 w-6 text-purple-600"/>
                             ) : (
-                              <ToggleLeft className="h-6 w-6 text-gray-400" />
+                              <ToggleLeft className="h-6 w-6 text-gray-400"/>
                             )}
                           </button>
                         </div>
 
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-3">
-                            <Bell className="h-5 w-5 text-gray-500" />
+                            <Bell className="h-5 w-5 text-gray-500"/>
                             <span>New Messages</span>
                           </div>
                           <button onClick={() => handleToggle("notifications", "pushNewMessages")}>
                             {notificationPreferences.pushNotifications.newMessages ? (
-                              <ToggleRight className="h-6 w-6 text-purple-600" />
+                              <ToggleRight className="h-6 w-6 text-purple-600"/>
                             ) : (
-                              <ToggleLeft className="h-6 w-6 text-gray-400" />
+                              <ToggleLeft className="h-6 w-6 text-gray-400"/>
                             )}
                           </button>
                         </div>
 
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-3">
-                            <Bell className="h-5 w-5 text-gray-500" />
+                            <Bell className="h-5 w-5 text-gray-500"/>
                             <span>Promotions and Deals</span>
                           </div>
                           <button onClick={() => handleToggle("notifications", "pushPromotionsAndDeals")}>
                             {notificationPreferences.pushNotifications.promotionsAndDeals ? (
-                              <ToggleRight className="h-6 w-6 text-purple-600" />
+                              <ToggleRight className="h-6 w-6 text-purple-600"/>
                             ) : (
-                              <ToggleLeft className="h-6 w-6 text-gray-400" />
+                              <ToggleLeft className="h-6 w-6 text-gray-400"/>
                             )}
                           </button>
                         </div>
@@ -315,28 +399,28 @@ export default function SettingsPage() {
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-3">
-                            <Smartphone className="h-5 w-5 text-gray-500" />
+                            <Smartphone className="h-5 w-5 text-gray-500"/>
                             <span>Rental Reminders</span>
                           </div>
                           <button onClick={() => handleToggle("notifications", "smsRentalReminders")}>
                             {notificationPreferences.smsNotifications.rentalReminders ? (
-                              <ToggleRight className="h-6 w-6 text-purple-600" />
+                              <ToggleRight className="h-6 w-6 text-purple-600"/>
                             ) : (
-                              <ToggleLeft className="h-6 w-6 text-gray-400" />
+                              <ToggleLeft className="h-6 w-6 text-gray-400"/>
                             )}
                           </button>
                         </div>
 
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-3">
-                            <Smartphone className="h-5 w-5 text-gray-500" />
+                            <Smartphone className="h-5 w-5 text-gray-500"/>
                             <span>New Messages</span>
                           </div>
                           <button onClick={() => handleToggle("notifications", "smsNewMessages")}>
                             {notificationPreferences.smsNotifications.newMessages ? (
-                              <ToggleRight className="h-6 w-6 text-purple-600" />
+                              <ToggleRight className="h-6 w-6 text-purple-600"/>
                             ) : (
-                              <ToggleLeft className="h-6 w-6 text-gray-400" />
+                              <ToggleLeft className="h-6 w-6 text-gray-400"/>
                             )}
                           </button>
                         </div>
@@ -348,28 +432,28 @@ export default function SettingsPage() {
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-3">
-                            <Bell className="h-5 w-5 text-gray-500" />
+                            <Bell className="h-5 w-5 text-gray-500"/>
                             <span>Promotions and Deals</span>
                           </div>
                           <button onClick={() => handleToggle("notifications", "marketingPromotionsAndDeals")}>
                             {notificationPreferences.marketingNotifications.promotionsAndDeals ? (
-                              <ToggleRight className="h-6 w-6 text-purple-600" />
+                              <ToggleRight className="h-6 w-6 text-purple-600"/>
                             ) : (
-                              <ToggleLeft className="h-6 w-6 text-gray-400" />
+                              <ToggleLeft className="h-6 w-6 text-gray-400"/>
                             )}
                           </button>
                         </div>
 
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-3">
-                            <Mail className="h-5 w-5 text-gray-500" />
+                            <Mail className="h-5 w-5 text-gray-500"/>
                             <span>Marketing Emails</span>
                           </div>
                           <button onClick={() => handleToggle("notifications", "marketingEmails")}>
                             {notificationPreferences.marketingNotifications.marketingEmails ? (
-                              <ToggleRight className="h-6 w-6 text-purple-600" />
+                              <ToggleRight className="h-6 w-6 text-purple-600"/>
                             ) : (
-                              <ToggleLeft className="h-6 w-6 text-gray-400" />
+                              <ToggleLeft className="h-6 w-6 text-gray-400"/>
                             )}
                           </button>
                         </div>
@@ -389,33 +473,33 @@ export default function SettingsPage() {
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
                           <span>Show my profile to other users</span>
-                          <button onClick={() => handleToggle("privacy", "showProfile")}>
-                            {settings.privacy.showProfile ? (
-                              <ToggleRight className="h-6 w-6 text-purple-600" />
+                          <button onClick={() => handleToggle("privacy", "profileVisibility.showProfileToOtherUsers")}>
+                            {settings.privacy.profileVisibility.showProfileToOtherUsers ? (
+                              <ToggleRight className="h-6 w-6 text-purple-600"/>
                             ) : (
-                              <ToggleLeft className="h-6 w-6 text-gray-400" />
+                              <ToggleLeft className="h-6 w-6 text-gray-400"/>
                             )}
                           </button>
                         </div>
 
                         <div className="flex items-center justify-between">
                           <span>Show my rental history</span>
-                          <button onClick={() => handleToggle("privacy", "showRentals")}>
-                            {settings.privacy.showRentals ? (
-                              <ToggleRight className="h-6 w-6 text-purple-600" />
+                          <button onClick={() => handleToggle("privacy", "profileVisibility.showRentalHistory")}>
+                            {settings.privacy.profileVisibility.showRentalHistory ? (
+                              <ToggleRight className="h-6 w-6 text-purple-600"/>
                             ) : (
-                              <ToggleLeft className="h-6 w-6 text-gray-400" />
+                              <ToggleLeft className="h-6 w-6 text-gray-400"/>
                             )}
                           </button>
                         </div>
 
                         <div className="flex items-center justify-between">
                           <span>Show my reviews</span>
-                          <button onClick={() => handleToggle("privacy", "showReviews")}>
-                            {settings.privacy.showReviews ? (
-                              <ToggleRight className="h-6 w-6 text-purple-600" />
+                          <button onClick={() => handleToggle("privacy", "profileVisibility.showReviews")}>
+                            {settings.privacy.profileVisibility.showReviews ? (
+                              <ToggleRight className="h-6 w-6 text-purple-600"/>
                             ) : (
-                              <ToggleLeft className="h-6 w-6 text-gray-400" />
+                              <ToggleLeft className="h-6 w-6 text-gray-400"/>
                             )}
                           </button>
                         </div>
@@ -427,22 +511,23 @@ export default function SettingsPage() {
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
                           <span>Share my location with lenders</span>
-                          <button onClick={() => handleToggle("privacy", "locationSharing")}>
-                            {settings.privacy.locationSharing ? (
-                              <ToggleRight className="h-6 w-6 text-purple-600" />
+                          <button onClick={() => handleToggle("privacy", "dataAndLocation.shareLocationWithLenders")}>
+                            {settings.privacy.dataAndLocation.shareLocationWithLenders ? (
+                              <ToggleRight className="h-6 w-6 text-purple-600"/>
                             ) : (
-                              <ToggleLeft className="h-6 w-6 text-gray-400" />
+                              <ToggleLeft className="h-6 w-6 text-gray-400"/>
                             )}
                           </button>
                         </div>
 
                         <div className="flex items-center justify-between">
                           <span>Allow data collection for better recommendations</span>
-                          <button onClick={() => handleToggle("privacy", "dataCollection")}>
-                            {settings.privacy.dataCollection ? (
-                              <ToggleRight className="h-6 w-6 text-purple-600" />
+                          <button
+                            onClick={() => handleToggle("privacy", "dataAndLocation.allowDataCollectionForRecommendations")}>
+                            {settings.privacy.dataAndLocation.allowDataCollectionForRecommendations ? (
+                              <ToggleRight className="h-6 w-6 text-purple-600"/>
                             ) : (
-                              <ToggleLeft className="h-6 w-6 text-gray-400" />
+                              <ToggleLeft className="h-6 w-6 text-gray-400"/>
                             )}
                           </button>
                         </div>
@@ -462,22 +547,22 @@ export default function SettingsPage() {
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
                           <span>Two-Factor Authentication</span>
-                          <button onClick={() => handleToggle("security", "twoFactorAuth")}>
-                            {settings.security.twoFactorAuth ? (
-                              <ToggleRight className="h-6 w-6 text-purple-600" />
+                          <button onClick={() => handleToggle("security", "twoFactorAuthentication")}>
+                            {settings.security.twoFactorAuthentication ? (
+                              <ToggleRight className="h-6 w-6 text-purple-600"/>
                             ) : (
-                              <ToggleLeft className="h-6 w-6 text-gray-400" />
+                              <ToggleLeft className="h-6 w-6 text-gray-400"/>
                             )}
                           </button>
                         </div>
 
                         <div className="flex items-center justify-between">
                           <span>Login alerts for new devices</span>
-                          <button onClick={() => handleToggle("security", "loginAlerts")}>
-                            {settings.security.loginAlerts ? (
-                              <ToggleRight className="h-6 w-6 text-purple-600" />
+                          <button onClick={() => handleToggle("security", "loginAlertsForNewDevices")}>
+                            {settings.security.loginAlertsForNewDevices ? (
+                              <ToggleRight className="h-6 w-6 text-purple-600"/>
                             ) : (
-                              <ToggleLeft className="h-6 w-6 text-gray-400" />
+                              <ToggleLeft className="h-6 w-6 text-gray-400"/>
                             )}
                           </button>
                         </div>
@@ -485,8 +570,8 @@ export default function SettingsPage() {
                         <div className="flex items-center justify-between">
                           <span>Session Timeout</span>
                           <select
-                            value={settings.security.sessionTimeout}
-                            onChange={(e) => handleSelectChange("security", "sessionTimeout", e.target.value)}
+                            value={settings.security.sessionTimeoutMinutes}
+                            onChange={(e) => handleSelectChange("security", "sessionTimeoutMinutes", e.target.value)}
                             className="border border-gray-300 rounded-md px-3 py-1 focus:outline-none focus:ring-2 focus:ring-purple-500"
                           >
                             <option value="15">15 minutes</option>
@@ -501,7 +586,8 @@ export default function SettingsPage() {
                     <div className="space-y-4">
                       <h3 className="font-medium text-gray-900">Password</h3>
                       <div className="space-y-3">
-                        <button className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-sm">
+                        <button
+                          className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors text-sm">
                           Change Password
                         </button>
                       </div>
@@ -520,25 +606,25 @@ export default function SettingsPage() {
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-3">
-                            <Moon className="h-5 w-5 text-gray-500" />
+                            <Moon className="h-5 w-5 text-gray-500"/>
                             <span>Dark Mode</span>
                           </div>
-                          <button onClick={() => handleToggle("appearance", "darkMode")}>
-                            {settings.appearance.darkMode ? (
-                              <ToggleRight className="h-6 w-6 text-purple-600" />
+                          <button onClick={() => handleToggle("appearance", "theme.darkMode")}>
+                            {settings.appearance.theme.darkMode ? (
+                              <ToggleRight className="h-6 w-6 text-purple-600"/>
                             ) : (
-                              <ToggleLeft className="h-6 w-6 text-gray-400" />
+                              <ToggleLeft className="h-6 w-6 text-gray-400"/>
                             )}
                           </button>
                         </div>
 
                         <div className="flex items-center justify-between">
                           <span>Compact View</span>
-                          <button onClick={() => handleToggle("appearance", "compactView")}>
-                            {settings.appearance.compactView ? (
-                              <ToggleRight className="h-6 w-6 text-purple-600" />
+                          <button onClick={() => handleToggle("appearance", "theme.compactView")}>
+                            {settings.appearance.theme.compactView ? (
+                              <ToggleRight className="h-6 w-6 text-purple-600"/>
                             ) : (
-                              <ToggleLeft className="h-6 w-6 text-gray-400" />
+                              <ToggleLeft className="h-6 w-6 text-gray-400"/>
                             )}
                           </button>
                         </div>
@@ -549,8 +635,8 @@ export default function SettingsPage() {
                       <h3 className="font-medium text-gray-900">Language</h3>
                       <div className="space-y-3">
                         <select
-                          value={settings.appearance.language}
-                          onChange={(e) => handleSelectChange("appearance", "language", e.target.value)}
+                          value={settings.appearance.defaultLanguage}
+                          onChange={(e) => handleSelectChange("appearance", "defaultLanguage", e.target.value)}
                           className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
                         >
                           <option value="english">English</option>
@@ -577,7 +663,7 @@ export default function SettingsPage() {
                     </>
                   ) : (
                     <>
-                      <Save className="h-4 w-4" />
+                      <Save className="h-4 w-4"/>
                       <span>Save Settings</span>
                     </>
                   )}
