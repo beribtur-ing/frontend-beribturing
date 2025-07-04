@@ -5,6 +5,7 @@ import { ThemeProvider } from './components/theme-provider';
 import { AuthProvider } from './lib/auth';
 import React, { useMemo } from 'react';
 import axios from 'axios';
+import { SnackbarProvider } from 'notistack';
 
 const App = () => {
   const router = useMemo(() => browserRouter, []);
@@ -24,9 +25,11 @@ const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="light" storageKey="owner-app-theme">
-        <AuthProvider>
-          <RouterProvider router={router} />
-        </AuthProvider>
+        <SnackbarProvider classes={{ containerAnchorOriginTopRight: 'custom-snackbar' }}>
+          <AuthProvider>
+            <RouterProvider router={router}/>
+          </AuthProvider>
+        </SnackbarProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

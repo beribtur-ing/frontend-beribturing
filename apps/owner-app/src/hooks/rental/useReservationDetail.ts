@@ -1,0 +1,181 @@
+import { useQuery, UseQueryResult } from '@tanstack/react-query';
+import { QueryResponse, RentalOwnSeekApi, ReservationDetailRdo } from '@beribturing/api-stub';
+
+const mockData: ReservationDetailRdo = {
+  reservation: {
+    id: 'reservation-001',
+    entityVersion: 1,
+    registeredBy: 'system',
+    registeredOn: new Date('2024-01-15T10:30:00Z'),
+    modifiedBy: 'system',
+    modifiedOn: new Date('2024-01-15T10:30:00Z'),
+    productVariantId: 'variant-001',
+    requesterId: 'lendee-001',
+    period: {
+      startDateTime: new Date('2024-01-20T09:00:00Z'),
+      endDateTime: new Date('2024-01-22T18:00:00Z'),
+    },
+    status: 'Pending',
+    note: 'Need this for a weekend photography project',
+  },
+  requester: {
+    id: 'lendee-001',
+    entityVersion: 1,
+    registeredBy: 'system',
+    registeredOn: new Date('2024-01-10T08:00:00Z'),
+    modifiedBy: 'lendee-001',
+    modifiedOn: new Date('2024-01-14T12:00:00Z'),
+    name: 'John Doe',
+    phoneNumber: '+1234567890',
+    active: true,
+    profile: {
+      gender: 'Male',
+      email: 'john.doe@example.com',
+      address: '123 Main St, City, Country',
+      avatarUrl: 'https://example.com/avatars/john-doe.jpg',
+      location: {
+        latitude: 40.7128,
+        longitude: -74.0060,
+      },
+    },
+    reservationSequence: 5,
+  },
+  owner: {
+    id: 'lender-001',
+    entityVersion: 1,
+    registeredBy: 'system',
+    registeredOn: new Date('2023-12-01T10:00:00Z'),
+    modifiedBy: 'lender-001',
+    modifiedOn: new Date('2024-01-10T14:30:00Z'),
+    name: 'Jane Smith',
+    phoneNumber: '+0987654321',
+    lenderType: 'Individual',
+    active: true,
+    profile: {
+      gender: 'Female',
+      email: 'jane.smith@example.com',
+      address: '456 Oak Ave, City, Country',
+      avatarUrl: 'https://example.com/avatars/jane-smith.jpg',
+      location: {
+        latitude: 40.7589,
+        longitude: -73.9851,
+      },
+    },
+    productSequence: 12,
+  },
+  product: {
+    id: 'product-001',
+    entityVersion: 1,
+    registeredBy: 'lender-001',
+    registeredOn: new Date('2023-12-05T14:00:00Z'),
+    modifiedBy: 'lender-001',
+    modifiedOn: new Date('2024-01-05T09:30:00Z'),
+    ownerId: 'lender-001',
+    title: 'Professional DSLR Camera',
+    description: 'High-quality Canon EOS 5D Mark IV with excellent image quality perfect for professional photography',
+    active: true,
+    categoryId: 'category-001',
+    variantSequence: 2,
+  },
+  category: {
+    id: 'category-001',
+    entityVersion: 1,
+    registeredBy: 'admin',
+    registeredOn: new Date('2023-11-01T00:00:00Z'),
+    modifiedBy: 'admin',
+    modifiedOn: new Date('2023-11-01T00:00:00Z'),
+    name: 'Photography Equipment',
+    description: 'Cameras, lenses, tripods, and other photography accessories',
+    iconUrl: 'https://example.com/icons/camera.svg',
+    active: true,
+  },
+  variant: {
+    id: 'variant-001',
+    entityVersion: 1,
+    registeredBy: 'lender-001',
+    registeredOn: new Date('2023-12-05T14:15:00Z'),
+    modifiedBy: 'lender-001',
+    modifiedOn: new Date('2024-01-05T09:45:00Z'),
+    productId: 'product-001',
+    price: {
+      currency: {
+        amount: 250,
+        currency: 'USD',
+      },
+      unit: 'DAILY',
+    },
+    color: 'Black',
+    brand: 'Canon',
+    model: 'EOS 5D Mark IV',
+    manufacturer: 'Canon Inc.',
+    madeIn: 'Japan',
+    producedYear: '2022',
+    material: 'Magnesium alloy body',
+    manual: 'https://example.com/manuals/canon-5d-mark-iv.pdf',
+    availability: {
+      availableFrom: new Date('2024-01-01T00:00:00Z'),
+      availableUntil: new Date('2024-12-31T23:59:59Z'),
+      availableDays: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+    },
+    active: true,
+    imageSequence: 3,
+    notes: 'Includes battery grip and extra memory card',
+  },
+  images: [
+    {
+      id: 'image-001',
+      entityVersion: 1,
+      registeredBy: 'lender-001',
+      registeredOn: new Date('2023-12-05T14:30:00Z'),
+      modifiedBy: 'lender-001',
+      modifiedOn: new Date('2023-12-05T14:30:00Z'),
+      variantId: 'variant-001',
+      url: 'https://example.com/products/canon-5d-mark-iv-front.jpg',
+      order: 1,
+      active: true,
+    },
+    {
+      id: 'image-002',
+      entityVersion: 1,
+      registeredBy: 'lender-001',
+      registeredOn: new Date('2023-12-05T14:31:00Z'),
+      modifiedBy: 'lender-001',
+      modifiedOn: new Date('2023-12-05T14:31:00Z'),
+      variantId: 'variant-001',
+      url: 'https://example.com/products/canon-5d-mark-iv-back.jpg',
+      order: 2,
+      active: true,
+    },
+    {
+      id: 'image-003',
+      entityVersion: 1,
+      registeredBy: 'lender-001',
+      registeredOn: new Date('2023-12-05T14:32:00Z'),
+      modifiedBy: 'lender-001',
+      modifiedOn: new Date('2023-12-05T14:32:00Z'),
+      variantId: 'variant-001',
+      url: 'https://example.com/products/canon-5d-mark-iv-accessories.jpg',
+      order: 3,
+      active: true,
+    },
+  ],
+};
+
+export const useReservationDetail = (reservationId?: string) => {
+  //
+  const { queryKey, queryFn } = RentalOwnSeekApi.query.findRentalRecord({ reservationId: reservationId || '' });
+
+  const { data, refetch, isLoading }: UseQueryResult<QueryResponse<ReservationDetailRdo>> = useQuery(
+    {
+      queryKey,
+      queryFn,
+      enabled: !!reservationId,
+    },
+  );
+
+  return {
+    reservationDetailRdo: (data?.result || mockData) as ReservationDetailRdo,
+    refetchReservationDetailRdo: refetch,
+    reservationDetailRdoIsLoading: isLoading,
+  };
+};

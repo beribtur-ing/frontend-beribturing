@@ -7,3 +7,4 @@ export * from './ProductVariantRegCdo';
 export * from './UserMeRdo';
 export * from './PopularProductRdo';
 export * from './ReservationRdo';
+export * from './ReservationDetailRdo';

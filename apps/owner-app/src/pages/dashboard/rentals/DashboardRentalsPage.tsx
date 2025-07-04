@@ -95,23 +95,17 @@ export default function DashboardRentalsPage() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   if (rentalRecordsAreLoading) {
-      return (
+    return (
           <div className="animate-pulse">
               <div className="bg-white rounded-lg shadow h-96"></div>
           </div>
-      );
+    );
   }
 
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3 gap-4 sm:gap-0">
         <Title title="Rental"/>
-        <Link
-          to={`/dashboard/rentals/calendar`}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-center sm:text-left"
-        >
-          Calendar View
-        </Link>
       </div>
 
       <div className="mb-4">

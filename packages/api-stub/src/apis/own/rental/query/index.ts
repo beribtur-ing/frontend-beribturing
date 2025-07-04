@@ -3,3 +3,4 @@ export type { FindItemConditionPhotoOwnQuery } from './FindItemConditionPhotoOwn
 export type { FindRentalRecordOwnQuery } from './FindRentalRecordOwnQuery';
 export type { FindRentalRecordsOwnQuery } from './FindRentalRecordsOwnQuery';
 export type { FindReservationRdosOwnQuery } from './FindReservationRdosOwnQuery';
+export type { FindReservationDetailOwnQuery } from './FindReservationDetailOwnQuery';

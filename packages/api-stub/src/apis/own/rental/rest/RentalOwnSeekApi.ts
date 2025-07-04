@@ -2,17 +2,18 @@ import {
   FindItemConditionCheckOwnQuery,
   FindItemConditionPhotoOwnQuery,
   FindRentalRecordOwnQuery,
-  FindRentalRecordsOwnQuery, FindReservationRdosOwnQuery,
+  FindRentalRecordsOwnQuery,
+  FindReservationDetailOwnQuery,
+  FindReservationRdosOwnQuery,
 } from '~/apis';
 import {
   QueryResponse,
-  RentalRecord,
   ItemConditionCheck,
   ItemConditionPhoto,
   FirstParameter,
   Offset,
   RentalRecordRdo,
-  ReservationRdo,
+  ReservationRdo, ReservationDetailRdo,
 } from '~/models';
 import axios from 'axios';
 
@@ -42,6 +43,13 @@ const findReservationRdos = (variables: {
   return axios.post<QueryResponse<ReservationRdo[]>>(url('find-reservation-rdos/query'), query);
 };
 
+const findReservationDetail = (variables: {
+  reservationId?: string;
+}) => {
+  const query = <FindReservationDetailOwnQuery>{ ...variables };
+  return axios.post<QueryResponse<ReservationDetailRdo>>(url('find-reservation-detail/query'), query);
+};
+
 const findItemConditionCheck = (variables: {
   itemConditionCheckId: string;
 }) => {
@@ -62,6 +70,7 @@ export default {
   findItemConditionCheck,
   findItemConditionPhoto,
   findReservationRdos,
+  findReservationDetail,
 
   query: {
     findRentalRecord: (params: FirstParameter<typeof findRentalRecord>) => ({
@@ -77,10 +86,16 @@ export default {
       }) => (await findRentalRecords(queryKey.slice().pop()))?.data,
     }),
     findReservationRdos: (params: FirstParameter<typeof findReservationRdos>) => ({
-      queryKey: ['feature/owner/rental', 'findReservations', params],
+      queryKey: ['feature/owner/rental', 'findReservationRdos', params],
       queryFn: async ({ queryKey }: {
         queryKey: readonly any[]
       }) => (await findReservationRdos(queryKey.slice().pop()))?.data,
+    }),
+    findReservationDetail: (params: FirstParameter<typeof findReservationDetail>) => ({
+      queryKey: ['feature/owner/rental', 'findReservationDetail', params],
+      queryFn: async ({ queryKey }: {
+        queryKey: readonly any[]
+      }) => (await findReservationDetail(queryKey.slice().pop()))?.data,
     }),
     findItemConditionCheck: (params: FirstParameter<typeof findItemConditionCheck>) => ({
       queryKey: ['feature/owner/rental', 'findItemConditionCheck', params],
