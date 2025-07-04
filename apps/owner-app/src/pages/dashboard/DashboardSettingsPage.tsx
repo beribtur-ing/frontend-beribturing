@@ -1,14 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useUserMe, useUserMutation } from "../../hooks/user";
+import { Gender } from "@beribturing/api-stub";
+import { Map } from "../../components/map/Map";
 
 export default function DashboardSettingsPage() {
   const [profile, setProfile] = useState({
-    name: "John Doe",
-    email: "john@example.com",
-    phone: "+1 (555) 123-4567",
-    address: "123 Main St, City, State 12345",
-    businessName: "John's Rentals",
-    taxId: "12-3456789",
+    name: "",
+    email: "",
+    phone: "",
+    address: "",
+    gender: "",
   });
+  const [locationData, setLocationData] = useState<{ latitude: number; longitude: number } | undefined>();
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string>("");
 
   const [notifications, setNotifications] = useState({
     emailBookings: true,
@@ -19,10 +24,81 @@ export default function DashboardSettingsPage() {
     smsPayments: true,
   });
 
+  // Fetch current user profile using custom hook
+  const { userMe: userProfile, isLoading, refetch } = useUserMe();
+
+  // Update profile mutation using custom hook
+  const { mutation } = useUserMutation();
+  const updateProfileMutation = mutation.modifyProfile;
+  const updateNotificationMutation = mutation.updateNotificationPreferences;
+
+  // Initialize profile data when user data is loaded
+  useEffect(() => {
+    if (userProfile) {
+      setProfile({
+        name: userProfile.name || '',
+        email: userProfile.email || '',
+        phone: userProfile.phoneNumber || '',
+        address: userProfile.address || '',
+        gender: userProfile.gender || '',
+      });
+      setLocationData(userProfile.location || undefined);
+      setPreviewUrl(userProfile.avatarUrl || '');
+      
+      // Initialize notification preferences from backend data
+      if (userProfile.notificationPreferences) {
+        const prefs = userProfile.notificationPreferences;
+        setNotifications({
+          emailBookings: prefs.emailNotifications?.newBookingsAndReservations || false,
+          emailMessages: prefs.emailNotifications?.messagesFromCustomers || false,
+          emailPayments: prefs.emailNotifications?.paymentConfirmations || false,
+          smsBookings: prefs.smsNotifications?.newBookingsAndReservations || false,
+          smsMessages: prefs.smsNotifications?.messagesFromCustomers || false,
+          smsPayments: prefs.smsNotifications?.paymentConfirmations || false,
+        });
+      }
+    }
+  }, [userProfile]);
+
   const handleProfileSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Profile updated:", profile);
-    // Implement profile update
+    
+    if (!profile.name.trim()) {
+      alert('Name is required');
+      return;
+    }
+
+    const updateData = {
+      name: profile.name,
+      email: profile.email || undefined,
+      address: profile.address || undefined,
+      gender: profile.gender || undefined,
+      ...(locationData && { location: locationData }),
+      ...(profileImage && { image: profileImage }),
+    };
+
+    updateProfileMutation.mutate(updateData, {
+      onSuccess: () => {
+        alert('Profile updated successfully!');
+        refetch();
+      },
+      onError: (error: unknown) => {
+        alert('Failed to update profile. Please try again.');
+        console.error('Profile update error:', error);
+      },
+    });
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setProfileImage(file);
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setPreviewUrl(event.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const handleNotificationChange = (key: keyof typeof notifications) => {
@@ -30,6 +106,33 @@ export default function DashboardSettingsPage() {
       ...prev,
       [key]: !prev[key],
     }));
+  };
+
+  const handleNotificationSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const notificationData = {
+      emailNotifications: {
+        newBookingsAndReservations: notifications.emailBookings,
+        messagesFromCustomers: notifications.emailMessages,
+        paymentConfirmations: notifications.emailPayments,
+      },
+      smsNotifications: {
+        newBookingsAndReservations: notifications.smsBookings,
+        messagesFromCustomers: notifications.smsMessages,
+        paymentConfirmations: notifications.smsPayments,
+      },
+    };
+
+    updateNotificationMutation.mutate(notificationData, {
+      onSuccess: () => {
+        alert('Notification preferences updated successfully!');
+      },
+      onError: (error: unknown) => {
+        alert('Failed to update notification preferences. Please try again.');
+        console.error('Notification update error:', error);
+      },
+    });
   };
 
   return (
@@ -42,54 +145,114 @@ export default function DashboardSettingsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
         <div className="bg-white rounded-lg shadow p-4 md:p-6">
           <h2 className="text-base md:text-lg font-semibold text-gray-900 mb-4 md:mb-6">Profile Information</h2>
-          <form onSubmit={handleProfileSubmit} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
-              <input
-                type="text"
-                value={profile.name}
-                onChange={(e) => setProfile((prev) => ({ ...prev, name: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+          
+          {isLoading ? (
+            <div className="flex justify-center items-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             </div>
+          ) : (
+            <form onSubmit={handleProfileSubmit} className="space-y-4">
+              {/* Profile Image Upload */}
+              <div className="flex flex-col items-center mb-6">
+                <div className="relative">
+                  <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+                    {previewUrl ? (
+                      <img
+                        src={previewUrl}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-gray-400 text-sm">No Image</span>
+                    )}
+                  </div>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  />
+                </div>
+                <p className="text-xs text-gray-500 mt-2">Click to upload profile image</p>
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-              <input
-                type="email"
-                value={profile.email}
-                onChange={(e) => setProfile((prev) => ({ ...prev, email: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
+                <input
+                  type="text"
+                  required
+                  value={profile.name}
+                  onChange={(e) => setProfile((prev) => ({ ...prev, name: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-              <input
-                type="tel"
-                value={profile.phone}
-                onChange={(e) => setProfile((prev) => ({ ...prev, phone: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <input
+                  type="email"
+                  value={profile.email}
+                  onChange={(e) => setProfile((prev) => ({ ...prev, email: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Business Name</label>
-              <input
-                type="text"
-                value={profile.businessName}
-                onChange={(e) => setProfile((prev) => ({ ...prev, businessName: e.target.value }))}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-            </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                <select
+                  value={profile.gender}
+                  onChange={(e) => setProfile((prev) => ({ ...prev, gender: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Select Gender</option>
+                  <option value={Gender.Male}>Male</option>
+                  <option value={Gender.Female}>Female</option>
+                  <option value={Gender.NonBinary}>Non-Binary</option>
+                  <option value={Gender.PreferNotToSay}>Prefer Not To Say</option>
+                </select>
+              </div>
 
-            <button
-              type="submit"
-              className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              Update Profile
-            </button>
-          </form>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                <input
+                  type="text"
+                  value={profile.address}
+                  onChange={(e) => setProfile((prev) => ({ ...prev, address: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Your address"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                <div className="border border-gray-300 rounded-md overflow-hidden">
+                  <Map
+                    coords={locationData ? `${locationData.latitude},${locationData.longitude}` : '41.2995,69.2401'}
+                    height="300"
+                    onLocationClick={(coords) => {
+                      const [lat, lng] = coords.split(',').map(Number);
+                      setLocationData({ latitude: lat, longitude: lng });
+                    }}
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={updateProfileMutation.isPending}
+                className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {updateProfileMutation.isPending ? (
+                  <span className="flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    Updating...
+                  </span>
+                ) : (
+                  "Update Profile"
+                )}
+              </button>
+            </form>
+          )}
         </div>
 
         <div className="bg-white rounded-lg shadow p-4 md:p-6">
@@ -137,6 +300,23 @@ export default function DashboardSettingsPage() {
               </div>
             </div>
           </div>
+          
+          <form onSubmit={handleNotificationSubmit} className="mt-6">
+            <button
+              type="submit"
+              disabled={updateNotificationMutation.isPending}
+              className="w-full px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {updateNotificationMutation.isPending ? (
+                <span className="flex items-center justify-center">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                  Saving...
+                </span>
+              ) : (
+                'Save Notification Preferences'
+              )}
+            </button>
+          </form>
         </div>
       </div>
 

@@ -1,5 +1,5 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { RentalOwnSeekApi, RentalRecord, QueryResponse, FindRentalRecordsOwnQuery } from '@beribturing/api-stub';
+import { RentalOwnSeekApi, RentalRecordRdo, QueryResponse, FindRentalRecordsOwnQuery } from '@beribturing/api-stub';
 import { useState } from 'react';
 
 const mockData = [
@@ -17,31 +17,23 @@ const mockData = [
     },
     rentedAt: new Date('2023-01-01T10:00:00Z').toISOString(),
     returnedAt: new Date('2023-01-10T10:00:00Z').toISOString(),
-    product: {
-      id: 'product-12345',
+    productRentalRecordRdo: {
+      amount: 100,
+      currency: 'USD',
+      productId: 'product-12345',
       title: 'Mountain Bike',
       description: 'A sturdy mountain bike for all terrains.',
-      category: {
-        id: 'category-12345',
-        name: 'Bikes',
-      },
-      productVariant: {
-        id: 'variant-12345',
-        name: 'Mountain Bike - Large',
-        price: {
-          currency: {
-            amount: 100,
-            currency: 'USD',
-          },
-          unit: 'DAILY',
-        },
-      },
+      categoryId: 'category-12345',
+      name: 'Bikes',
+      productVariantId: 'variant-12345',
+      model: 'Mountain Bike - Large',
+      unit: 'DAILY',
     },
     fee: {
       amount: 10,
       currency: 'USD',
     },
-    deposit: {
+    rentalDeposit: {
       id: 'deposit-12345',
       amount: 50,
       currency: 'USD',
@@ -64,7 +56,7 @@ export const useRentalRecordsPaginated = () => {
 
   const { queryKey, queryFn } = RentalOwnSeekApi.query.findRentalRecords({ ...query });
 
-  const { isLoading, data, refetch }: UseQueryResult<QueryResponse<any[]>> = useQuery({
+  const { isLoading, data, refetch }: UseQueryResult<QueryResponse<RentalRecordRdo[]>> = useQuery({
     queryKey,
     queryFn,
   });
@@ -140,9 +132,9 @@ export const useRentalRecordsPaginated = () => {
 
   return {
     query,
-    rentalRecords: (data?.result || mockData) as any[],
+    rentalRecords: ((!!data?.result && data.result.length > 0) ? data.result : mockData) as RentalRecordRdo[],
     refetchRentalRecords: refetch,
-    rentalRecordsIsLoading: isLoading,
+    rentalRecordsAreLoading: isLoading,
     total: data?.offset.totalCount || 0,
     offset: data?.offset.offset || 0,
     limit: data?.offset.limit || 10,

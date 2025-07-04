@@ -1,17 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ColumnConfig, TableList } from '../../../components/shared/TableList';
-import { CustomPagination } from '../../../components/shared/CustomPagination';
-import { Title } from '../../../components/shared/Title';
-import { Filter } from '../../../components/shared/Filter';
-import { SearchBar } from '../../../components/shared/SearchBar';
-import { DeleteModal } from '../../../components/shared/DeleteModal';
-import { useRentalRecordsPaginated } from "~/hooks/rental/useRentalRecordsPaginated";
+import { ColumnConfig, TableList } from '~/components/shared/TableList';
+import { CustomPagination } from '~/components/shared/CustomPagination';
+import { Title } from '~/components/shared/Title';
+import { Filter } from '~/components/shared/Filter';
+import { SearchBar } from '~/components/shared/SearchBar';
+import { DeleteModal } from '~/components/shared/DeleteModal';
+import { useRentalRecordsPaginated } from '~/hooks/rental/useRentalRecordsPaginated';
 
 export default function DashboardRentalsPage() {
-  const [filter, setFilter] = useState<'all' | 'pending' | 'confirmed' | 'active' | 'completed'>('all');
+  //
   const {
     rentalRecords,
+    rentalRecordsAreLoading,
     offset,
     total,
     limit,
@@ -22,21 +23,7 @@ export default function DashboardRentalsPage() {
     fetchByNewQuery,
   } = useRentalRecordsPaginated();
 
-  // useEffect(() => {
-  //   fetch('/api/bookings')
-  //     .then((res) => res.json())
-  //     .then((data) => {
-  //       setBookings(data);
-  //       setLoading(false);
-  //     });
-  // }, []);
 
-  // const filteredBookings = bookings.filter((booking) => {
-  //   if (filter === 'all') return true;
-  //   return booking.status.toLowerCase() === filter;
-  // });
-
-  // 2. Column config
   const columns: ColumnConfig<any>[] = [
     {
       field: 'name', title: 'Customer',
@@ -51,8 +38,8 @@ export default function DashboardRentalsPage() {
       title: 'Product',
       cell: item => (
         <div>
-          <span className="font-semibold">{item.product.title}</span>
-          <span className="text-gray-500 text-sm">(Category: {item.product.category.name})</span>
+          <span className="font-semibold">{item.productRentalRecordRdo.title}</span>
+          <span className="text-gray-500 text-sm">(Category: {item.productRentalRecordRdo.name})</span>
         </div>
       ),
     },
@@ -60,9 +47,9 @@ export default function DashboardRentalsPage() {
       title: 'Product Variant',
       cell: item => (
         <div>
-          <span className="font-semibold">{item.product.productVariant.name}</span>
+          <span className="font-semibold">{item.productRentalRecordRdo.model}</span>
           <span
-            className="text-gray-500 text-sm">({item.product.productVariant.price.currency.amount} {item.product.productVariant.price.currency.currency})</span>
+            className="text-gray-500 text-sm">({item.productRentalRecordRdo.amount} {item.productRentalRecordRdo.currency})</span>
         </div>
       ),
     },
@@ -98,40 +85,38 @@ export default function DashboardRentalsPage() {
   ];
 
   const statusOptions = [
-    { id: 1, name: 'All' },
-    { id: 2, name: 'Active' },
-    { id: 3, name: 'Completed' },
-    { id: 4, name: 'Cancelled' },
-    { id: 5, name: 'Overdue' },
+    { id: 'All', name: 'All' },
+    { id: 'Active', name: 'Active' },
+    { id: 'Completed', name: 'Completed' },
+    { id: 'Cancelled', name: 'Cancelled' },
+    { id: 'Overdue', name: 'Overdue' },
   ];
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  // if (loading) {
-  //     return (
-  //         <div className="animate-pulse">
-  //             <div className="bg-white rounded-lg shadow h-96"></div>
-  //         </div>
-  //     );
-  // }
+  if (rentalRecordsAreLoading) {
+    return (
+          <div className="animate-pulse">
+              <div className="bg-white rounded-lg shadow h-96"></div>
+          </div>
+    );
+  }
 
   return (
     <div>
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-3 gap-4 sm:gap-0">
         <Title title="Rental"/>
-        <Link
-          to={`/dashboard/rentals/calendar`}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-center sm:text-left"
-        >
-          Calendar View
-        </Link>
       </div>
 
       <div className="mb-4">
         <div className="flex flex-wrap gap-2">
-          <Filter label="Status" values={statusOptions} onChange={(value) => {
+          <Filter label="Status" value={searchQuery.status} values={statusOptions} onChange={(value) => {
+            const statusValue = value === 'All' ? undefined : value;
+            changeSearchProperties('status', statusValue);
           }}/>
-          <SearchBar placeholder="Search..." onSearch={(value) => console.log('Searching for:', value)}/>
+          <SearchBar placeholder="Search..." onSearch={(value) => {
+            fetchByNewQuery('searchKeyword', value);
+          }}/>
         </div>
       </div>
 

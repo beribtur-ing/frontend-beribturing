@@ -1,77 +1,76 @@
-import type React from "react"
-import {useState} from "react"
+import type React from 'react';
+import { useState } from 'react';
 
-import {ArrowLeft, Eye, EyeOff, Lock, Phone} from "lucide-react"
-import { Link } from "react-router-dom"
-import {useAuth} from "../../hooks"
-import {useNavigate} from "react-router-dom"
+import { ArrowLeft, Eye, EyeOff, Lock, Phone } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../hooks';
 
 export default function SignInPage() {
-  const [showPassword, setShowPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
-    phone: "",
-    password: "",
+    phone: '',
+    password: '',
     rememberMe: false,
-  })
-  const [error, setError] = useState("")
-  const { signIn, isSigningIn } = useAuth()
-  const navigate = useNavigate()
+  });
+  const [error, setError] = useState('');
+  const { signIn, isSigningIn } = useAuth();
+  const navigate = useNavigate();
 
   const formatPhoneNumber = (value: string) => {
     // Remove all non-digits
-    let phoneNumber = value.replace(/\D/g, "")
-    
+    let phoneNumber = value.replace(/\D/g, '');
+
     // Auto-add country code if not present
     if (phoneNumber.length > 0 && !phoneNumber.startsWith('998')) {
-      phoneNumber = '998' + phoneNumber
+      phoneNumber = '998' + phoneNumber;
     }
 
     // Format as +998 XX XXX-XX-XX
     if (phoneNumber.length >= 12) {
-      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(8, 10)}-${phoneNumber.slice(10, 12)}`
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(8, 10)}-${phoneNumber.slice(10, 12)}`;
     } else if (phoneNumber.length >= 8) {
-      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(8)}`
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(8)}`;
     } else if (phoneNumber.length >= 5) {
-      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5)}`
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5)}`;
     } else if (phoneNumber.length >= 3) {
-      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3)}`
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3)}`;
     } else {
-      return phoneNumber ? `+${phoneNumber}` : ""
+      return phoneNumber ? `+${phoneNumber}` : '';
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError("")
+    e.preventDefault();
+    setError('');
 
     // Clean phone number for API (remove +, spaces, and hyphens)
-    const cleanPhone = formData.phone.replace(/[\s\-+]/g, '')
-    
-    const success = await signIn(cleanPhone, formData.password)
+    const cleanPhone = formData.phone.replace(/[\s\-+]/g, '');
+
+    const success = await signIn(cleanPhone, formData.password);
 
     if (success) {
-      navigate("/")
+      navigate('/');
     } else {
-      setError("Invalid phone number or password. Try +998 90 123-45-67 with password 'password'")
+      setError("Invalid phone number or password. Try +998 90 123-45-67 with password 'password'");
     }
-  }
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value, type, checked } = e.target
+    const { name, value, type, checked } = e.target;
 
-    if (name === "phone") {
-      const formatted = formatPhoneNumber(value)
+    if (name === 'phone') {
+      const formatted = formatPhoneNumber(value);
       setFormData((prev) => ({
         ...prev,
         [name]: formatted,
-      }))
+      }));
     } else {
       setFormData((prev) => ({
         ...prev,
-        [name]: type === "checkbox" ? checked : value,
-      }))
+        [name]: type === 'checkbox' ? checked : value,
+      }));
     }
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -140,7 +139,7 @@ export default function SignInPage() {
                 <input
                   id="password"
                   name="password"
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   autoComplete="current-password"
                   required
                   value={formData.password}
@@ -195,7 +194,7 @@ export default function SignInPage() {
                     Signing in...
                   </div>
                 ) : (
-                  "Sign in"
+                  'Sign in'
                 )}
               </button>
             </div>
@@ -205,7 +204,7 @@ export default function SignInPage() {
           {/* Sign up link */}
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
-              Don't have an account?{" "}
+              Don't have an account?{' '}
               <Link to="/auth/signup" className="font-medium text-purple-600 hover:text-purple-500">
                 Sign up for free
               </Link>
@@ -217,7 +216,7 @@ export default function SignInPage() {
       {/* Back to home */}
       <div className="mt-8 text-center">
         <Link
-          href="/"
+          to="/"
           className="inline-flex items-center text-sm text-gray-600 hover:text-purple-600 transition-colors"
         >
           <ArrowLeft className="h-4 w-4 mr-1" />
@@ -225,5 +224,5 @@ export default function SignInPage() {
         </Link>
       </div>
     </div>
-  )
+  );
 }

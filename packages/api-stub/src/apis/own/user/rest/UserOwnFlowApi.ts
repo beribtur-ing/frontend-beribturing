@@ -1,4 +1,4 @@
-import {ModifyProfileOwnCommand} from "~/apis";
+import {ModifyProfileOwnCommand, UpdateNotificationPreferencesOwnCommand} from "~/apis";
 import {CommandResponse} from "~/models";
 import axios from "axios";
 
@@ -10,21 +10,28 @@ const modifyProfile = (variables: {
   gender?: string;
   email?: string;
   address?: string;
-  location?: string;
-  profileImage?: File;
+  location?: { latitude: number; longitude: number };
+  image?: File;
 }) => {
   const formData = new FormData();
   
-  // Add command fields
-  formData.append('name', variables.name);
-  if (variables.gender) formData.append('gender', variables.gender);
-  if (variables.email) formData.append('email', variables.email);
-  if (variables.address) formData.append('address', variables.address);
-  if (variables.location) formData.append('location', variables.location);
+  // Create command object
+  const command: any = {
+    name: variables.name,
+  };
+  
+  if (variables.gender) command.gender = variables.gender;
+  if (variables.email) command.email = variables.email;
+  if (variables.address) command.address = variables.address;
+  if (variables.location) command.location = variables.location;
+  
+  // Add command as JSON blob with proper content type
+  const commandBlob = new Blob([JSON.stringify(command)], { type: 'application/json' });
+  formData.append('command', commandBlob);
   
   // Add profile image if provided
-  if (variables.profileImage) {
-    formData.append('profileImage', variables.profileImage);
+  if (variables.image) {
+    formData.append('image', variables.image);
   }
   
   return axios.post<CommandResponse<boolean>>(url('modify-profile/command'), formData, {
@@ -34,6 +41,23 @@ const modifyProfile = (variables: {
   });
 };
 
+const updateNotificationPreferences = (variables: {
+  emailNotifications: {
+    newBookingsAndReservations: boolean;
+    messagesFromCustomers: boolean;
+    paymentConfirmations: boolean;
+  };
+  smsNotifications: {
+    newBookingsAndReservations: boolean;
+    messagesFromCustomers: boolean;
+    paymentConfirmations: boolean;
+  };
+}) => {
+  const command = <UpdateNotificationPreferencesOwnCommand>{ ...variables };
+  return axios.post<CommandResponse<string>>(url('update-notification-preferences/command'), command);
+};
+
 export default {
   modifyProfile,
-}
+  updateNotificationPreferences,
+};

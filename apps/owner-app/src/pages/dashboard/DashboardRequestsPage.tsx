@@ -1,58 +1,40 @@
-import { useState, useEffect } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import type { Reservation } from '../../lib/types';
+import { Link } from 'react-router-dom';
+import { useReservationRdosPaginated } from '~/hooks';
+import { ReservationStatus, Size } from '@beribturing/api-stub';
 
 export default function DashboardRequestsPage() {
-  const [requests, setRequests] = useState<Reservation[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'pending' | 'confirmed' | 'cancelled'>('all');
+  //
+  const { reservationRdos, refetchReservationRdos, searchQuery, reservationRdosAreLoading, fetchByNewQuery } = useReservationRdosPaginated();
 
-  useEffect(() => {
-    fetch('/api/reservations')
-      .then((res) => res.json())
-      .then((data) => {
-        setRequests(Array.isArray(data) ? data : []);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error('Error fetching requests:', error);
-        setRequests([]);
-        setLoading(false);
-      });
-  }, []);
+  const formatSize = (size: Size) => {
+    if (size.label) {
+      return size.label;
+    }
+    
+    if (size.width || size.height || size.depth) {
+      const dimensions = [];
+      if (size.width) dimensions.push(`${size.width}cm`);
+      if (size.height) dimensions.push(`${size.height}cm`);
+      if (size.depth) dimensions.push(`${size.depth}cm`);
+      return dimensions.join('×');
+    }
+    
+    return 'N/A';
+  };
 
   const handleApprove = async (id: string) => {
-    try {
-      const response = await fetch(`/api/reservations/${id}/approve`, {
-        method: 'POST',
-      });
-
-      if (response.ok) {
-        setRequests((prev) => prev.map((req) => (req.id === id ? { ...req, status: 'CONFIRMED' as const } : req)));
-      }
-    } catch (error) {
-      alert('Failed to approve request');
-    }
+    //
+    // Implement approval logic here
+    alert(`Approving request with ID: ${id}`);
+    await refetchReservationRdos();
   };
 
   const handleReject = async (id: string) => {
-    try {
-      const response = await fetch(`/api/reservations/${id}/reject`, {
-        method: 'POST',
-      });
-
-      if (response.ok) {
-        setRequests((prev) => prev.map((req) => (req.id === id ? { ...req, status: 'CANCELLED' as const } : req)));
-      }
-    } catch (error) {
-      alert('Failed to reject request');
-    }
+    //
+    // Implement rejection logic here
+    alert(`Rejecting request with ID: ${id}`);
+    await refetchReservationRdos();
   };
-
-  const filteredRequests = requests.filter((request) => {
-    if (filter === 'all') return true;
-    return request.status.toLowerCase() === filter;
-  });
 
   const getStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -75,7 +57,7 @@ export default function DashboardRequestsPage() {
     });
   };
 
-  if (loading) {
+  if (reservationRdosAreLoading) {
     return (
       <div className="animate-pulse">
         <div className="bg-white rounded-lg shadow h-96"></div>
@@ -92,17 +74,17 @@ export default function DashboardRequestsPage() {
 
       <div className="mb-6 overflow-x-auto">
         <div className="flex flex-wrap gap-2">
-          {['all', 'pending', 'confirmed', 'cancelled'].map((status) => (
+          {(['all', ...Object.values(ReservationStatus)] as const).map((status) => (
             <button
-              key={status}
-              onClick={() => setFilter(status as any)}
+              key={String(status)}
+              onClick={() => fetchByNewQuery('status', status === 'all' ? undefined : (status as string))}
               className={`px-3 py-2 text-xs md:text-sm font-medium rounded-lg capitalize ${
-                filter === status
+                searchQuery.status === status || searchQuery.status === undefined && status === 'all'
                   ? 'bg-blue-600 text-white'
                   : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
               }`}
             >
-              {status}
+              {String(status)}
             </button>
           ))}
         </div>
@@ -112,83 +94,81 @@ export default function DashboardRequestsPage() {
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
-              <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Customer
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
-                <th className="hidden md:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Period
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Status
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
-              </tr>
+            <tr>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Customer
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
+              <th
+                className="hidden md:table-cell px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Period
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Status
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                Actions
+              </th>
+            </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredRequests.map((request) => (
-                <tr key={request.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-4 whitespace-nowrap">
-                    <div className="text-sm font-medium text-gray-900">{request.requester.name}</div>
-                    <div className="text-xs sm:text-sm text-gray-500 hidden sm:block">
-                      {request.requester.phoneNumber}
-                    </div>
-                  </td>
-                  <td className="px-4 py-4 whitespace-nowrap">
-                    <div className="text-sm text-gray-900">
-                      {request.productVariant.brand} {request.productVariant.model}
-                    </div>
-                    <div className="text-xs sm:text-sm text-gray-500 hidden sm:block">
-                      {request.productVariant.color} • {request.productVariant.size}
-                    </div>
-                  </td>
-                  <td className="hidden md:table-cell px-4 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {formatDate(request.period.startDate)} - {formatDate(request.period.endDate)}
-                  </td>
-                  <td className="px-4 py-4 whitespace-nowrap">
+            {reservationRdos.map((reservationRdo) => (
+              <tr key={reservationRdo.id} className="hover:bg-gray-50">
+                <td className="px-4 py-4 whitespace-nowrap">
+                  <div className="text-sm font-medium text-gray-900">{reservationRdo.requesterName}</div>
+                </td>
+                <td className="px-4 py-4 whitespace-nowrap">
+                  <div className="text-sm text-gray-900">
+                    {reservationRdo.variantBrand} {reservationRdo.variantModel}
+                  </div>
+                  <div className="text-xs sm:text-sm text-gray-500 hidden sm:block">
+                    {reservationRdo.variantColor} • {formatSize(reservationRdo.variantSize)}
+                  </div>
+                </td>
+                <td className="hidden md:table-cell px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {formatDate(reservationRdo.period.startDateTime)} - {formatDate(reservationRdo.period.endDateTime)}
+                </td>
+                <td className="px-4 py-4 whitespace-nowrap">
                     <span
                       className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(
-                        request.status,
+                        reservationRdo.status,
                       )}`}
                     >
-                      {request.status}
+                      {reservationRdo.status}
                     </span>
-                  </td>
-                  <td className="px-4 py-4 whitespace-nowrap text-xs md:text-sm font-medium">
-                    <div className="flex flex-col sm:flex-row gap-1 sm:gap-2">
-                      <Link to={`/dashboard/requests/${request.id}`} className="text-blue-600 hover:text-blue-900">
-                        View
-                      </Link>
-                      {request.status === 'PENDING' && (
-                        <>
-                          <button
-                            onClick={() => handleApprove(request.id)}
-                            className="text-green-600 hover:text-green-900"
-                          >
-                            Approve
-                          </button>
-                          <button onClick={() => handleReject(request.id)} className="text-red-600 hover:text-red-900">
-                            Reject
-                          </button>
-                        </>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
+                </td>
+                <td className="px-4 py-4 whitespace-nowrap text-xs md:text-sm font-medium">
+                  <div className="flex flex-col sm:flex-row gap-1 sm:gap-2">
+                    <Link to={`/dashboard/requests/${reservationRdo.id}`} className="text-blue-600 hover:text-blue-900">
+                      View
+                    </Link>
+                    {reservationRdo.status === 'PENDING' && (
+                      <>
+                        <button
+                          onClick={() => handleApprove(reservationRdo.id)}
+                          className="text-green-600 hover:text-green-900"
+                        >
+                          Approve
+                        </button>
+                        <button onClick={() => handleReject(reservationRdo.id)} className="text-red-600 hover:text-red-900">
+                          Reject
+                        </button>
+                      </>
+                    )}
+                  </div>
+                </td>
+              </tr>
+            ))}
             </tbody>
           </table>
         </div>
       </div>
 
-      {filteredRequests.length === 0 && (
+      {reservationRdos.length === 0 && (
         <div className="text-center py-12 bg-white rounded-lg shadow">
           <h3 className="text-lg font-medium text-gray-900 mb-2">No requests found</h3>
           <p className="text-gray-600">
-            {filter === 'all' ? "You don't have any requests yet." : `No ${filter} requests at the moment.`}
+            {searchQuery.status === 'all' ? "You don't have any requests yet." : `No ${searchQuery.status} requests at the moment.`}
           </p>
         </div>
       )}

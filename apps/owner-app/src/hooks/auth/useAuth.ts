@@ -4,8 +4,10 @@ import {
   AccountSignInOwnQuery,
   AccountSignInTokenRdo,
   AuthOwnSeekApi,
+  AuthOwnFlowApi,
   FirstParameter,
   QueryResponse,
+  CommandResponse,
   UserOwnSeekApi,
 } from '@beribturing/api-stub';
 import {useAuthContext} from '~/lib/auth';
@@ -47,6 +49,40 @@ export const useAuth = () => {
     },
   });
 
+  const refreshTokenMutation = useMutation<
+  AxiosResponse<CommandResponse<AccountSignInTokenRdo>>,
+  unknown,
+  FirstParameter<typeof AuthOwnFlowApi.refreshToken>
+  >({
+    mutationFn: AuthOwnFlowApi.refreshToken,
+    onSuccess: async (response) => {
+      const tokenData = response.data.result;
+      if (tokenData) {
+        setTokens(tokenData);
+      }
+    },
+    onError: (error) => {
+      console.error('Refresh token failed:', error);
+      signOut();
+    },
+  });
+
+  const refreshToken = async (): Promise<boolean> => {
+    try {
+      if (!tokens?.refreshToken) {
+        return false;
+      }
+
+      await refreshTokenMutation.mutateAsync({
+        refreshToken: tokens.refreshToken,
+      });
+      return true;
+    } catch (error) {
+      console.error('Token refresh error:', error);
+      return false;
+    }
+  };
+
   const signIn = async (phoneNumber: string, password: string): Promise<boolean> => {
     try {
       const query: AccountSignInOwnQuery = {
@@ -71,7 +107,9 @@ export const useAuth = () => {
     isAuthenticated,
     signIn,
     signOut,
+    refreshToken,
     error: signInMutation.error,
     isSigningIn: signInMutation.isPending,
+    isRefreshing: refreshTokenMutation.isPending,
   };
 };

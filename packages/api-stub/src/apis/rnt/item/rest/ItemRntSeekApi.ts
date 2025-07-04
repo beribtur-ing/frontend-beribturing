@@ -3,24 +3,20 @@ import {
   FindProductCategoryRdoRntQuery,
   FindProductRdosRntQuery,
   FindProductRdoRntQuery,
+  FindPopularProductRdosRntQuery,
 } from '~/apis';
-import { QueryResponse, ProductCategoryRdo, ProductRdo, FirstParameter, Offset } from '~/models';
+import { QueryResponse, ProductCategoryRdo, ProductRdo, FirstParameter, Offset, PopularProductRdo } from '~/models';
 import axios from 'axios';
 
-const url = (path: string) => `/api/feature/rnt/item/${path}`;
+const url = (path: string) => `/api/feature/renter/item/${path}`;
 
 // Product Category Queries
-const findProductCategoryRdos = (variables: {
-  searchKeyword?: string;
-  offset?: Offset;
-}) => {
+const findProductCategoryRdos = (variables: { searchKeyword?: string; offset?: Offset }) => {
   const query = <FindProductCategoryRdosRntQuery>{ ...variables };
   return axios.post<QueryResponse<ProductCategoryRdo[]>>(url('find-product-category-rdos/query'), query);
 };
 
-const findProductCategoryRdo = (variables: {
-  categoryId: string;
-}) => {
+const findProductCategoryRdo = (variables: { categoryId: string }) => {
   const query = <FindProductCategoryRdoRntQuery>{ ...variables };
   return axios.post<QueryResponse<ProductCategoryRdo>>(url('find-product-category-rdo/query'), query);
 };
@@ -39,9 +35,12 @@ const findProductRdos = (variables: {
   return axios.post<QueryResponse<ProductRdo[]>>(url('find-product-rdos/query'), query);
 };
 
-const findProductRdo = (variables: {
-  productId: string;
-}) => {
+const findPopularProductRdos = (variables: { maxCount?: number; offset?: Offset }) => {
+  const query = <FindPopularProductRdosRntQuery>{ ...variables };
+  return axios.post<QueryResponse<PopularProductRdo[]>>(url('find-popular-product-rdos/query'), query);
+};
+
+const findProductRdo = (variables: { productId: string }) => {
   const query = <FindProductRdoRntQuery>{ ...variables };
   return axios.post<QueryResponse<ProductRdo>>(url('find-product-rdo/query'), query);
 };
@@ -54,6 +53,7 @@ export default {
   // Product queries
   findProductRdos,
   findProductRdo,
+  findPopularProductRdos,
 
   query: {
     // Product Category query keys
@@ -74,6 +74,12 @@ export default {
       queryKey: ['feature/rnt/item', 'findProductRdos', params],
       queryFn: async ({ queryKey }: { queryKey: readonly any[] }) =>
         (await findProductRdos(queryKey.slice().pop()))?.data,
+    }),
+
+    findPopularProductRdos: (params: FirstParameter<typeof findPopularProductRdos>) => ({
+      queryKey: ['feature/rnt/item', 'findPopularProductRdos', params],
+      queryFn: async ({ queryKey }: { queryKey: readonly any[] }) =>
+        (await findPopularProductRdos(queryKey.slice().pop()))?.data,
     }),
 
     findProductRdo: (params: FirstParameter<typeof findProductRdo>) => ({

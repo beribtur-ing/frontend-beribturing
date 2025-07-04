@@ -22,6 +22,13 @@ export const useUserMutation = () => {
       >({
         mutationFn: UserRntFlowApi.modifyProfile,
       }),
+      changePassword: useMutation<
+        AxiosResponse<CommandResponse<string>>,
+        unknown,
+        FirstParameter<typeof UserRntFlowApi.changePassword>
+      >({
+        mutationFn: UserRntFlowApi.changePassword,
+      }),
     },
   };
 };

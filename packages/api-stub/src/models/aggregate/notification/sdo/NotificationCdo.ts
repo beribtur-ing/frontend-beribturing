@@ -1,10 +1,11 @@
-import { CreationDataObject } from '~/models';
-import { NotificationType } from '../vo';
+import {CreationDataObject, NotificationMessage} from '~/models';
+import {ChannelType, NotificationType } from '../vo';
 
 export interface NotificationCdo extends CreationDataObject {
-  recipientId: string;
-  message: string;
+  //
+  senderId: string
+  receiverId: string;
   type: NotificationType;
-  read: boolean;
-  timestamp: Date;
+  message: NotificationMessage;
+  channelType: ChannelType;
 }

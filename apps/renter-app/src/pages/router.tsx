@@ -3,7 +3,7 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { LocalizedLayout } from '~/components/localized-layout';
 
 // Import pages
-import HomePage from './HomePage';
+import HomePage from './home/HomePage';
 import AuthSignInPage from './auth/AuthSignInPage';
 import AuthSignUpPage from './auth/AuthSignUpPage';
 import AuthForgotPasswordPage from './auth/AuthForgotPasswordPage';

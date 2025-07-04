@@ -111,8 +111,9 @@ services:
 
 networks:
   beribturing-network:
-    driver: bridge
+    external: true
     name: beribturing-network
+
 
 volumes:
   nginx-logs:

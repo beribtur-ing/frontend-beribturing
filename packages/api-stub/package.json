@@ -18,7 +18,8 @@
     "build": "vite build && ttsc -p src/tsconfig.json"
   },
   "dependencies": {
-    "axios": "^1"
+    "axios": "^1",
+    "nats.ws": "^1.30.3"
   },
   "browserslist": {
     "production": [

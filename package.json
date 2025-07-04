@@ -76,6 +76,8 @@
     "install": "^0.13.0",
     "internmap": "^2.0.3",
     "lodash": "^4.17.21",
+    "notistack": "^3",
+    "goober": "^2.1.16",
     "npm": "^11.4.2",
     "object-assign": "^4.1.1",
     "papaparse": "^5.5.3",
@@ -111,7 +113,8 @@
     "hoist-non-react-statics": "^3.3.2",
     "@emotion/sheet": "^1.4.0",
     "stylis": "^4.3.6",
-    "void-elements": "^3.1.0"
+    "void-elements": "^3.1.0",
+    "axios": "^1.10.0"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^12.1.3",
