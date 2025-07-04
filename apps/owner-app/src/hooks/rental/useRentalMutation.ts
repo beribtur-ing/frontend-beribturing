@@ -26,6 +26,16 @@ export const useRentalMutation = () => {
       unknown,
       FirstParameter<typeof RentalOwnFlowApi.registerItemConditionPhoto>
       >(RentalOwnFlowApi.registerItemConditionPhoto as any, {}),
+      approveReservation: useMutation<
+      AxiosResponse<CommandResponse<string>>,
+      unknown,
+      FirstParameter<typeof RentalOwnFlowApi.approveReservation>
+      >(RentalOwnFlowApi.approveReservation as any, {}),
+      rejectReservation: useMutation<
+      AxiosResponse<CommandResponse<string>>,
+      unknown,
+      FirstParameter<typeof RentalOwnFlowApi.rejectReservation>
+      >(RentalOwnFlowApi.rejectReservation as any, {}),
     },
   };
 };

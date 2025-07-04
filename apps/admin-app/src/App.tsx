@@ -6,30 +6,34 @@ import { AuthProvider } from './lib/auth';
 import './globals.css';
 import React, { useMemo } from 'react';
 import axios from 'axios';
+import { SnackbarProvider } from 'notistack';
 
 const App = () => {
   const router = useMemo(() => browserRouter, []);
   const queryClient = useMemo(() => new QueryClient(), []);
 
-    axios.interceptors.request.use(
-        (config) => {
-            const token = JSON.parse(localStorage.getItem('admin_tokens') || '{}')?.accessToken; // or use your auth state/store
-            if (token) {
-                config.headers.Authorization = `Bearer ${token}`;
-            }
-            return config;},
-        (error) => Promise.reject(error),
-    );
+  axios.interceptors.request.use(
+    (config) => {
+      const token = JSON.parse(localStorage.getItem('admin_tokens') || '{}')?.accessToken; // or use your auth state/store
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    },
+    (error) => Promise.reject(error),
+  );
 
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme="light" storageKey="admin-app-theme">
-        <AuthProvider>
-          <RouterProvider router={router} />
-        </AuthProvider>
+        <SnackbarProvider classes={{ containerAnchorOriginTopRight: 'custom-snackbar' }}>
+          <AuthProvider>
+            <RouterProvider router={router}/>
+          </AuthProvider>
+        </SnackbarProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );
 };
 
-export default App
+export default App;

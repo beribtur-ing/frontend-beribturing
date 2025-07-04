@@ -9,7 +9,7 @@ const mockData: ReservationRdo[] = [
     requesterName: 'Alice Johnson',
     period: {
       startDateTime: new Date('2024-02-01T09:00:00Z'),
-      endDateTime: new Date('2024-02-03T17:00:00Z')
+      endDateTime: new Date('2024-02-03T17:00:00Z'),
     },
     status: 'Pending',
     productId: 'product-001',
@@ -20,8 +20,8 @@ const mockData: ReservationRdo[] = [
     variantColor: 'Navy Blue',
     variantSize: {
       label: 'M',
-      measureUnit: 'metric'
-    }
+      measureUnit: 'metric',
+    },
   },
   {
     id: '2',
@@ -29,7 +29,7 @@ const mockData: ReservationRdo[] = [
     requesterName: 'Michael Brown',
     period: {
       startDateTime: new Date('2024-02-05T08:00:00Z'),
-      endDateTime: new Date('2024-02-07T18:00:00Z')
+      endDateTime: new Date('2024-02-07T18:00:00Z'),
     },
     status: 'Approved',
     productId: 'product-002',
@@ -43,8 +43,8 @@ const mockData: ReservationRdo[] = [
       height: 9.8,
       depth: 8.8,
       weight: 0.738,
-      measureUnit: 'metric'
-    }
+      measureUnit: 'metric',
+    },
   },
   {
     id: '3',
@@ -52,7 +52,7 @@ const mockData: ReservationRdo[] = [
     requesterName: 'Sarah Miller',
     period: {
       startDateTime: new Date('2024-02-10T10:00:00Z'),
-      endDateTime: new Date('2024-02-12T16:00:00Z')
+      endDateTime: new Date('2024-02-12T16:00:00Z'),
     },
     status: 'Rejected',
     productId: 'product-003',
@@ -63,8 +63,8 @@ const mockData: ReservationRdo[] = [
     variantColor: 'Red',
     variantSize: {
       label: 'S',
-      measureUnit: 'metric'
-    }
+      measureUnit: 'metric',
+    },
   },
   {
     id: '4',
@@ -72,7 +72,7 @@ const mockData: ReservationRdo[] = [
     requesterName: 'Robert Anderson',
     period: {
       startDateTime: new Date('2024-02-15T09:30:00Z'),
-      endDateTime: new Date('2024-02-17T15:30:00Z')
+      endDateTime: new Date('2024-02-17T15:30:00Z'),
     },
     status: 'Pending',
     productId: 'product-004',
@@ -83,8 +83,8 @@ const mockData: ReservationRdo[] = [
     variantColor: 'Brown',
     variantSize: {
       label: '42',
-      measureUnit: 'metric'
-    }
+      measureUnit: 'metric',
+    },
   },
   {
     id: '5',
@@ -92,7 +92,7 @@ const mockData: ReservationRdo[] = [
     requesterName: 'Amanda White',
     period: {
       startDateTime: new Date('2024-02-20T07:00:00Z'),
-      endDateTime: new Date('2024-02-22T19:00:00Z')
+      endDateTime: new Date('2024-02-22T19:00:00Z'),
     },
     status: 'Approved',
     productId: 'product-005',
@@ -106,8 +106,8 @@ const mockData: ReservationRdo[] = [
       height: 2.21,
       depth: 22.12,
       weight: 1.6,
-      measureUnit: 'metric'
-    }
+      measureUnit: 'metric',
+    },
   },
   {
     id: '6',
@@ -115,7 +115,7 @@ const mockData: ReservationRdo[] = [
     requesterName: 'Kevin Martinez',
     period: {
       startDateTime: new Date('2024-02-25T11:00:00Z'),
-      endDateTime: new Date('2024-02-27T14:00:00Z')
+      endDateTime: new Date('2024-02-27T14:00:00Z'),
     },
     status: 'Approved',
     productId: 'product-006',
@@ -129,9 +129,9 @@ const mockData: ReservationRdo[] = [
       height: 15.0,
       depth: 6.5,
       weight: 0.6,
-      measureUnit: 'metric'
-    }
-  }
+      measureUnit: 'metric',
+    },
+  },
 ];
 
 export const useReservationRdosPaginated = () => {

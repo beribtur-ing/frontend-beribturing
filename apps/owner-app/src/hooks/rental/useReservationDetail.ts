@@ -98,7 +98,10 @@ const mockData: ReservationDetailRdo = {
     modifiedOn: new Date('2024-01-05T09:45:00Z'),
     productId: 'product-001',
     price: {
-      currency: 'USD',
+      currency: {
+        amount: 250,
+        currency: 'USD',
+      },
       unit: 'DAILY',
     },
     color: 'Black',

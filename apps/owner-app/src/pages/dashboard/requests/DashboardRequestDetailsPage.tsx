@@ -1,38 +1,49 @@
 import { Link, useParams } from 'react-router-dom';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 import { PlaceholderImage } from '~/assets';
-import { useReservationDetail } from '~/hooks';
+import { useRentalMutation, useReservationDetail, useToast } from '~/hooks';
 
 export default function DashboardRequestDetailsPage() {
+  //
   const { id } = useParams();
-  const { reservationDetailRdo, reservationDetailRdoIsLoading } = useReservationDetail(id);
+  const { reservationDetailRdo, refetchReservationDetailRdo, reservationDetailRdoIsLoading } = useReservationDetail(id);
+  const { showToast } = useToast();
+
+  const {
+    mutation: {
+      approveReservation,
+      rejectReservation,
+    },
+  } = useRentalMutation();
 
   const handleApprove = async () => {
-    try {
-      const response = await fetch(`/api/reservations/${id}/approve`, {
-        method: 'POST',
-      });
-
-      if (response.ok) {
-        alert('Request approved successfully');
-      }
-    } catch (error) {
-      alert('Failed to approve request');
-    }
+    //
+    await approveReservation.mutateAsync({
+      reservationId: id || '',
+    }, {
+      onSuccess: () => {
+        refetchReservationDetailRdo();
+        showToast('Request approved successfully', 'success');
+      },
+      onError: () => {
+        showToast('Failed to approve request', 'error');
+      },
+    });
   };
 
   const handleReject = async () => {
-    try {
-      const response = await fetch(`/api/reservations/${id}/reject`, {
-        method: 'POST',
-      });
-
-      if (response.ok) {
-        alert('Request rejected successfully');
-      }
-    } catch (error) {
-      alert('Failed to reject request');
-    }
+    //
+    await rejectReservation.mutateAsync({
+      reservationId: id || '',
+    }, {
+      onSuccess: () => {
+        refetchReservationDetailRdo();
+        showToast('Request rejected successfully', 'success');
+      },
+      onError: () => {
+        showToast('Failed to reject request', 'error');
+      },
+    });
   };
 
   const getStatusColor = (status: string) => {
@@ -75,7 +86,7 @@ export default function DashboardRequestDetailsPage() {
       <div className="bg-white rounded-lg shadow p-6">
         <h1 className="text-xl font-bold text-gray-900 mb-4">Request not found</h1>
         <p className="text-gray-600">The reservation request could not be loaded or does not exist.</p>
-        <Link to={`/dashboard/requests`} className="inline-flex items-center text-blue-600 hover:text-blue-800 mt-4">
+        <Link to={'/dashboard/requests'} className="inline-flex items-center text-blue-600 hover:text-blue-800 mt-4">
           <ArrowLeftIcon className="w-4 h-4 mr-1" />
           Back to Requests
         </Link>
@@ -87,13 +98,14 @@ export default function DashboardRequestDetailsPage() {
   const days = reservation.period?.startDateTime && reservation.period?.endDateTime
     ? calculateDays(reservation.period.startDateTime, reservation.period.endDateTime)
     : 0;
-  const totalCost = days * 50; // Using fixed price for now since variant.price might not have daily rate
+  const dailyRate = variant.price?.currency.amount || 0;
+  const totalCost = days * dailyRate;
 
   return (
     <div>
       <div className="mb-8">
         <Link
-          to={`/dashboard/requests`}
+          to={'/dashboard/requests'}
           className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-4"
         >
           <ArrowLeftIcon className="w-4 h-4 mr-1" />
@@ -192,7 +204,7 @@ export default function DashboardRequestDetailsPage() {
           <div className="space-y-1 text-sm">
             <div className="flex justify-between">
               <span>Daily rate:</span>
-              <span>$50/day</span>
+              <span>${dailyRate.toFixed(2)}/day</span>
             </div>
             <div className="flex justify-between">
               <span>Duration:</span>
