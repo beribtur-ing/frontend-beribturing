@@ -2,8 +2,9 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { AxiosResponse } from 'axios';
 import { CommandResponse } from '@beribturing/api-stub';
-import { useToast, useUserMutation } from '~/hooks';
+import { useUserMutation } from '../../hooks/user';
 import { Eye, EyeOff } from 'lucide-react';
+import { useToast } from '~/hooks';
 
 interface ChangePasswordModalProps {
   isOpen: boolean;
@@ -38,12 +39,13 @@ export default function ChangePasswordModal(
     watch,
   } = useForm<ChangePasswordFormData>();
 
-  const { mutation: { changePassword } } = useUserMutation();
+  const { mutation } = useUserMutation();
+  const changePasswordMutation = mutation.changePassword;
 
   const newPassword = watch('newPassword');
 
   const onSubmit = (data: ChangePasswordFormData) => {
-    changePassword.mutateAsync({
+    changePasswordMutation.mutateAsync({
       currentPassword: data.currentPassword,
       newPassword: data.newPassword,
     }).then((response: AxiosResponse<CommandResponse<string>>) => {
@@ -51,11 +53,11 @@ export default function ChangePasswordModal(
       onClose();
       onSuccess?.();
       showToast('Password changed successfully', 'success');
-    }).catch((error: AxiosResponse<CommandResponse>) => {
+    }).catch((error: any) => {
       console.error('Failed to change password:', error);
       // @ts-ignore
       showToast(error?.response?.data?.failureMessage?.exceptionMessage || 'Failed to change password. Please try again.', 'error');
-    })
+    });
   };
 
   const handleClose = () => {
@@ -77,7 +79,7 @@ export default function ChangePasswordModal(
             </label>
             <div className="relative">
               <input
-                type={showCurrentPassword ? "text" : "password"}
+                type={showCurrentPassword ? 'text' : 'password'}
                 {...register('currentPassword', {
                   required: 'Current password is required',
                   minLength: {
@@ -85,7 +87,7 @@ export default function ChangePasswordModal(
                     message: 'Current password cannot be empty',
                   },
                 })}
-                className={`w-full border rounded-md px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                className={`w-full border rounded-md px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.currentPassword ? 'border-red-500' : 'border-gray-300'
                 }`}
                 placeholder="Enter current password"
@@ -125,7 +127,7 @@ export default function ChangePasswordModal(
                     message: 'Password must contain at least one digit, one lowercase letter, one uppercase letter, and one special character (@#$%^*&+=!.,-)',
                   },
                 })}
-                className={`w-full border rounded-md px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                className={`w-full border rounded-md px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.newPassword ? 'border-red-500' : 'border-gray-300'
                 }`}
                 placeholder="Enter new password"
@@ -159,7 +161,7 @@ export default function ChangePasswordModal(
                   validate: (value) =>
                     value === newPassword || 'Passwords do not match',
                 })}
-                className={`w-full border rounded-md px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                className={`w-full border rounded-md px-3 py-2 pr-10 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
                   errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
                 }`}
                 placeholder="Confirm new password"
@@ -186,16 +188,16 @@ export default function ChangePasswordModal(
               type="button"
               onClick={handleClose}
               className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
-              disabled={changePassword.isPending}
+              disabled={changePasswordMutation.isPending}
             >
               Cancel
             </button>
             <button
               type="submit"
-              disabled={changePassword.isPending}
-              className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={changePasswordMutation.isPending}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {changePassword.isPending ? 'Changing...' : 'Change Password'}
+              {changePasswordMutation.isPending ? 'Changing...' : 'Change Password'}
             </button>
           </div>
         </form>

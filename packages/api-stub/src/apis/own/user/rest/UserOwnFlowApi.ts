@@ -1,4 +1,4 @@
-import {ModifyProfileOwnCommand, UpdateNotificationPreferencesOwnCommand} from "~/apis";
+import {ModifyProfileOwnCommand, UpdateNotificationPreferencesOwnCommand, ChangePasswordOwnCommand} from "~/apis";
 import {CommandResponse} from "~/models";
 import axios from "axios";
 
@@ -57,7 +57,16 @@ const updateNotificationPreferences = (variables: {
   return axios.post<CommandResponse<string>>(url('update-notification-preferences/command'), command);
 };
 
+const changePassword = (command: ChangePasswordOwnCommand) => {
+  return axios.post<CommandResponse<string>>(url('change-password/command'), command, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+};
+
 export default {
   modifyProfile,
   updateNotificationPreferences,
+  changePassword,
 };

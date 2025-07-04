@@ -2,8 +2,13 @@ import React, { useState, useEffect } from "react";
 import { useUserMe, useUserMutation } from "../../hooks/user";
 import { Gender } from "@beribturing/api-stub";
 import { Map } from "../../components/map/Map";
+import { ChangePasswordModal } from "../../components/modals";
+import { useToast } from '~/hooks';
 
 export default function DashboardSettingsPage() {
+  //
+
+  const { showToast } = useToast();
   const [profile, setProfile] = useState({
     name: "",
     email: "",
@@ -23,6 +28,8 @@ export default function DashboardSettingsPage() {
     smsMessages: true,
     smsPayments: true,
   });
+
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
 
   // Fetch current user profile using custom hook
   const { userMe: userProfile, isLoading, refetch } = useUserMe();
@@ -44,7 +51,7 @@ export default function DashboardSettingsPage() {
       });
       setLocationData(userProfile.location || undefined);
       setPreviewUrl(userProfile.avatarUrl || '');
-      
+
       // Initialize notification preferences from backend data
       if (userProfile.notificationPreferences) {
         const prefs = userProfile.notificationPreferences;
@@ -62,9 +69,9 @@ export default function DashboardSettingsPage() {
 
   const handleProfileSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!profile.name.trim()) {
-      alert('Name is required');
+      showToast('Name is required', 'warning');
       return;
     }
 
@@ -79,12 +86,11 @@ export default function DashboardSettingsPage() {
 
     updateProfileMutation.mutate(updateData, {
       onSuccess: () => {
-        alert('Profile updated successfully!');
+        showToast('Profile updated successfully!', 'success');
         refetch();
       },
       onError: (error: unknown) => {
-        alert('Failed to update profile. Please try again.');
-        console.error('Profile update error:', error);
+        showToast('Failed to update profile. Please try again.', 'error');
       },
     });
   };
@@ -110,7 +116,7 @@ export default function DashboardSettingsPage() {
 
   const handleNotificationSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const notificationData = {
       emailNotifications: {
         newBookingsAndReservations: notifications.emailBookings,
@@ -126,10 +132,10 @@ export default function DashboardSettingsPage() {
 
     updateNotificationMutation.mutate(notificationData, {
       onSuccess: () => {
-        alert('Notification preferences updated successfully!');
+        showToast('Notification preferences updated successfully!', 'success');
       },
       onError: (error: unknown) => {
-        alert('Failed to update notification preferences. Please try again.');
+        showToast('Failed to update notification preferences. Please try again.', 'error');
         console.error('Notification update error:', error);
       },
     });
@@ -145,7 +151,7 @@ export default function DashboardSettingsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
         <div className="bg-white rounded-lg shadow p-4 md:p-6">
           <h2 className="text-base md:text-lg font-semibold text-gray-900 mb-4 md:mb-6">Profile Information</h2>
-          
+
           {isLoading ? (
             <div className="flex justify-center items-center py-8">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
@@ -300,7 +306,7 @@ export default function DashboardSettingsPage() {
               </div>
             </div>
           </div>
-          
+
           <form onSubmit={handleNotificationSubmit} className="mt-6">
             <button
               type="submit"
@@ -323,7 +329,9 @@ export default function DashboardSettingsPage() {
       <div className="mt-6 md:mt-8 bg-white rounded-lg shadow p-4 md:p-6">
         <h2 className="text-base md:text-lg font-semibold text-gray-900 mb-4">Account Actions</h2>
         <div className="flex flex-wrap gap-3">
-          <button className="px-3 py-2 text-xs md:text-sm bg-gray-600 text-white rounded-md hover:bg-gray-700">
+          <button
+            onClick={() => setShowPasswordModal(true)}
+            className="px-3 py-2 text-xs md:text-sm bg-gray-600 text-white rounded-md hover:bg-gray-700">
             Change Password
           </button>
           <button className="px-3 py-2 text-xs md:text-sm bg-yellow-600 text-white rounded-md hover:bg-yellow-700">
@@ -334,6 +342,14 @@ export default function DashboardSettingsPage() {
           </button>
         </div>
       </div>
+
+      <ChangePasswordModal
+        isOpen={showPasswordModal}
+        onClose={() => setShowPasswordModal(false)}
+        onSuccess={() => {
+          // Optionally refresh user data or show additional success message
+        }}
+      />
     </div>
   );
 }
