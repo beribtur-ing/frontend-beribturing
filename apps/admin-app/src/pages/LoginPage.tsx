@@ -11,6 +11,34 @@ export default function LoginPage() {
   const { signIn, isSigningIn } = useAuth();
   const navigate = useNavigate();
 
+  const formatPhoneNumber = (value: string) => {
+    // Remove all non-digits
+    let phoneNumber = value.replace(/\D/g, "")
+    
+    // Auto-add country code if not present
+    if (phoneNumber.length > 0 && !phoneNumber.startsWith('998')) {
+      phoneNumber = '998' + phoneNumber
+    }
+
+    // Format as +998 XX XXX-XX-XX
+    if (phoneNumber.length >= 12) {
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(8, 10)}-${phoneNumber.slice(10, 12)}`
+    } else if (phoneNumber.length >= 8) {
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5, 8)}-${phoneNumber.slice(8)}`
+    } else if (phoneNumber.length >= 5) {
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3, 5)} ${phoneNumber.slice(5)}`
+    } else if (phoneNumber.length >= 3) {
+      return `+${phoneNumber.slice(0, 3)} ${phoneNumber.slice(3)}`
+    } else {
+      return phoneNumber ? `+${phoneNumber}` : ""
+    }
+  }
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhoneNumber(e.target.value)
+    setPhoneNumber(formatted)
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -20,7 +48,10 @@ export default function LoginPage() {
       return;
     }
 
-    const success = await signIn(phoneNumber, password);
+    // Clean phone number for API (remove +, spaces, and hyphens)
+    const cleanPhone = phoneNumber.replace(/[\s\-+]/g, '')
+    
+    const success = await signIn(cleanPhone, password);
     if (success) {
       navigate(`/overview`);
     } else {
@@ -63,10 +94,13 @@ export default function LoginPage() {
               id="phoneNumber"
               label="Phone Number"
               type="tel"
-              placeholder="+998901234567"
+              placeholder="+998 90 123-45-67"
               value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
+              onChange={handlePhoneChange}
               margin="normal"
+              inputProps={{
+                maxLength: 18
+              }}
             />
             <TextField
               fullWidth

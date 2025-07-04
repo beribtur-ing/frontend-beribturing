@@ -1,4 +1,4 @@
-import { PriceUnit } from '~/models';
+import { PriceUnit, ProductImage } from '~/models';
 
 export interface ProductRentalRecordRdo {
 //from Currency of Price
@@ -15,4 +15,5 @@ export interface ProductRentalRecordRdo {
   productVariantId: string;
   model: string;
   unit: PriceUnit;
+  images: ProductImage[];
 }
