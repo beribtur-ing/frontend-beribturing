@@ -1,11 +1,10 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, Link, useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import { ArrowLeftIcon } from '@heroicons/react/24/outline';
-import { useRentalRecord } from '../../../hooks/rental/useRentalRecord';
+import { useRentalRecord } from '~/hooks';
 import { PlaceholderImage } from '~/assets';
 
 export default function DashboardRentalDetailPage() {
-  const navigate = useNavigate();
+  //
   const { id } = useParams();
   const { rentalRecord, isLoading } = useRentalRecord(id || '');
 
@@ -51,8 +50,8 @@ export default function DashboardRentalDetailPage() {
       <div className="bg-white rounded-lg shadow p-6">
         <h1 className="text-xl font-bold text-gray-900 mb-4">Rental not found</h1>
         <p className="text-gray-600">The rental record could not be loaded or does not exist.</p>
-        <Link to={`/dashboard/rentals`} className="inline-flex items-center text-blue-600 hover:text-blue-800 mt-4">
-          <ArrowLeftIcon className="w-4 h-4 mr-1" />
+        <Link to={'/dashboard/rentals'} className="inline-flex items-center text-blue-600 hover:text-blue-800 mt-4">
+          <ArrowLeftIcon className="w-4 h-4 mr-1"/>
           Back to Rentals
         </Link>
       </div>
@@ -68,10 +67,10 @@ export default function DashboardRentalDetailPage() {
     <div>
       <div className="mb-8">
         <Link
-          to={`/dashboard/rentals`}
+          to={'/dashboard/rentals'}
           className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-4"
         >
-          <ArrowLeftIcon className="w-4 h-4 mr-1" />
+          <ArrowLeftIcon className="w-4 h-4 mr-1"/>
           Back to Rentals
         </Link>
         <div className="flex items-center justify-between">
@@ -118,7 +117,7 @@ export default function DashboardRentalDetailPage() {
           <h2 className="text-lg font-semibold text-gray-900 mb-4">Product Details</h2>
           <div className="flex space-x-4 mb-4">
             <img
-              src={PlaceholderImage}
+              src={rentalRecord.productRentalRecordRdo?.images?.[0]?.url || PlaceholderImage}
               alt={rentalRecord.productRentalRecordRdo?.title || 'Product'}
               width={100}
               height={100}
