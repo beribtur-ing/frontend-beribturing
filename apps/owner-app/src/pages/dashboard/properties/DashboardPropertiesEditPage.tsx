@@ -37,6 +37,7 @@ export default function DashboardPropertiesEditPage() {
     formState: { errors, isSubmitting },
     reset,
     control,
+    watch,
   } = useForm({
     resolver: yupResolver(productFormSchema),
   });
@@ -91,18 +92,18 @@ export default function DashboardPropertiesEditPage() {
                         required
                         id="title"
                         label="Title"
-                        defaultValue={product?.product.title} name={''} value={''}
-                        onChange={() => {
-                        }}
+                        name="title"
+                        value={watch('title')}
+                        onChange={() => {}}
                     />
                     <CustomSelect
                         label="Category" required name={''}
                         onChange={function (e: React.ChangeEvent<HTMLSelectElement>): void {
                           throw new Error('Function not implemented.');
-                        }} options={productCategories} value={''} dataItemKey={0} textField={0}>
+                        }} options={productCategories.map(p => p.category)} value={watch('categoryId')} dataItemKey="id" textField="name">
                     </CustomSelect>
                 </div>
-                <CustomTextarea label="Description" required name="description" value={''} onChange={() => {
+                <CustomTextarea label="Description" required name="description" value={watch('description')} onChange={() => {
                 }} />
                 <div className="flex justify-center">
 

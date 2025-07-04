@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { SelectHTMLAttributes } from 'react';
 import type { FieldError } from 'react-hook-form';
 import { ProductCategoryRdo } from '@beribturing/api-stub';
 
-interface CustomSelectProps<T = any> extends React.SelectHTMLAttributes<HTMLSelectElement> {
+interface CustomSelectProps<T = any> extends SelectHTMLAttributes<HTMLSelectElement> {
   label?: string;
   name: string;
   value: string | number;
@@ -48,9 +48,9 @@ export function CustomSelect<T>({
                 } ${className}`}
             >
                 {placeholder && <option value="">{placeholder}</option>}
-                {options?.map((item: ProductCategoryRdo) => (
-                    <option key={item.category.id} value={item.category.id}>
-                        {item.category.name}
+                {options?.map((item: T) => (
+                    <option key={dataItemKey as string} value={dataItemKey as string}>
+                        {item[textField as string]}
                     </option>
                 ))}
             </select>
