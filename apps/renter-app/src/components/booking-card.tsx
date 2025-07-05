@@ -1,40 +1,40 @@
-import {useState} from "react"
-import {Calendar, Clock, Heart, MessageCircle, Shield} from "lucide-react"
-import type {ProductVariant} from "../types/domain"
+import { useState } from 'react';
+import { Calendar, Clock, Heart, MessageCircle, Shield } from 'lucide-react';
+import type { ProductVariant } from '../types/domain';
 
 interface BookingCardProps {
-  variant: ProductVariant
+  variant: ProductVariant;
 }
 
 export function BookingCard({ variant }: BookingCardProps) {
-  const [startDate, setStartDate] = useState("")
-  const [endDate, setEndDate] = useState("")
-  const [days, setDays] = useState(1)
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [days, setDays] = useState(1);
 
   const calculateTotal = () => {
-    const dailyRate = variant.price.dailyRate.amount
-    let rate = dailyRate
+    const dailyRate = variant.price.dailyRate.amount;
+    let rate = dailyRate;
 
     // Use weekly rate if available and rental is 7+ days
     if (days >= 7 && variant.price.weeklyRate) {
-      const weeks = Math.floor(days / 7)
-      const remainingDays = days % 7
-      rate = weeks * variant.price.weeklyRate.amount + remainingDays * dailyRate
+      const weeks = Math.floor(days / 7);
+      const remainingDays = days % 7;
+      rate = weeks * variant.price.weeklyRate.amount + remainingDays * dailyRate;
     } else if (days >= 30 && variant.price.monthlyRate) {
       // Use monthly rate if available and rental is 30+ days
-      const months = Math.floor(days / 30)
-      const remainingDays = days % 30
-      rate = months * variant.price.monthlyRate.amount + remainingDays * dailyRate
+      const months = Math.floor(days / 30);
+      const remainingDays = days % 30;
+      rate = months * variant.price.monthlyRate.amount + remainingDays * dailyRate;
     } else {
-      rate = dailyRate * days
+      rate = dailyRate * days;
     }
 
-    const serviceFee = rate * 0.1
-    const total = rate + serviceFee
-    return { subtotal: rate, serviceFee, total }
-  }
+    const serviceFee = rate * 0.1;
+    const total = rate + serviceFee;
+    return { subtotal: rate, serviceFee, total };
+  };
 
-  const { subtotal, serviceFee, total } = calculateTotal()
+  const { subtotal, serviceFee, total } = calculateTotal();
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg sm:rounded-xl border dark:border-gray-700 shadow-lg p-4 sm:p-6 space-y-4 sm:space-y-6">
@@ -97,7 +97,7 @@ export function BookingCard({ variant }: BookingCardProps) {
           >
             {[1, 2, 3, 4, 5, 6, 7, 14, 30].map((day) => (
               <option key={day} value={day}>
-                {day} {day === 1 ? "day" : "days"}
+                {day} {day === 1 ? 'day' : 'days'}
               </option>
             ))}
           </select>
@@ -129,7 +129,7 @@ export function BookingCard({ variant }: BookingCardProps) {
         <button
           onClick={() => {
             // In a real app, this would navigate to booking flow
-            alert(`Reserving ${variant.product.title} for ${days} days. Total: $${total.toFixed(2)}`)
+            alert(`Reserving ${variant.product.title} for ${days} days. Total: $${total.toFixed(2)}`);
           }}
           className="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded-lg font-medium transition-colors text-sm sm:text-base"
         >
@@ -140,7 +140,7 @@ export function BookingCard({ variant }: BookingCardProps) {
           <button
             onClick={() => {
               // In a real app, this would add to favorites
-              alert("Added to favorites!")
+              alert('Added to favorites!');
             }}
             className="border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-1 text-sm text-gray-700 dark:text-gray-300"
           >
@@ -151,7 +151,7 @@ export function BookingCard({ variant }: BookingCardProps) {
           <button
             onClick={() => {
               // In a real app, this would open chat or contact form
-              alert("Opening chat with lender...")
+              alert('Opening chat with lender...');
             }}
             className="border border-purple-600 text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-900/20 py-2 rounded-lg font-medium transition-colors flex items-center justify-center space-x-1 text-sm"
           >
@@ -173,5 +173,5 @@ export function BookingCard({ variant }: BookingCardProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }

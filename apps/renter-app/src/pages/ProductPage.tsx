@@ -1,16 +1,27 @@
-import { useParams } from "react-router-dom"
-import {ProductGallery} from "../components/product-gallery"
-import {ProductInfo} from "../components/product-info"
-import {BookingCard} from "../components/booking-card"
-import {ProductReviews} from "../components/product-reviews"
-import {SimilarProducts} from "../components/similar-products"
-import {mockProductVariants} from "../data/mock-data"
+import { useParams } from 'react-router-dom';
+import { ProductGallery } from '../components/product-gallery';
+import { ProductInfo } from '../components/product-info';
+import { BookingCard } from '../components/booking-card';
+import { ProductReviews } from '../components/product-reviews';
+import { SimilarProducts } from '../components/similar-products';
+import { mockProductVariants } from '../data/mock-data';
+import { useProductRdo } from '~/hooks';
 
 export default function ProductPage() {
-  const { id } = useParams<{ id: string }>()
+  const { id } = useParams<{ id: string }>();
+  const { productRdo } = useProductRdo('50a5abd6-67b1-4000-830e-90acfcc7734b-2');
+  const product = productRdo?.product;
+  const category = productRdo?.category;
+  const variantRdos = productRdo?.variantRdos;
+  const variantImages: string[] = variantRdos
+    ?.flatMap((rdo) => rdo.images || [])
+    .filter((image) => image.url)
+    .map((image) => image.url);
+
+  console.log(variantImages);
 
   // Find the product variant by ID
-  const productVariant = mockProductVariants.find((variant) => variant.id === id)
+  const productVariant = product;
 
   // If product not found, show 404
   if (!productVariant) {
@@ -24,11 +35,11 @@ export default function ProductPage() {
           </a>
         </div>
       </div>
-    )
+    );
   }
 
   // Get similar products (excluding current product)
-  const similarVariants = mockProductVariants.filter((variant) => variant.id !== id).slice(0, 3)
+  const similarVariants = mockProductVariants.filter((variant) => variant.id !== id).slice(0, 3);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -42,13 +53,13 @@ export default function ProductPage() {
               </a>
               <span className="text-gray-400">/</span>
               <a
-                href={`/category/${productVariant.product.category.name.toLowerCase()}`}
+                href={`/category/${category.name.toLowerCase()}`}
                 className="hover:text-purple-600 dark:hover:text-purple-400"
               >
-                {productVariant.product.category.name}
+                {category.name}
               </a>
               <span className="text-gray-400">/</span>
-              <span className="text-gray-900 dark:text-gray-100 truncate">{productVariant.product.title}</span>
+              <span className="text-gray-900 dark:text-gray-100 truncate">{product.title}</span>
             </div>
           </nav>
         </div>
@@ -59,25 +70,23 @@ export default function ProductPage() {
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
           {/* Left Column - Images and Info */}
           <div className="xl:col-span-2 space-y-4 sm:space-y-6 lg:space-y-8">
-            <ProductGallery images={productVariant.images.map((img) => img.url)}/>
-            <ProductInfo variant={productVariant}/>
-            <div className="text-lg font-bold text-gray-900">
-              UZS {productVariant.price.toLocaleString()}
-            </div>
-            <ProductReviews productId={productVariant.id} rating={4.9} totalReviews={127}/>
+            <ProductGallery images={variantImages} />
+            <ProductInfo product={productVariant} variantRdos={variantRdos} />
+            <div className="text-lg font-bold text-gray-900">UZS {productVariant?.price?.toLocaleString()}</div>
+            <ProductReviews productId={productVariant.id} rating={4.9} totalReviews={127} />
           </div>
 
           {/* Right Column - Booking */}
           <div className="xl:col-span-1 order-first xl:order-last">
             <div className="xl:sticky xl:top-24">
-              <BookingCard variant={productVariant}/>
+              <BookingCard variant={mockProductVariants[0]} />
             </div>
           </div>
         </div>
 
         {/* Similar Products */}
-        <SimilarProducts variants={similarVariants}/>
+        <SimilarProducts variants={similarVariants} />
       </div>
     </div>
-  )
+  );
 }
