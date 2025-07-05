@@ -34,7 +34,7 @@ export default function HomePage() {
       <HeroBanner />
       <CategoryTiles tiles={categoryTiles} />
       <RecentItems />
-      <PopularItems variants={mockProductVariants} />
+      {/*<PopularItems variants={mockProductVariants} />*/}
       <TrustSection />
     </div>
   );

@@ -1,14 +1,17 @@
-import {useState} from "react"
-import {CheckCircle, MapPin, Shield, Star, X} from "lucide-react"
-import type {ProductVariant} from "../types/domain"
+import { useState } from 'react';
+import { CheckCircle, MapPin, Shield, Star, X } from 'lucide-react';
+import { ProductRdo } from '@beribturing/api-stub';
 
 interface ProductInfoProps {
-  variant: ProductVariant
+  productRdo: ProductRdo;
+  variantRdos;
 }
 
-export function ProductInfo({ variant }: ProductInfoProps) {
-  const [showContactModal, setShowContactModal] = useState(false)
-  const location = `${variant.product.owner.profile.city}, ${variant.product.owner.profile.state}`
+export function ProductInfo({ productRdo, variantRdos }: ProductInfoProps) {
+  const [showContactModal, setShowContactModal] = useState(false);
+  const product = productRdo?.product;
+  const location = `${product?.owner?.profile?.city}, ${product?.owner?.profile?.state}`;
+  const variant = variantRdos?.[0]?.variant;
 
   const features = [
     `Brand: ${variant.brand}`,
@@ -16,16 +19,16 @@ export function ProductInfo({ variant }: ProductInfoProps) {
     `Year: ${variant.producedYear}`,
     `Made in: ${variant.madeIn}`,
     `Material: ${variant.material}`,
-  ]
+  ];
 
-  const included = [variant.product.title, "User Manual", "All Original Accessories", "Protective Case (if applicable)"]
+  const included = [product.title, 'User Manual', 'All Original Accessories', 'Protective Case (if applicable)'];
 
   return (
     <div className="space-y-6 sm:space-y-8">
       {/* Product Title and Rating */}
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-          {variant.product.title} - {variant.brand} {variant.model}
+          {product.title} - {variant.brand} {variant.model}
         </h1>
         <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-4 mb-4">
           <div className="flex items-center space-x-1">
@@ -43,9 +46,7 @@ export function ProductInfo({ variant }: ProductInfoProps) {
       {/* Description */}
       <div>
         <h2 className="text-lg sm:text-xl font-semibold mb-3 text-gray-900 dark:text-gray-100">Description</h2>
-        <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-sm sm:text-base">
-          {variant.product.description}
-        </p>
+        <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-sm sm:text-base">{product.description}</p>
         {variant.notes && (
           <p className="text-gray-600 dark:text-gray-400 leading-relaxed text-sm sm:text-base mt-2 italic">
             Owner's note: {variant.notes}
@@ -100,14 +101,14 @@ export function ProductInfo({ variant }: ProductInfoProps) {
         <h2 className="text-lg sm:text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">Meet Your Lender</h2>
         <div className="flex items-start space-x-3 sm:space-x-4">
           <img
-            src={variant.product.owner.profile.profilePictureUrl || "/placeholder.svg"}
-            alt={variant.product.owner.name}
+            src={product?.owner?.profile.profilePictureUrl || '/placeholder.svg'}
+            alt={product?.owner?.name}
             className="w-12 h-12 sm:w-16 sm:h-16 rounded-full object-cover flex-shrink-0"
           />
           <div className="flex-1 min-w-0">
             <div className="flex items-center space-x-2 mb-2">
               <h3 className="font-semibold text-base sm:text-lg truncate text-gray-900 dark:text-gray-100">
-                {variant.product.owner.profile.firstName} {variant.product.owner.profile.lastName}
+                {product?.owner?.profile.firstName} {product?.owner?.profile.lastName}
               </h3>
               <Shield className="h-4 sm:h-5 w-4 sm:w-5 text-green-600 dark:text-green-400 flex-shrink-0" />
             </div>
@@ -144,13 +145,13 @@ export function ProductInfo({ variant }: ProductInfoProps) {
 
             <div className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
               <img
-                src={variant.product.owner.profile.profilePictureUrl || "/placeholder.svg"}
-                alt={variant.product.owner.name}
+                src={product?.owner?.profile.profilePictureUrl || '/placeholder.svg'}
+                alt={product?.owner?.name}
                 className="w-10 h-10 rounded-full object-cover"
               />
               <div>
                 <p className="font-medium text-gray-900 dark:text-white">
-                  {variant.product.owner.profile.firstName} {variant.product.owner.profile.lastName}
+                  {product?.owner?.profile.firstName} {product?.owner?.profile.lastName}
                 </p>
                 <p className="text-sm text-gray-600 dark:text-gray-300">Usually responds within 1 hour</p>
               </div>
@@ -159,9 +160,9 @@ export function ProductInfo({ variant }: ProductInfoProps) {
             <form
               className="space-y-4"
               onSubmit={(e) => {
-                e.preventDefault()
-                alert("Message sent to lender!")
-                setShowContactModal(false)
+                e.preventDefault();
+                alert('Message sent to lender!');
+                setShowContactModal(false);
               }}
             >
               <div>
@@ -194,5 +195,5 @@ export function ProductInfo({ variant }: ProductInfoProps) {
         </div>
       )}
     </div>
-  )
+  );
 }

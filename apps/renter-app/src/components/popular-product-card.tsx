@@ -1,50 +1,60 @@
 import type React from 'react';
 
 import { Heart, MapPin, Star } from 'lucide-react';
+import { ProductAvailability, type ProductVariant, PopularProductRdo } from '../types/domain';
 import { Link } from 'react-router-dom';
-import { ProductRdo } from '@beribturing/api-stub';
+import Camera from '~/assets/camera.png';
+import Drill from '~/assets/drill.png';
+import Tent from '~/assets/tent.png';
+import Bike from '~/assets/bike.png';
+import PS5 from '~/assets/ps5.png';
 
 interface ProductCardProps {
-  productRdo: ProductRdo;
+  product: PopularProductRdo;
   onFavoriteToggle?: (variantId: string) => void;
   isFavorite?: boolean;
 }
 
-export function ProductCard({ productRdo, onFavoriteToggle, isFavorite = false }: ProductCardProps) {
+export function PopularProductCard({ product, onFavoriteToggle, isFavorite = false }: ProductCardProps) {
   // Add null checks to prevent errors
-  if (!productRdo) {
+  if (!product) {
     return <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">Product data unavailable</div>;
   }
 
-  // Safely access images with null checks
-  const images: string[] =
-    productRdo?.variantRdos
-      ?.flatMap((rdo) => rdo.images || [])
-      .filter((image) => image.url)
-      .map((image) => image.url) || [];
-
   // Safely access nested properties with optional chaining
-  const location = 'Location unavailable';
-  const selectedVariant = productRdo?.variantRdos?.[0]?.variant;
+  const location = product?.address || 'Location unavailable';
 
   // Calculate discount if available
-  const originalPrice = selectedVariant?.price?.currency || 0;
-  const currentPrice = selectedVariant?.price?.currency || 0;
-  const discountPercentage = Math.round(((originalPrice - currentPrice) / originalPrice) * 100);
+  const originalPrice = product?.priceAmount; // Simulate original price
+  const currentPrice = product?.priceAmount;
+  const discountPercentage = 0;
 
-  const badge = { text: 'Available', color: 'bg-green-600' };
+  // const getAvailabilityBadge = () => {
+  //   switch (product.availability) {
+  //     case ProductAvailability.AVAILABLE:
+  //       return { text: 'Available', color: 'bg-green-600' };
+  //     case ProductAvailability.RENTED:
+  //       return { text: 'Rented', color: 'bg-red-600' };
+  //     case ProductAvailability.MAINTENANCE:
+  //       return { text: 'Maintenance', color: 'bg-yellow-600' };
+  //     default:
+  //       return { text: 'Unavailable', color: 'bg-gray-600' };
+  //   }
+  // };
+
+  // const badge = getAvailabilityBadge();
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    onFavoriteToggle?.(selectedVariant?.id);
+    onFavoriteToggle?.(product.id);
   };
 
   return (
-    <Link to={`/product/${productRdo?.product?.id}`} className="block h-full">
+    <Link to={`/product/${product.id}`} className="block h-full">
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-lg transition-shadow cursor-pointer overflow-hidden border dark:border-gray-700 h-full flex flex-col">
         <div className="relative">
-          <img src={images[0]} alt={productRdo?.product?.title || 'Product'} className="w-full h-48 object-cover" />
+          <img src={product.url} alt={product?.title || 'Product'} className="w-full h-48 object-cover" />
           <button
             onClick={handleFavoriteClick}
             className={`absolute top-2 right-2 h-8 w-8 rounded-full flex items-center justify-center transition-colors z-10 ${
@@ -53,18 +63,13 @@ export function ProductCard({ productRdo, onFavoriteToggle, isFavorite = false }
           >
             <Heart className={`h-4 w-4 ${isFavorite ? 'fill-current' : ''}`} />
           </button>
-          <span className={`absolute top-2 left-2 ${badge.color} text-white text-xs px-2 py-1 rounded-md font-medium`}>
-            {badge.text}
-          </span>
         </div>
 
         <div className="p-3 flex-1 flex flex-col">
-          <h3 className="font-medium text-gray-900 dark:text-gray-100 text-sm mb-2 line-clamp-2">
-            {productRdo?.product?.title || 'Unnamed Product'}
-            {selectedVariant?.brand && selectedVariant?.model
-              ? ` - ${selectedVariant?.brand} ${selectedVariant?.model}`
-              : ''}
-          </h3>
+          {/*<h3 className="font-medium text-gray-900 dark:text-gray-100 text-sm mb-2 line-clamp-2">*/}
+          {/*  {variant.product?.title || 'Unnamed Product'}*/}
+          {/*  {variant.brand && variant.model ? ` - ${variant.brand} ${variant.model}` : ''}*/}
+          {/*</h3>*/}
 
           <div className="flex items-center space-x-1 mb-2">
             <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
@@ -81,13 +86,13 @@ export function ProductCard({ productRdo, onFavoriteToggle, isFavorite = false }
           <div className="space-y-1 mt-auto">
             <div className="flex items-center space-x-2">
               <span className="text-lg font-bold text-gray-900 dark:text-gray-100">
-                UZS {currentPrice.toLocaleString()}
+                UZS {currentPrice?.toLocaleString()}
               </span>
               <span className="text-sm text-gray-500 dark:text-gray-400">/day</span>
             </div>
             {discountPercentage > 0 && (
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-400 line-through">UZS {originalPrice.toLocaleString()}</span>
+                <span className="text-sm text-gray-400 line-through">UZS {originalPrice?.toLocaleString()}</span>
                 <span className="text-sm text-green-600 dark:text-green-400 font-medium">-{discountPercentage}%</span>
               </div>
             )}
