@@ -1,70 +1,50 @@
 import type React from 'react';
 
 import { Heart, MapPin, Star } from 'lucide-react';
-import { ProductAvailability, type ProductVariant } from '../types/domain';
 import { Link } from 'react-router-dom';
-import Camera from '~/assets/camera.png';
-import Drill from '~/assets/drill.png';
-import Tent from '~/assets/tent.png';
-import Bike from '~/assets/bike.png';
-import PS5 from '~/assets/ps5.png';
+import { ProductRdo } from '@beribturing/api-stub';
 
 interface ProductCardProps {
-  variant: ProductVariant
-  onFavoriteToggle?: (variantId: string) => void
-  isFavorite?: boolean
+  productRdo: ProductRdo;
+  onFavoriteToggle?: (variantId: string) => void;
+  isFavorite?: boolean;
 }
 
-export function ProductCard({ variant, onFavoriteToggle, isFavorite = false }: ProductCardProps) {
+export function ProductCard({ productRdo, onFavoriteToggle, isFavorite = false }: ProductCardProps) {
   // Add null checks to prevent errors
-  if (!variant) {
+  if (!productRdo) {
     return <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm p-4">Product data unavailable</div>;
   }
 
   // Safely access images with null checks
-  const images = variant.images || [];
-  const primaryImage = images.find((img) => img?.order === 0) || images[0];
+  const images: string[] =
+    productRdo?.variantRdos
+      ?.flatMap((rdo) => rdo.images || [])
+      .filter((image) => image.url)
+      .map((image) => image.url) || [];
 
   // Safely access nested properties with optional chaining
-  const location = variant.product?.owner?.profile
-    ? `${variant.product.owner.profile.city}, ${variant.product.owner.profile.state}`
-    : 'Location unavailable';
+  const location = 'Location unavailable';
+  const selectedVariant = productRdo?.variantRdos?.[0]?.variant;
 
   // Calculate discount if available
-  const originalPrice = variant.price?.dailyRate?.amount * 1.3 || 0; // Simulate original price
-  const currentPrice = variant.price?.dailyRate?.amount || 0;
+  const originalPrice = selectedVariant?.price?.currency || 0;
+  const currentPrice = selectedVariant?.price?.currency || 0;
   const discountPercentage = Math.round(((originalPrice - currentPrice) / originalPrice) * 100);
 
-  const getAvailabilityBadge = () => {
-    switch (variant.availability) {
-      case ProductAvailability.AVAILABLE:
-        return { text: 'Available', color: 'bg-green-600' };
-      case ProductAvailability.RENTED:
-        return { text: 'Rented', color: 'bg-red-600' };
-      case ProductAvailability.MAINTENANCE:
-        return { text: 'Maintenance', color: 'bg-yellow-600' };
-      default:
-        return { text: 'Unavailable', color: 'bg-gray-600' };
-    }
-  };
-
-  const badge = getAvailabilityBadge();
+  const badge = { text: 'Available', color: 'bg-green-600' };
 
   const handleFavoriteClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    onFavoriteToggle?.(variant.id);
+    onFavoriteToggle?.(selectedVariant?.id);
   };
 
   return (
-    <Link to={`/product/${variant.id}`} className="block h-full">
+    <Link to={`/product/${productRdo?.product?.id}`} className="block h-full">
       <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm hover:shadow-lg transition-shadow cursor-pointer overflow-hidden border dark:border-gray-700 h-full flex flex-col">
         <div className="relative">
-          <img
-            src={Camera}
-            alt={variant.product?.title || 'Product'}
-            className="w-full h-48 object-cover"
-          />
+          <img src={images[0]} alt={productRdo?.product?.title || 'Product'} className="w-full h-48 object-cover" />
           <button
             onClick={handleFavoriteClick}
             className={`absolute top-2 right-2 h-8 w-8 rounded-full flex items-center justify-center transition-colors z-10 ${
@@ -80,8 +60,10 @@ export function ProductCard({ variant, onFavoriteToggle, isFavorite = false }: P
 
         <div className="p-3 flex-1 flex flex-col">
           <h3 className="font-medium text-gray-900 dark:text-gray-100 text-sm mb-2 line-clamp-2">
-            {variant.product?.title || 'Unnamed Product'}
-            {variant.brand && variant.model ? ` - ${variant.brand} ${variant.model}` : ''}
+            {productRdo?.product?.title || 'Unnamed Product'}
+            {selectedVariant?.brand && selectedVariant?.model
+              ? ` - ${selectedVariant?.brand} ${selectedVariant?.model}`
+              : ''}
           </h3>
 
           <div className="flex items-center space-x-1 mb-2">
@@ -105,15 +87,8 @@ export function ProductCard({ variant, onFavoriteToggle, isFavorite = false }: P
             </div>
             {discountPercentage > 0 && (
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-400 line-through">
-                  UZS {originalPrice.toLocaleString()}
-                </span>
+                <span className="text-sm text-gray-400 line-through">UZS {originalPrice.toLocaleString()}</span>
                 <span className="text-sm text-green-600 dark:text-green-400 font-medium">-{discountPercentage}%</span>
-              </div>
-            )}
-            {variant.price?.weeklyRate && (
-              <div className="text-xs text-gray-500 dark:text-gray-400">
-                Weekly: UZS {variant.price.weeklyRate.amount.toLocaleString()}
               </div>
             )}
           </div>

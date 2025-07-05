@@ -9,19 +9,19 @@ import { useProductRdo } from '~/hooks';
 
 export default function ProductPage() {
   const { id } = useParams<{ id: string }>();
-  const { productRdo } = useProductRdo('50a5abd6-67b1-4000-830e-90acfcc7734b-2');
+  const { productRdo } = useProductRdo(id);
   const product = productRdo?.product;
   const category = productRdo?.category;
   const variantRdos = productRdo?.variantRdos;
-  const variantImages: string[] = variantRdos
-    ?.flatMap((rdo) => rdo.images || [])
-    .filter((image) => image.url)
-    .map((image) => image.url);
-
-  console.log(variantImages);
+  const variantImages: string[] =
+    variantRdos
+      ?.flatMap((rdo) => rdo.images || [])
+      .filter((image) => image.url)
+      .map((image) => image.url) || [];
 
   // Find the product variant by ID
   const productVariant = product;
+  const selectedVariant = variantRdos?.[0];
 
   // If product not found, show 404
   if (!productVariant) {
@@ -53,10 +53,10 @@ export default function ProductPage() {
               </a>
               <span className="text-gray-400">/</span>
               <a
-                href={`/category/${category.name.toLowerCase()}`}
+                href={`/category/${category?.name?.toLowerCase()}`}
                 className="hover:text-purple-600 dark:hover:text-purple-400"
               >
-                {category.name}
+                {category?.name}
               </a>
               <span className="text-gray-400">/</span>
               <span className="text-gray-900 dark:text-gray-100 truncate">{product.title}</span>
@@ -71,8 +71,10 @@ export default function ProductPage() {
           {/* Left Column - Images and Info */}
           <div className="xl:col-span-2 space-y-4 sm:space-y-6 lg:space-y-8">
             <ProductGallery images={variantImages} />
-            <ProductInfo product={productVariant} variantRdos={variantRdos} />
-            <div className="text-lg font-bold text-gray-900">UZS {productVariant?.price?.toLocaleString()}</div>
+            <ProductInfo productRdo={productRdo} variantRdos={variantRdos} />
+            <div className="text-lg font-bold text-gray-900">
+              UZS {selectedVariant?.variant?.price?.currency?.toLocaleString()}
+            </div>
             <ProductReviews productId={productVariant.id} rating={4.9} totalReviews={127} />
           </div>
 

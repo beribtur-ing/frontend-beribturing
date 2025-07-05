@@ -3,12 +3,13 @@ import { CheckCircle, MapPin, Shield, Star, X } from 'lucide-react';
 import { ProductRdo } from '@beribturing/api-stub';
 
 interface ProductInfoProps {
-  product: ProductRdo;
+  productRdo: ProductRdo;
   variantRdos;
 }
 
-export function ProductInfo({ product, variantRdos }: ProductInfoProps) {
+export function ProductInfo({ productRdo, variantRdos }: ProductInfoProps) {
   const [showContactModal, setShowContactModal] = useState(false);
+  const product = productRdo?.product;
   const location = `${product?.owner?.profile?.city}, ${product?.owner?.profile?.state}`;
   const variant = variantRdos?.[0]?.variant;
 

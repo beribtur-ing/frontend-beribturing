@@ -6,7 +6,7 @@ import { ProductCard } from '~/components/product-card';
 
 export function RecentItems() {
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useRecentProducts();
-  const [favoriteIds, setFavoriteIds] = useState<number[]>([]);
+  const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
 
   const handleFavorite = (variantId: string) => {};
 
@@ -27,12 +27,12 @@ export function RecentItems() {
 
         {variants.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {variants.map((variant) => (
+            {variants.map((productRdo) => (
               <ProductCard
-                key={variant?.id}
-                variant={variant}
+                key={productRdo?.product?.id}
+                productRdo={productRdo}
                 onFavoriteToggle={handleFavorite}
-                isFavorite={favoriteIds.includes(variant?.id)}
+                isFavorite={favoriteIds.includes(productRdo?.product?.id)}
               />
             ))}
           </div>
