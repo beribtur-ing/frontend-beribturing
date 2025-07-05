@@ -1,6 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { AxiosResponse } from 'axios';
-import { CommandResponse, FirstParameter, UserOwnFlowApi, ModifyProfileOwnCommand, UpdateNotificationPreferencesOwnCommand, ChangePasswordOwnCommand } from '@beribturing/api-stub';
+import { CommandResponse, FirstParameter, UserOwnFlowApi, ModifyProfileOwnCommand, ChangePasswordOwnCommand } from '@beribturing/api-stub';
 
 export const useUserMutation = () => {
   const defaultModifyProfileOwnCommand: ModifyProfileOwnCommand = {
@@ -13,7 +13,7 @@ export const useUserMutation = () => {
     mutation: {
       modifyProfile: useMutation<
         AxiosResponse<CommandResponse<boolean>>,
-        unknown,
+      unknown,
         FirstParameter<typeof UserOwnFlowApi.modifyProfile>
       >({
         mutationFn: UserOwnFlowApi.modifyProfile,

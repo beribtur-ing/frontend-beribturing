@@ -1,6 +1,6 @@
-import {ModifyProfileOwnCommand, UpdateNotificationPreferencesOwnCommand, ChangePasswordOwnCommand} from "~/apis";
-import {CommandResponse} from "~/models";
-import axios from "axios";
+import { UpdateNotificationPreferencesOwnCommand, ChangePasswordOwnCommand} from '~/apis';
+import {CommandResponse} from '~/models';
+import axios from 'axios';
 
 const url = (path: string) => `/api/feature/owner/user/${path}`;
 

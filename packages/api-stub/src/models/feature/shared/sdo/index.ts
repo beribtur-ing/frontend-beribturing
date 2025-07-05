@@ -8,3 +8,4 @@ export * from './UserMeRdo';
 export * from './PopularProductRdo';
 export * from './ReservationRdo';
 export * from './ReservationDetailRdo';
+export * from './LendeeCurrentInfoRdo';

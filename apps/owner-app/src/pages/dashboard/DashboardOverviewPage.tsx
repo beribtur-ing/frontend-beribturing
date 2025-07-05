@@ -1,19 +1,22 @@
-import {useEffect, useState} from "react";
-import type {DashboardStats} from "../../lib/types";
+import { useEffect, useState } from 'react';
+import type { DashboardStats } from '~/lib/types';
 import {
   BuildingOfficeIcon,
   CalendarDaysIcon,
   ChatBubbleLeftRightIcon,
   CurrencyDollarIcon,
-} from "@heroicons/react/24/outline";
-import {StatCard} from "../../components/dashboard/StatCard";
+} from '@heroicons/react/24/outline';
+import { StatCard } from '~/components/dashboard/StatCard';
+import {useLendeeCurrentInfo} from "~/hooks/user/useLendeeCurrentInfo";
 
 export default function DashboardOverviewPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
-
+  
+  const {ownerCurrentInfo} = useLendeeCurrentInfo();
+  
   useEffect(() => {
-    fetch("/api/dashboard/stats")
+    fetch('/api/dashboard/stats')
       .then((res) => res.json())
       .then((data) => {
         setStats(data);
@@ -45,29 +48,29 @@ export default function DashboardOverviewPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
         <StatCard
           title="Total Properties"
-          value={stats.totalProperties}
-          change="+2 this month"
+          value={ownerCurrentInfo?.totalPropertiesCount || 0}
+          change=""
           changeType="positive"
           icon={<BuildingOfficeIcon className="w-6 h-6 md:w-8 md:h-8"/>}
         />
         <StatCard
           title="Active Bookings"
-          value={stats.activeBookings}
-          change="3 ending soon"
+          value={ownerCurrentInfo?.activeBookingsCount || 0}
+          change=""
           changeType="neutral"
           icon={<CalendarDaysIcon className="w-6 h-6 md:w-8 md:h-8"/>}
         />
         <StatCard
           title="Monthly Revenue"
-          value={`$${stats.monthlyRevenue}`}
-          change="+12% from last month"
+          value={`$${ownerCurrentInfo?.monthRevenue || 0}`}
+          change=""
           changeType="positive"
           icon={<CurrencyDollarIcon className="w-6 h-6 md:w-8 md:h-8"/>}
         />
         <StatCard
           title="Messages"
-          value={stats.pendingMessages}
-          change="2 unread"
+          value={ownerCurrentInfo?.unReadMessageCount || 0}
+          change=""
           changeType="neutral"
           icon={<ChatBubbleLeftRightIcon className="w-6 h-6 md:w-8 md:h-8"/>}
         />
@@ -75,13 +78,13 @@ export default function DashboardOverviewPage() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
         <div className="bg-white rounded-lg shadow p-4 md:p-6">
-          <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+          <h3 className="text-base md:text-lg font-semibold text-gray-900 mb-4">Recent Activity (Mock data)</h3>
           <div className="space-y-4">
             <div className="flex items-center space-x-3">
               <div className="w-2 h-2 bg-green-400 rounded-full"></div>
               <div className="flex-1">
-                <p className="text-sm text-gray-900">New booking confirmed</p>
-                <p className="text-xs text-gray-500">Canon EOS R5 • 2 hours ago</p>
+                <p className="text-sm text-gray-900">This needs to be implemented</p>
+                <p className="text-xs text-gray-500">TNTBI • 2 hours ago</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
@@ -109,7 +112,7 @@ export default function DashboardOverviewPage() {
               <span className="text-sm font-medium text-gray-900">{stats.occupancyRate}%</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
-              <div className="bg-blue-600 h-2 rounded-full" style={{width: `${stats.occupancyRate}%`}}></div>
+              <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${stats.occupancyRate}%` }}></div>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-sm text-gray-600">Total Revenue</span>

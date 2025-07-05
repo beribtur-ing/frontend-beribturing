@@ -1,6 +1,6 @@
-import {UserMeRntQuery} from "~/apis";
-import {FirstParameter, QueryResponse, UserMeRdo, LendeeAllSettingsRdo} from "~/models";
-import axios from "axios";
+import {UserMeRntQuery} from '~/apis';
+import {FirstParameter, QueryResponse, UserMeRdo, LendeeAllSettingsRdo, LendeeCurrentInfoRdo} from '~/models';
+import axios from 'axios';
 
 const url = (path: string) => `/api/feature/renter/user/${path}`;
 
@@ -16,7 +16,7 @@ const getAllSettings = <T = LendeeAllSettingsRdo>() => {
 export default {
   userMe,
   getAllSettings,
-
+  
   query: {
     userMe: (params: FirstParameter<typeof userMe>) => ({
       queryKey: ['feature/renter/user', 'userMe', params],
@@ -28,5 +28,5 @@ export default {
       queryKey: ['feature/renter/user', 'getAllSettings'],
       queryFn: async () => (await getAllSettings())?.data,
     }),
-  }
-}
+  },
+};

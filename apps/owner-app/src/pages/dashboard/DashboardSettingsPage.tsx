@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { useUserMe, useUserMutation } from "../../hooks/user";
-import { Gender } from "@beribturing/api-stub";
-import { Map } from "../../components/map/Map";
-import { ChangePasswordModal } from "../../components/modals";
+import React, { useState, useEffect } from 'react';
+import { useUserMe, useUserMutation } from '~/hooks';
+import { Gender } from '@beribturing/api-stub';
+import { Map } from '~/components/map/Map';
+import { ChangePasswordModal } from '../../components/modals';
 import { useToast } from '~/hooks';
 
 export default function DashboardSettingsPage() {
@@ -10,15 +10,15 @@ export default function DashboardSettingsPage() {
 
   const { showToast } = useToast();
   const [profile, setProfile] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-    gender: "",
+    name: '',
+    email: '',
+    phone: '',
+    address: '',
+    gender: '',
   });
   const [locationData, setLocationData] = useState<{ latitude: number; longitude: number } | undefined>();
   const [profileImage, setProfileImage] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string>("");
+  const [previewUrl, setPreviewUrl] = useState<string>('');
 
   const [notifications, setNotifications] = useState({
     emailBookings: true,
@@ -254,7 +254,7 @@ export default function DashboardSettingsPage() {
                     Updating...
                   </span>
                 ) : (
-                  "Update Profile"
+                  'Update Profile'
                 )}
               </button>
             </form>
@@ -268,9 +268,9 @@ export default function DashboardSettingsPage() {
               <h3 className="text-sm font-medium text-gray-900 mb-3">Email Notifications</h3>
               <div className="space-y-2">
                 {[
-                  { key: "emailBookings", label: "New bookings and reservations" },
-                  { key: "emailMessages", label: "Messages from customers" },
-                  { key: "emailPayments", label: "Payment confirmations" },
+                  { key: 'emailBookings', label: 'New bookings and reservations' },
+                  { key: 'emailMessages', label: 'Messages from customers' },
+                  { key: 'emailPayments', label: 'Payment confirmations' },
                 ].map(({ key, label }) => (
                   <label key={key} className="flex items-center">
                     <input
@@ -289,9 +289,9 @@ export default function DashboardSettingsPage() {
               <h3 className="text-sm font-medium text-gray-900 mb-3">SMS Notifications</h3>
               <div className="space-y-2">
                 {[
-                  { key: "smsBookings", label: "New bookings and reservations" },
-                  { key: "smsMessages", label: "Messages from customers" },
-                  { key: "smsPayments", label: "Payment confirmations" },
+                  { key: 'smsBookings', label: 'New bookings and reservations' },
+                  { key: 'smsMessages', label: 'Messages from customers' },
+                  { key: 'smsPayments', label: 'Payment confirmations' },
                 ].map(({ key, label }) => (
                   <label key={key} className="flex items-center">
                     <input
