@@ -1,8 +1,8 @@
-import { SystemStatCard } from "../components/admin/system-stat-card";
-import { RecentActivity } from "../components/admin/recent-activity";
-import { QuickActions } from "../components/admin/quick-actions";
-import { mockSystemStats } from "../lib/mock-data";
-import { Users, Calendar, DollarSign, AlertTriangle, Building2, MessageSquare } from "lucide-react";
+import { SystemStatCard } from '~/components/admin/system-stat-card';
+import { RecentActivity } from '~/components/admin/recent-activity';
+import { QuickActions } from '~/components/admin/quick-actions';
+import { mockSystemStats } from '~/lib/mock-data';
+import { Users, Calendar, DollarSign, AlertTriangle, Building2, MessageSquare } from 'lucide-react';
 
 export default function OverviewPage() {
   return (
