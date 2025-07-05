@@ -1,35 +1,76 @@
 import React, { useState, useEffect } from "react";
+import { useForm, Controller } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 import { useUserMe, useUserMutation } from "../../hooks/user";
 import { Gender } from "@beribturing/api-stub";
 import { Map } from "../../components/map/Map";
 import { ChangePasswordModal } from "../../components/modals";
 import { useToast } from '~/hooks';
 
-export default function DashboardSettingsPage() {
-  //
+interface ProfileFormData {
+  name: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+  gender?: string;
+}
 
+interface NotificationFormData {
+  emailBookings: boolean;
+  emailMessages: boolean;
+  emailPayments: boolean;
+  smsBookings: boolean;
+  smsMessages: boolean;
+  smsPayments: boolean;
+}
+
+const profileSchema = yup.object().shape({
+  name: yup.string().required("Name is required").min(2, "Name must be at least 2 characters"),
+  email: yup.string().email("Invalid email format").optional(),
+  phone: yup.string().optional(),
+  address: yup.string().optional(),
+  gender: yup.string().optional(),
+});
+
+const notificationSchema = yup.object().shape({
+  emailBookings: yup.boolean().default(false),
+  emailMessages: yup.boolean().default(false),
+  emailPayments: yup.boolean().default(false),
+  smsBookings: yup.boolean().default(false),
+  smsMessages: yup.boolean().default(false),
+  smsPayments: yup.boolean().default(false),
+});
+
+export default function DashboardSettingsPage() {
   const { showToast } = useToast();
-  const [profile, setProfile] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    address: "",
-    gender: "",
-  });
   const [locationData, setLocationData] = useState<{ latitude: number; longitude: number } | undefined>();
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
 
-  const [notifications, setNotifications] = useState({
-    emailBookings: true,
-    emailMessages: true,
-    emailPayments: true,
-    smsBookings: false,
-    smsMessages: true,
-    smsPayments: true,
+  const profileForm = useForm<ProfileFormData>({
+    resolver: yupResolver(profileSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      address: "",
+      gender: "",
+    },
   });
 
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const notificationForm = useForm<NotificationFormData>({
+    resolver: yupResolver(notificationSchema),
+    defaultValues: {
+      emailBookings: true,
+      emailMessages: true,
+      emailPayments: true,
+      smsBookings: false,
+      smsMessages: true,
+      smsPayments: true,
+    },
+  });
 
   // Fetch current user profile using custom hook
   const { userMe: userProfile, isLoading, refetch } = useUserMe();
@@ -42,20 +83,20 @@ export default function DashboardSettingsPage() {
   // Initialize profile data when user data is loaded
   useEffect(() => {
     if (userProfile) {
-      setProfile({
+      profileForm.reset({
         name: userProfile.name || '',
         email: userProfile.email || '',
         phone: userProfile.phoneNumber || '',
         address: userProfile.address || '',
         gender: userProfile.gender || '',
       });
-      setLocationData(userProfile.location || undefined);
+      setLocationData(userProfile.location || { latitude: '41.32', longitude: '69.24' });
       setPreviewUrl(userProfile.avatarUrl || '');
 
       // Initialize notification preferences from backend data
       if (userProfile.notificationPreferences) {
         const prefs = userProfile.notificationPreferences;
-        setNotifications({
+        notificationForm.reset({
           emailBookings: prefs.emailNotifications?.newBookingsAndReservations || false,
           emailMessages: prefs.emailNotifications?.messagesFromCustomers || false,
           emailPayments: prefs.emailNotifications?.paymentConfirmations || false,
@@ -65,25 +106,19 @@ export default function DashboardSettingsPage() {
         });
       }
     }
-  }, [userProfile]);
+  }, [userProfile, profileForm, notificationForm]);
 
-  const handleProfileSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!profile.name.trim()) {
-      showToast('Name is required', 'warning');
-      return;
-    }
-
+  const handleProfileSubmit = (data: ProfileFormData) => {
+    console.log(locationData)
     const updateData = {
-      name: profile.name,
-      email: profile.email || undefined,
-      address: profile.address || undefined,
-      gender: profile.gender || undefined,
+      name: data.name,
+      email: data.email || undefined,
+      address: data.address || undefined,
+      gender: data.gender || undefined,
       ...(locationData && { location: locationData }),
       ...(profileImage && { image: profileImage }),
     };
-
+    console.log(updateData)
     updateProfileMutation.mutate(updateData, {
       onSuccess: () => {
         showToast('Profile updated successfully!', 'success');
@@ -107,26 +142,17 @@ export default function DashboardSettingsPage() {
     }
   };
 
-  const handleNotificationChange = (key: keyof typeof notifications) => {
-    setNotifications((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
-
-  const handleNotificationSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleNotificationSubmit = (data: NotificationFormData) => {
     const notificationData = {
       emailNotifications: {
-        newBookingsAndReservations: notifications.emailBookings,
-        messagesFromCustomers: notifications.emailMessages,
-        paymentConfirmations: notifications.emailPayments,
+        newBookingsAndReservations: data.emailBookings,
+        messagesFromCustomers: data.emailMessages,
+        paymentConfirmations: data.emailPayments,
       },
       smsNotifications: {
-        newBookingsAndReservations: notifications.smsBookings,
-        messagesFromCustomers: notifications.smsMessages,
-        paymentConfirmations: notifications.smsPayments,
+        newBookingsAndReservations: data.smsBookings,
+        messagesFromCustomers: data.smsMessages,
+        paymentConfirmations: data.smsPayments,
       },
     };
 
@@ -157,7 +183,7 @@ export default function DashboardSettingsPage() {
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
             </div>
           ) : (
-            <form onSubmit={handleProfileSubmit} className="space-y-4">
+            <form onSubmit={profileForm.handleSubmit(handleProfileSubmit)} className="space-y-4">
               {/* Profile Image Upload */}
               <div className="flex flex-col items-center mb-6">
                 <div className="relative">
@@ -184,62 +210,110 @@ export default function DashboardSettingsPage() {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
-                <input
-                  type="text"
-                  required
-                  value={profile.name}
-                  onChange={(e) => setProfile((prev) => ({ ...prev, name: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                <Controller
+                  name="name"
+                  control={profileForm.control}
+                  render={({ field, fieldState }) => (
+                    <>
+                      <input
+                        {...field}
+                        type="text"
+                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                          fieldState.error ? 'border-red-500' : 'border-gray-300'
+                        }`}
+                      />
+                      {fieldState.error && (
+                        <p className="mt-1 text-sm text-red-600">{fieldState.error.message}</p>
+                      )}
+                    </>
+                  )}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                <input
-                  type="email"
-                  value={profile.email}
-                  onChange={(e) => setProfile((prev) => ({ ...prev, email: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                <Controller
+                  name="email"
+                  control={profileForm.control}
+                  render={({ field, fieldState }) => (
+                    <>
+                      <input
+                        {...field}
+                        type="email"
+                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                          fieldState.error ? 'border-red-500' : 'border-gray-300'
+                        }`}
+                      />
+                      {fieldState.error && (
+                        <p className="mt-1 text-sm text-red-600">{fieldState.error.message}</p>
+                      )}
+                    </>
+                  )}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
-                <select
-                  value={profile.gender}
-                  onChange={(e) => setProfile((prev) => ({ ...prev, gender: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Select Gender</option>
-                  <option value={Gender.Male}>Male</option>
-                  <option value={Gender.Female}>Female</option>
-                  <option value={Gender.NonBinary}>Non-Binary</option>
-                  <option value={Gender.PreferNotToSay}>Prefer Not To Say</option>
-                </select>
+                <Controller
+                  name="gender"
+                  control={profileForm.control}
+                  render={({ field, fieldState }) => (
+                    <>
+                      <select
+                        {...field}
+                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                          fieldState.error ? 'border-red-500' : 'border-gray-300'
+                        }`}
+                      >
+                        <option value="">Select Gender</option>
+                        <option value={Gender.Male}>Male</option>
+                        <option value={Gender.Female}>Female</option>
+                        <option value={Gender.NonBinary}>Non-Binary</option>
+                        <option value={Gender.PreferNotToSay}>Prefer Not To Say</option>
+                      </select>
+                      {fieldState.error && (
+                        <p className="mt-1 text-sm text-red-600">{fieldState.error.message}</p>
+                      )}
+                    </>
+                  )}
+                />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Address</label>
-                <input
-                  type="text"
-                  value={profile.address}
-                  onChange={(e) => setProfile((prev) => ({ ...prev, address: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Your address"
+                <Controller
+                  name="address"
+                  control={profileForm.control}
+                  render={({ field, fieldState }) => (
+                    <>
+                      <input
+                        {...field}
+                        type="text"
+                        placeholder="Your address"
+                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+                          fieldState.error ? 'border-red-500' : 'border-gray-300'
+                        }`}
+                      />
+                      {fieldState.error && (
+                        <p className="mt-1 text-sm text-red-600">{fieldState.error.message}</p>
+                      )}
+                    </>
+                  )}
                 />
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
                 <div className="border border-gray-300 rounded-md overflow-hidden">
-                  <Map
-                    coords={locationData ? `${locationData.latitude},${locationData.longitude}` : '41.2995,69.2401'}
+                  {locationData?.latitude && locationData?.longitude && (<Map
+                    coords={locationData ? `${locationData.latitude},${locationData.longitude}` : '0,0'}
                     height="300"
                     onLocationClick={(coords) => {
                       const [lat, lng] = coords.split(',').map(Number);
+                      console.log(`Selected coordinates: ${lat}, ${lng}`);
                       setLocationData({ latitude: lat, longitude: lng });
                     }}
-                  />
+                  />)}
                 </div>
               </div>
 
@@ -272,15 +346,22 @@ export default function DashboardSettingsPage() {
                   { key: "emailMessages", label: "Messages from customers" },
                   { key: "emailPayments", label: "Payment confirmations" },
                 ].map(({ key, label }) => (
-                  <label key={key} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={notifications[key as keyof typeof notifications]}
-                      onChange={() => handleNotificationChange(key as keyof typeof notifications)}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                    <span className="ml-2 text-sm text-gray-700">{label}</span>
-                  </label>
+                  <Controller
+                    key={key}
+                    name={key as keyof NotificationFormData}
+                    control={notificationForm.control}
+                    render={({ field }) => (
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={field.value}
+                          onChange={(e) => field.onChange(e.target.checked)}
+                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        />
+                        <span className="ml-2 text-sm text-gray-700">{label}</span>
+                      </label>
+                    )}
+                  />
                 ))}
               </div>
             </div>
@@ -293,21 +374,28 @@ export default function DashboardSettingsPage() {
                   { key: "smsMessages", label: "Messages from customers" },
                   { key: "smsPayments", label: "Payment confirmations" },
                 ].map(({ key, label }) => (
-                  <label key={key} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={notifications[key as keyof typeof notifications]}
-                      onChange={() => handleNotificationChange(key as keyof typeof notifications)}
-                      className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-                    />
-                    <span className="ml-2 text-sm text-gray-700">{label}</span>
-                  </label>
+                  <Controller
+                    key={key}
+                    name={key as keyof NotificationFormData}
+                    control={notificationForm.control}
+                    render={({ field }) => (
+                      <label className="flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={field.value}
+                          onChange={(e) => field.onChange(e.target.checked)}
+                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                        />
+                        <span className="ml-2 text-sm text-gray-700">{label}</span>
+                      </label>
+                    )}
+                  />
                 ))}
               </div>
             </div>
           </div>
 
-          <form onSubmit={handleNotificationSubmit} className="mt-6">
+          <form onSubmit={notificationForm.handleSubmit(handleNotificationSubmit)} className="mt-6">
             <button
               type="submit"
               disabled={updateNotificationMutation.isPending}
