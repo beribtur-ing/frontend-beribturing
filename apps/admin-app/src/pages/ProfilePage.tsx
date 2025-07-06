@@ -1,4 +1,4 @@
-import { useAuth } from '../hooks/auth';
+import { useAuth } from '~/hooks';
 import { Card, CardContent, CardHeader, Avatar, Button, Chip, Typography, Box, Grid, Divider } from '@mui/material';
 import { CalendarDays, Mail, Phone, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
