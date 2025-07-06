@@ -1,13 +1,19 @@
-
-
 import { Button, TextField, Select, MenuItem, FormControl, InputLabel, InputAdornment, Box } from "@mui/material"
 import { useState } from "react"
 import { Search, Filter } from "lucide-react"
 
-export function UserFilters() {
-  const [userType, setUserType] = useState('')
-  const [status, setStatus] = useState('')
+interface UserFiltersProps {
+  onUserTypeChange?: (userType: 'lender' | 'lendee') => void;
+  onFilterSearch?: (searchKeyword: string, status: string) => void;
+}
 
+export function UserFilters({ 
+  onUserTypeChange, 
+  onFilterSearch 
+}: UserFiltersProps) {
+  const [userType, setUserType] = useState<'lender' | 'lendee'>('lender')
+  const [status, setStatus] = useState('')
+  const [searchKeyword, setSearchKeyword] = useState('')
   return (
     <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, gap: 2 }}>
       <TextField
@@ -15,6 +21,10 @@ export function UserFilters() {
         variant="outlined"
         size="small"
         sx={{ flex: 1 }}
+        value={searchKeyword}
+        onChange={(e) => {
+          setSearchKeyword(e.target.value);
+        }}
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
@@ -28,9 +38,12 @@ export function UserFilters() {
         <Select
           value={userType}
           label="User Type"
-          onChange={(e) => setUserType(e.target.value)}
+          onChange={(e) => {
+            const value = e.target.value as 'lender' | 'lendee';
+            setUserType(value);
+            onUserTypeChange?.(value);
+          }}
         >
-          <MenuItem value="all">All Types</MenuItem>
           <MenuItem value="lendee">Lendees</MenuItem>
           <MenuItem value="lender">Lenders</MenuItem>
         </Select>
@@ -40,15 +53,21 @@ export function UserFilters() {
         <Select
           value={status}
           label="Status"
-          onChange={(e) => setStatus(e.target.value)}
+          onChange={(e) => {
+            setStatus(e.target.value);
+          }}
         >
-          <MenuItem value="all">All Status</MenuItem>
-          <MenuItem value="active">Active</MenuItem>
-          <MenuItem value="inactive">Inactive</MenuItem>
+          <MenuItem value="">All Status</MenuItem>
+          <MenuItem value="Active">Active</MenuItem>
+          <MenuItem value="InActive">Inactive</MenuItem>
         </Select>
       </FormControl>
-      <Button variant="outlined" startIcon={<Filter size={16} />}>
-        More Filters
+      <Button 
+        variant="outlined" 
+        startIcon={<Filter size={16} />}
+        onClick={() => onFilterSearch?.(searchKeyword, status)}
+      >
+        Search
       </Button>
     </Box>
   )

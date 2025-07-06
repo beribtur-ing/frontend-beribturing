@@ -1,1 +1,1 @@
-export * from './FindDisabledLendersAdmQuery';
+export * from './FindLendersAdmQuery';

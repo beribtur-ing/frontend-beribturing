@@ -3,8 +3,22 @@ import { UserFilters } from '../components/admin/user-filters';
 import { Button, Typography, Box } from '@mui/material';
 import { UserPlus } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useState } from 'react';
 
 export default function UsersPage() {
+  const [userType, setUserType] = useState<'lender' | 'lendee'>('lender');
+  const [searchKeyword, setSearchKeyword] = useState('');
+  const [status, setStatus] = useState('');
+
+  const handleUserTypeChange = (newUserType: 'lender' | 'lendee') => {
+    setUserType(newUserType);
+  };
+
+  const handleFilterSearch = (newSearchKeyword: string, newStatus: string) => {
+    setSearchKeyword(newSearchKeyword);
+    setStatus(newStatus);
+  };
+
   return (
     <Box sx={{ py: 3 }}>
       <Box
@@ -25,15 +39,22 @@ export default function UsersPage() {
             Manage lendees, lenders, and user permissions.
           </Typography>
         </Box>
-        <Button variant="contained" component={Link} to={`/users/create`} startIcon={<UserPlus size={16} />}>
+        <Button variant="contained" component={Link} to={`/users/create`} startIcon={<UserPlus size={16}/>}>
           Add User
         </Button>
       </Box>
 
       <Box sx={{ mb: 3 }}>
-        <UserFilters />
+        <UserFilters
+          onUserTypeChange={handleUserTypeChange}
+          onFilterSearch={handleFilterSearch}
+        />
       </Box>
-      <UserTable />
+      <UserTable
+        userType={userType}
+        searchKeyword={searchKeyword}
+        status={status}
+      />
     </Box>
   );
 }
