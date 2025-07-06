@@ -2,6 +2,7 @@ import { ChevronRight } from 'lucide-react';
 import type { ProductVariant } from '~/types/domain';
 import { ProductCard } from '~/components/product-card';
 import { usePopularProductRdos } from '~/pages/home/hooks/usePopularProductRdos';
+import { PopularProductCard } from '~/components/popular-product-card';
 
 interface PopularItemsProps {
   variants: ProductVariant[];
@@ -11,6 +12,7 @@ interface PopularItemsProps {
 
 export function PopularItems({ variants, onFavoriteToggle, favoriteIds = [] }: PopularItemsProps) {
   const { popularProductRdos } = usePopularProductRdos({ maxCount: 10 });
+  console.log(popularProductRdos);
 
   return (
     <section id="popular-items" className="py-8 bg-gray-50 dark:bg-gray-900">
@@ -25,14 +27,14 @@ export function PopularItems({ variants, onFavoriteToggle, favoriteIds = [] }: P
           </button>
         </div>
 
-        {variants.length > 0 ? (
+        {popularProductRdos.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
-            {variants.map((variant) => (
-              <ProductCard
-                key={variant.id}
-                variant={variant}
+            {popularProductRdos.map((product) => (
+              <PopularProductCard
+                key={product?.id}
+                product={product}
                 onFavoriteToggle={onFavoriteToggle}
-                isFavorite={favoriteIds.includes(variant.id)}
+                isFavorite={favoriteIds.includes(product.id)}
               />
             ))}
           </div>
