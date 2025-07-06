@@ -9,3 +9,4 @@ export * from './PopularProductRdo';
 export * from './ReservationRdo';
 export * from './ReservationDetailRdo';
 export * from './LendeeCurrentInfoRdo';
+export * from './AdminOverviewRdo';
