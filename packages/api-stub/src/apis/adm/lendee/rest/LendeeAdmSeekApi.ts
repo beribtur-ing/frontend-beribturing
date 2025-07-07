@@ -1,4 +1,4 @@
-import {FindLendeesAdmQuery} from '~/apis';
+import {FindLendeesAdmQuery, FindLendeeAdmQuery} from '~/apis';
 import {FirstParameter, Lendee, QueryResponse} from '~/models';
 import axios from 'axios';
 
@@ -21,8 +21,18 @@ const findLendees = (variables: {
   return axios.post<QueryResponse<Lendee[]>>(url('find-lendees/query'), query);
 };
 
+const findLendee = (variables: {
+  lendeeId?: string;
+}) => {
+  const query = <FindLendeeAdmQuery>{
+    lendeeId: variables.lendeeId,
+  };
+  return axios.post<QueryResponse<Lendee[]>>(url('find-lendee/query'), query);
+};
+
 export default {
   findLendees,
+  findLendee,
 
   query: {
     findLendees: (params: FirstParameter<typeof findLendees>) => ({
@@ -30,6 +40,12 @@ export default {
       queryFn: async ({queryKey}: {
         queryKey: readonly any[]
       }) => (await findLendees(queryKey.slice().pop()))?.data,
+    }),
+    findLendee: (params: FirstParameter<typeof findLendee>) => ({
+      queryKey: ['feature/admin/lendee', 'findLendee', params],
+      queryFn: async ({queryKey}: {
+        queryKey: readonly any[]
+      }) => (await findLendee(queryKey.slice().pop()))?.data,
     }),
   }
 };

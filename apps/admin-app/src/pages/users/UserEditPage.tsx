@@ -17,7 +17,7 @@ import {
   IconButton,
 } from '@mui/material';
 import { ArrowLeft } from 'lucide-react';
-import { mockUsers } from '../lib/mock-data';
+import { mockUsers } from '../../lib/mock-data';
 
 export default function UserEditPage() {
   const navigate = useNavigate();

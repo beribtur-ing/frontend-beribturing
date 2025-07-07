@@ -1,5 +1,5 @@
-import { UserTable } from '../components/admin/user-table';
-import { UserFilters } from '../components/admin/user-filters';
+import { UserTable } from '../../components/admin/user-table';
+import { UserFilters } from '../../components/admin/user-filters';
 import { Button, Typography, Box } from '@mui/material';
 import { UserPlus } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -39,9 +39,9 @@ export default function UsersPage() {
             Manage lendees, lenders, and user permissions.
           </Typography>
         </Box>
-        <Button variant="contained" component={Link} to={`/users/create`} startIcon={<UserPlus size={16}/>}>
-          Add User
-        </Button>
+        {/*<Button variant="contained" component={Link} to={`/users/create`} startIcon={<UserPlus size={16}/>}>*/}
+        {/*  Add User*/}
+        {/*</Button>*/}
       </Box>
 
       <Box sx={{ mb: 3 }}>

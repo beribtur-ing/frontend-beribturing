@@ -19,9 +19,9 @@ import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { Tab } from '@mui/material';
 import { useState } from 'react';
 import { ArrowLeft, Edit, Trash2, Ban, CheckCircle } from 'lucide-react';
-import { mockUsers } from '../lib/mock-data';
+import { mockUsers } from '../../../lib/mock-data';
 
-export default function UserDetailsPage() {
+export default function LenderDetailsPage() {
   const navigate = useNavigate();
   const { id } = useParams();
   const user = mockUsers.find((u) => u.id === id) || mockUsers[0];

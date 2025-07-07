@@ -32,10 +32,10 @@ interface UserTableProps {
 export function UserTable({ userType = 'lender', searchKeyword = '', status = '' }: UserTableProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
-  
+
   const lendersQuery = useLenders({ limit: 10 });
   const lendeesQuery = useLendees({ limit: 10 });
-  
+
   const isLenders = userType === 'lender';
   const query = isLenders ? lendersQuery : lendeesQuery;
   const users = isLenders ? lendersQuery.lenders : lendeesQuery.lendees;
@@ -81,7 +81,7 @@ export function UserTable({ userType = 'lender', searchKeyword = '', status = ''
   if (query.isLoading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-        <CircularProgress />
+        <CircularProgress/>
       </Box>
     );
   }
@@ -105,7 +105,7 @@ export function UserTable({ userType = 'lender', searchKeyword = '', status = ''
           {users.map((user) => (
             <TableRow key={user.id}>
               <TableCell sx={{ fontWeight: 'medium' }}>
-                <Link to={`/users/${user.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                <Link to={`/users/${userType}/${user.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
                   {user.name}
                 </Link>
               </TableCell>
@@ -125,14 +125,14 @@ export function UserTable({ userType = 'lender', searchKeyword = '', status = ''
                 />
               </TableCell>
               <TableCell>{user.phoneNumber}</TableCell>
-              <TableCell>{user.registeredAt ? new Date(user.registeredAt).toLocaleDateString() : 'N/A'}</TableCell>
+              <TableCell>{user.registeredOn ? new Date(user.registeredOn).toLocaleDateString() : 'N/A'}</TableCell>
               <TableCell>
                 {isLenders && 'productSequence' in user && `${user.productSequence} listings`}
                 {!isLenders && 'reservationSequence' in user && `${user.reservationSequence} reservations`}
               </TableCell>
               <TableCell>
                 <IconButton size="small" onClick={(e) => handleMenuClick(e, user.id)}>
-                  <MoreHorizontal size={16} />
+                  <MoreHorizontal size={16}/>
                 </IconButton>
               </TableCell>
             </TableRow>
@@ -185,29 +185,29 @@ export function UserTable({ userType = 'lender', searchKeyword = '', status = ''
       >
         <MenuItem
           component={Link}
-          to={`/users/${selectedUserId}`}
+          to={`/users/${userType}/${selectedUserId}`}
           onClick={handleMenuClose}
           sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
         >
-          <Eye size={16} />
+          <Eye size={16}/>
           View Details
         </MenuItem>
-        <MenuItem
-          component={Link}
-          to={`/users/${selectedUserId}/edit`}
-          onClick={handleMenuClose}
-          sx={{ display: 'flex', alignItems: 'center', gap: 1 }}
-        >
-          <Edit size={16} />
-          Edit User
-        </MenuItem>
-        <MenuItem onClick={handleMenuClose} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          <Shield size={16} />
-          Toggle Status
-        </MenuItem>
-        <MenuItem onClick={handleMenuClose} sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'error.main' }}>
-          Delete User
-        </MenuItem>
+        {/*<MenuItem*/}
+        {/*  component={Link}*/}
+        {/*  to={`/users/${selectedUserId}/edit`}*/}
+        {/*  onClick={handleMenuClose}*/}
+        {/*  sx={{ display: 'flex', alignItems: 'center', gap: 1 }}*/}
+        {/*>*/}
+        {/*  <Edit size={16}/>*/}
+        {/*  Edit User*/}
+        {/*</MenuItem>*/}
+        {/*<MenuItem onClick={handleMenuClose} sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>*/}
+        {/*  <Shield size={16}/>*/}
+        {/*  Toggle Status*/}
+        {/*</MenuItem>*/}
+        {/*<MenuItem onClick={handleMenuClose} sx={{ display: 'flex', alignItems: 'center', gap: 1, color: 'error.main' }}>*/}
+        {/*  Delete User*/}
+        {/*</MenuItem>*/}
       </Menu>
     </Card>
   );

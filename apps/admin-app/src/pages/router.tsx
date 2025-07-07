@@ -23,10 +23,11 @@ import PropertiesPage from './PropertiesPage';
 import PropertyDetailsPage from './PropertyDetailsPage';
 import PropertyEditPage from './PropertyEditPage';
 import SettingsPage from './SettingsPage';
-import UsersPage from './UsersPage';
-import UserDetailsPage from './UserDetailsPage';
-import UserEditPage from './UserEditPage';
-import UserCreatePage from './UserCreatePage';
+import UsersPage from './users/UsersPage';
+import LenderDetailsPage from './users/lender/LenderDetailsPage';
+import LendeeDetailsPage from './users/lendee/LendeeDetailsPage';
+import UserEditPage from './users/UserEditPage';
+import UserCreatePage from './users/UserCreatePage';
 import CategoriesPage from './CategoriesPage';
 
 export const browserRouter = createBrowserRouter(
@@ -149,10 +150,18 @@ export const browserRouter = createBrowserRouter(
           ),
         },
         {
-          path: 'users/:id',
+          path: 'users/lender/:id',
           element: (
             <ProtectedLayout>
-              <UserDetailsPage />
+              <LenderDetailsPage />
+            </ProtectedLayout>
+          ),
+        },
+        {
+          path: 'users/lendee/:id',
+          element: (
+            <ProtectedLayout>
+              <LendeeDetailsPage />
             </ProtectedLayout>
           ),
         },
