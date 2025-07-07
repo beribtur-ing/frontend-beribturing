@@ -1,1 +1,1 @@
-// Commands will be added here as needed
+export * from './ModifyLenderStatusCommand';
