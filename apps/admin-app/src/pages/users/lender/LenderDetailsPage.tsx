@@ -20,17 +20,34 @@ import { Tab } from '@mui/material';
 import { useState } from 'react';
 import { ArrowLeft, Edit, Trash2, Ban, CheckCircle } from 'lucide-react';
 import { mockUsers } from '../../../lib/mock-data';
+import { useLenderDetail, useLenderMutation, useToast } from '~/hooks';
 
 export default function LenderDetailsPage() {
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const { id } = useParams();
-  const user = mockUsers.find((u) => u.id === id) || mockUsers[0];
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [activeTab, setActiveTab] = useState('activity');
 
+  const { user, refetch } = useLenderDetail(id);
+  const { mutation: { modifyLenderStatus } } = useLenderMutation();
+
+  const handleSubmitModifyLenderStatus = () => {
+    console.log(id)
+    modifyLenderStatus.mutateAsync({ lenderId: id || '' }, {
+      onSuccess: () => {
+        refetch();
+        showToast('Status modified successfully', 'success')
+      },
+      onError: () => {
+        showToast('Something went wrong', 'error');
+      },
+    })
+  }
+
   const handleDelete = () => {
-    setShowDeleteDialog(false);
-    navigate(`/users`);
+    // setShowDeleteDialog(false);
+    // navigate(`/users`);
   };
 
   return (
@@ -46,7 +63,7 @@ export default function LenderDetailsPage() {
       >
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
           <IconButton onClick={() => navigate(`/users`)}>
-            <ArrowLeft size={20} />
+            <ArrowLeft size={20}/>
           </IconButton>
           <Box>
             <Typography variant="h4" fontWeight="bold">
@@ -57,14 +74,14 @@ export default function LenderDetailsPage() {
             </Typography>
           </Box>
         </Box>
-        <Box sx={{ display: 'flex', gap: 1 }}>
-          <Button variant="outlined" component={Link} to={`/users/${id}/edit`} startIcon={<Edit size={16} />}>
-            Edit User
-          </Button>
-          <Button color="error" onClick={() => setShowDeleteDialog(true)} startIcon={<Trash2 size={16} />}>
-            Delete User
-          </Button>
-        </Box>
+        {/*<Box sx={{ display: 'flex', gap: 1 }}>*/}
+        {/*  <Button variant="outlined" component={Link} to={`/users/${id}/edit`} startIcon={<Edit size={16}/>}>*/}
+        {/*    Edit User*/}
+        {/*  </Button>*/}
+        {/*  <Button color="error" onClick={() => setShowDeleteDialog(true)} startIcon={<Trash2 size={16}/>}>*/}
+        {/*    Delete User*/}
+        {/*  </Button>*/}
+        {/*</Box>*/}
       </Box>
 
       <Box sx={{ display: 'grid', gap: 3, gridTemplateColumns: { xs: '1fr', md: '1fr 2fr' } }}>
@@ -81,10 +98,10 @@ export default function LenderDetailsPage() {
                 {user?.name}
               </Typography>
               <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
-                {user?.email}
+                {user?.profile?.email}
               </Typography>
-              <Chip label={user?.type} color={user?.type === 'lender' ? 'primary' : 'secondary'} sx={{ mb: 1 }} />
-              <Chip label={user?.isActive ? 'Active' : 'Inactive'} color={user?.isActive ? 'success' : 'error'} />
+              <Chip label={'lender'} color={'primary'} sx={{ mb: 1 }}/>
+              <Chip label={user?.active ? 'Active' : 'Inactive'} color={user?.active ? 'success' : 'error'}/>
             </Box>
 
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -98,26 +115,28 @@ export default function LenderDetailsPage() {
                 <Typography variant="body2" color="text.secondary">
                   Joined:
                 </Typography>
-                <Typography variant="body2">{new Date(user?.joinedAt || '').toLocaleDateString()}</Typography>
+                <Typography variant="body2">{new Date(user?.registeredOn || '').toLocaleDateString()}</Typography>
               </Box>
               <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                 <Typography variant="body2" color="text.secondary">
                   Activity:
                 </Typography>
                 <Typography variant="body2">
-                  {user?.totalRentals && `${user?.totalRentals} rentals`}
-                  {user?.totalListings && `${user?.totalListings} listings`}
+                  {/*{user?.totalRentals && `${user?.totalRentals} rentals`}*/}
+                  {/*{user?.totalListings && `${user?.totalListings} listings`}*/}
                 </Typography>
               </Box>
             </Box>
 
             <Box sx={{ mt: 3, display: 'flex', flexDirection: 'column', gap: 1 }}>
-              {user?.isActive ? (
-                <Button variant="outlined" fullWidth startIcon={<Ban size={16} />}>
+              {user?.active ? (
+                <Button variant="outlined" fullWidth startIcon={<Ban size={16}/>}
+                        onClick={handleSubmitModifyLenderStatus}>
                   Deactivate Account
                 </Button>
               ) : (
-                <Button variant="outlined" fullWidth startIcon={<CheckCircle size={16} />}>
+                <Button variant="outlined" fullWidth startIcon={<CheckCircle size={16}/>}
+                        onClick={handleSubmitModifyLenderStatus}>
                   Activate Account
                 </Button>
               )}
@@ -131,15 +150,14 @@ export default function LenderDetailsPage() {
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
           <TabContext value={activeTab}>
             <TabList onChange={(e, newValue) => setActiveTab(newValue)}>
-              <Tab label="Activity" value="activity" />
-              <Tab label="Rentals" value="rentals" />
-              <Tab label="Listings" value="listings" />
-              <Tab label="Reports" value="reports" />
+              <Tab label="Activity" value="activity"/>
+              <Tab label="Listings" value="listings"/>
+              <Tab label="Reports" value="reports"/>
             </TabList>
 
             <TabPanel value="activity">
               <Card>
-                <CardHeader title="Recent Activity" subheader="User's recent actions on the platform." />
+                <CardHeader title="Recent Activity" subheader="User's recent actions on the platform."/>
                 <CardContent>
                   <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -185,86 +203,40 @@ export default function LenderDetailsPage() {
                 </CardContent>
               </Card>
             </TabPanel>
-
-            <TabPanel value="rentals">
-              <Card>
-                <CardHeader title="Rental History" subheader="Items rented by this user." />
-                <CardContent>
-                  {user?.type === 'lendee' ? (
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <Box>
-                          <Typography variant="body2" fontWeight="medium">
-                            Professional Camera Kit
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            Mar 15, 2024 - Mar 20, 2024
-                          </Typography>
-                        </Box>
-                        <Chip label="Active" color="success" size="small" />
-                      </Box>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <Box>
-                          <Typography variant="body2" fontWeight="medium">
-                            Power Drill Set
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            Feb 20, 2024 - Feb 25, 2024
-                          </Typography>
-                        </Box>
-                        <Chip label="Completed" color="default" size="small" />
-                      </Box>
-                    </Box>
-                  ) : (
-                    <Typography variant="body2" color="text.secondary">
-                      This user is a lender and does not rent items.
-                    </Typography>
-                  )}
-                </CardContent>
-              </Card>
-            </TabPanel>
-
             <TabPanel value="listings">
               <Card>
-                <CardHeader title="Listed Properties" subheader="Items listed by this user." />
+                <CardHeader title="Listed Properties" subheader="Items listed by this user."/>
                 <CardContent>
-                  {user?.type === 'lender' ? (
-                    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <Box>
-                          <Typography variant="body2" fontWeight="medium">
-                            Professional Camera Kit
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            Listed on Feb 25, 2024
-                          </Typography>
-                        </Box>
-                        <Chip label="Active" color="success" size="small" />
+                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <Box>
+                        <Typography variant="body2" fontWeight="medium">
+                          Professional Camera Kit
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          Listed on Feb 25, 2024
+                        </Typography>
                       </Box>
-                      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <Box>
-                          <Typography variant="body2" fontWeight="medium">
-                            Camping Gear Set
-                          </Typography>
-                          <Typography variant="caption" color="text.secondary">
-                            Listed on Jan 10, 2024
-                          </Typography>
-                        </Box>
-                        <Chip label="Active" color="success" size="small" />
-                      </Box>
+                      <Chip label="Active" color="success" size="small"/>
                     </Box>
-                  ) : (
-                    <Typography variant="body2" color="text.secondary">
-                      This user is a lendee and does not list items.
-                    </Typography>
-                  )}
+                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                      <Box>
+                        <Typography variant="body2" fontWeight="medium">
+                          Camping Gear Set
+                        </Typography>
+                        <Typography variant="caption" color="text.secondary">
+                          Listed on Jan 10, 2024
+                        </Typography>
+                      </Box>
+                      <Chip label="Active" color="success" size="small"/>
+                    </Box>
+                  </Box>
                 </CardContent>
               </Card>
             </TabPanel>
-
             <TabPanel value="reports">
               <Card>
-                <CardHeader title="Reports" subheader="Reports involving this user." />
+                <CardHeader title="Reports" subheader="Reports involving this user."/>
                 <CardContent>
                   <Typography variant="body2" color="text.secondary">
                     No reports found for this user.

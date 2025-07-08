@@ -25,7 +25,7 @@ const findLender = (variables: {
   lenderId?: string;
 }) => {
   const query = <FindLendersAdmQuery>{
-    searchKeyword: variables.lenderId,
+    lenderId: variables.lenderId,
   };
   return axios.post<QueryResponse<Lender[]>>(url('find-lender/query'), query);
 };
