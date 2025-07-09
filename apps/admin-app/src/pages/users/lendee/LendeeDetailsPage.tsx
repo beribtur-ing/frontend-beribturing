@@ -14,12 +14,13 @@ import {
   DialogActions,
   DialogContentText,
   IconButton,
+  Pagination,
 } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { Tab } from '@mui/material';
 import { useState } from 'react';
 import { ArrowLeft, Edit, Trash2, Ban, CheckCircle } from 'lucide-react';
-import { useLendeeDetail } from '~/hooks';
+import { useLendeeDetail, useRentalRecordRdosByLendeeId } from '~/hooks';
 
 export default function LendeeDetailsPage() {
   const navigate = useNavigate();
@@ -27,6 +28,10 @@ export default function LendeeDetailsPage() {
   const { user } = useLendeeDetail(id);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [activeTab, setActiveTab] = useState('activity');
+  const { rentalRecords, total, offset, limit, changeCurrentPage, changePageLimit, isLoading } = useRentalRecordRdosByLendeeId({
+    lendeeId: id,
+    limit: 5
+  });
 
   const handleDelete = () => {
     // setShowDeleteDialog(false);
@@ -189,30 +194,53 @@ export default function LendeeDetailsPage() {
               <Card>
                 <CardHeader title="Rental History" subheader="Items rented by this user."/>
                 <CardContent>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <Box>
-                        <Typography variant="body2" fontWeight="medium">
-                          Professional Camera Kit
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          Mar 15, 2024 - Mar 20, 2024
-                        </Typography>
+                  {isLoading ? (
+                    <Typography variant="body2" color="text.secondary">
+                      Loading...
+                    </Typography>
+                  ) : rentalRecords.length === 0 ? (
+                    <Typography variant="body2" color="text.secondary">
+                      No rental history found for this user.
+                    </Typography>
+                  ) : (
+                    <>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        {rentalRecords.map((record, index) => (
+                          <Box key={record.id || index} sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                            <Box>
+                              <Typography variant="body2" fontWeight="medium">
+                                {record.productRentalRecordRdo?.product?.title || 'Unknown Product'}
+                              </Typography>
+                              <Typography variant="caption" color="text.secondary">
+                                {record?.period?.startDateTime ? new Date(record?.period?.startDateTime).toLocaleDateString() : 'N/A'} - {record?.period?.endDateTime ? new Date(record?.period?.endDateTime).toLocaleDateString() : 'Ongoing'}
+                              </Typography>
+                              {record.fee && (
+                                <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                                  Fee: {record.fee.amount} {record.fee.unit}
+                                </Typography>
+                              )}
+                            </Box>
+                            <Chip 
+                              label={record.status || 'Unknown'} 
+                              color={record.status === 'ACTIVE' ? 'success' : record.status === 'COMPLETED' ? 'default' : 'warning'} 
+                              size="small"
+                            />
+                          </Box>
+                        ))}
                       </Box>
-                      <Chip label="Active" color="success" size="small"/>
-                    </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <Box>
-                        <Typography variant="body2" fontWeight="medium">
-                          Power Drill Set
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          Feb 20, 2024 - Feb 25, 2024
-                        </Typography>
-                      </Box>
-                      <Chip label="Completed" color="default" size="small"/>
-                    </Box>
-                  </Box>
+                      {total > limit && (
+                        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+                          <Pagination
+                            count={Math.ceil(total / limit)}
+                            page={Math.floor(offset / limit) + 1}
+                            onChange={(_, page) => changeCurrentPage((page - 1) * limit)}
+                            color="primary"
+                            size="medium"
+                          />
+                        </Box>
+                      )}
+                    </>
+                  )}
                 </CardContent>
               </Card>
             </TabPanel>

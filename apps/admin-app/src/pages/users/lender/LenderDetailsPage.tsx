@@ -14,6 +14,7 @@ import {
   DialogActions,
   DialogContentText,
   IconButton,
+  Pagination,
 } from '@mui/material';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import { Tab } from '@mui/material';
@@ -21,6 +22,7 @@ import { useState } from 'react';
 import { ArrowLeft, Edit, Trash2, Ban, CheckCircle } from 'lucide-react';
 import { mockUsers } from '../../../lib/mock-data';
 import { useLenderDetail, useLenderMutation, useToast } from '~/hooks';
+import { useProductRdosByOwner } from '~/hooks/item';
 
 export default function LenderDetailsPage() {
   const navigate = useNavigate();
@@ -31,6 +33,10 @@ export default function LenderDetailsPage() {
 
   const { user, refetch } = useLenderDetail(id);
   const { mutation: { modifyLenderStatus } } = useLenderMutation();
+  const { productRdos, total, offset, limit, changeCurrentPage, changePageLimit, isLoading } = useProductRdosByOwner({
+    ownerId: id,
+    limit: 5,
+  });
 
   const handleSubmitModifyLenderStatus = () => {
     console.log(id)
@@ -152,7 +158,6 @@ export default function LenderDetailsPage() {
             <TabList onChange={(e, newValue) => setActiveTab(newValue)}>
               <Tab label="Activity" value="activity"/>
               <Tab label="Listings" value="listings"/>
-              <Tab label="Reports" value="reports"/>
             </TabList>
 
             <TabPanel value="activity">
@@ -207,40 +212,58 @@ export default function LenderDetailsPage() {
               <Card>
                 <CardHeader title="Listed Properties" subheader="Items listed by this user."/>
                 <CardContent>
-                  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <Box>
-                        <Typography variant="body2" fontWeight="medium">
-                          Professional Camera Kit
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          Listed on Feb 25, 2024
-                        </Typography>
+                  {isLoading ? (
+                    <Typography variant="body2" color="text.secondary">
+                      Loading...
+                    </Typography>
+                  ) : productRdos.length === 0 ? (
+                    <Typography variant="body2" color="text.secondary">
+                      No items found for this user.
+                    </Typography>
+                  ) : (
+                    <>
+                      <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        {productRdos.map((rdo, index) => {
+                          const product = rdo.product;
+                          const category = rdo.category;
+                          return (
+                            <Box key={product.id || index}
+                                 sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                              <Box>
+                                <Typography variant="body2" fontWeight="medium">
+                                  {product.title}
+                                </Typography>
+                                <Typography variant="caption" color="text.secondary">
+                                  Listed on {new Date(product.registeredOn || '').toLocaleDateString()}
+                                </Typography>
+                                {category && (
+                                  <Typography variant="caption" color="text.secondary" sx={{ display: 'block' }}>
+                                    Category: {category.name}
+                                  </Typography>
+                                )}
+                              </Box>
+                              <Chip
+                                label={product.active ? "Active" : "Inactive"}
+                                color={product.active ? "success" : "default"}
+                                size="small"
+                              />
+                            </Box>
+                          )
+                        })}
                       </Box>
-                      <Chip label="Active" color="success" size="small"/>
-                    </Box>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                      <Box>
-                        <Typography variant="body2" fontWeight="medium">
-                          Camping Gear Set
-                        </Typography>
-                        <Typography variant="caption" color="text.secondary">
-                          Listed on Jan 10, 2024
-                        </Typography>
-                      </Box>
-                      <Chip label="Active" color="success" size="small"/>
-                    </Box>
-                  </Box>
-                </CardContent>
-              </Card>
-            </TabPanel>
-            <TabPanel value="reports">
-              <Card>
-                <CardHeader title="Reports" subheader="Reports involving this user."/>
-                <CardContent>
-                  <Typography variant="body2" color="text.secondary">
-                    No reports found for this user.
-                  </Typography>
+                      {total > limit && (
+                        <Box sx={{ display: 'flex', justifyContent: 'center', mt: 3 }}>
+                          <Pagination
+                            count={Math.ceil(total / limit)}
+                            page={Math.floor(offset / limit) + 1}
+                            onChange={(_, page) => changeCurrentPage((page - 1) * limit)}
+                            color="primary"
+                            size="medium"
+                          />
+                        </Box>
+                      )}
+                    </>
+                  )}
                 </CardContent>
               </Card>
             </TabPanel>
