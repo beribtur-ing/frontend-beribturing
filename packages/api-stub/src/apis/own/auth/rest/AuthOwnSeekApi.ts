@@ -1,6 +1,6 @@
-import {AccountSignInOwnQuery} from "~/apis";
-import {AccountSignInTokenRdo, FirstParameter, QueryResponse} from "~/models";
-import axios from "axios";
+import {AccountSignInOwnQuery} from '~/apis';
+import {AccountSignInTokenRdo, FirstParameter, QueryResponse} from '~/models';
+import axios from 'axios';
 
 const url = (path: string) => `/api/feature/owner/auth/${path}`;
 
@@ -21,5 +21,5 @@ export default {
         queryKey: readonly any[]
       }) => (await accountSignIn(queryKey.slice().pop()))?.data,
     }),
-  }
-}
+  },
+};
